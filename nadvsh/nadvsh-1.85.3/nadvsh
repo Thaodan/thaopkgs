@@ -1,0 +1,5417 @@
+#!/bin/echo Please start ksh, bash, or zsh, and source this file with .
+#
+############################################################################
+# @(#) nadvsh v1.85.3
+#
+# Name:		nadvsh
+# Description:	new adventure shell
+# Version:	1.85.3
+# Author:	Rene Uittenbogaard (script)
+#		Dean Swift (location descriptions, used with permission)
+# URL:		http://nadvsh.sourceforge.net/
+# Motto:	Work doesn't have to be boring
+# Date:		2002-09-07
+# Usage:	. nadvsh [ -noplay ] [ -safe | -nosafe ]
+#			 [ -strict | -semistrict | -nostrict ]
+# Portability:	tested with:	Linux/ksh	Linux/bash	Linux/zsh
+#				HP-UX/ksh	HP-UX/bash
+#				SunOS/ksh
+#				AIX/ksh		AIX/bash
+#		ought to work with OSF/1, SCO, IRIX and *BSD
+# TODO:
+#		ksh-Sun: set -o physical not possible?
+#		zsh-3: cd -P not possible; only pwd -r
+#		pwd -P (zsh: -r) may print path with no symlinks
+#			fix paths this way? target=`(chdir $target;pwd -P)` => slow
+#		zsh-4: cd /; cd var leaves $PWD = '//var' -> use `pwd` ? => slow
+#		bash-hp segfaults again - in d_cardinal
+#
+#		wear/wield/stow away
+#			think about chmod, drop(unwear first), take(already carrying)
+#		backpack handling as "real" object
+#			d_setup_backpack: re-examine
+#			backpack dropping/giving -> lose objects (use d_isbackpacked)
+#			prevent double names in backpack/wielding directories (rename = ok)
+#
+#		give jmol 10 florins
+#		implement scuba gear/ring of water breathing D2: or sc: ?
+#		make an npc repository
+#		have 'cal' decide to print just one month?
+#		d_steal contains a bug concerning the gender/pronoun of users
+#		d_indep_drop should not drop backpack!
+#		d_fight: not only drop items, but also lair items and gold for monsters?
+#			auto-pickup if no write perm in cwd?
+#		d_fight with <weapon> should check for missile weapon
+#		d_give should consider whether a valuable has been given (++charm)
+#		buy: create list of items for sale?
+#		buy clothing as vest for 2: wrong type!
+#		change object classes for armor/clothing?
+#		expand indact routine
+#		d_create_valuable/_weapon/_armor should use statistical distribution
+#		a 'theme write' command to create theme files
+#		'and' to string together commands?
+#		'use' magical object, 'fire/use' wand
+#		break d_wrap arguments across lines
+#		d_fight for users
+#		d_ifcarrying function?
+#		add NADVSH_GENDER variables? store pc gender? d_gender_change command?
+#		describe <object> as <desc> ?
+#		find out if substr() in awk can preserve multiple spaces correctly
+#		resurrect? summon?
+#		enable strange languages and translation (d_translate)?
+#		advance in $d_pc_maxstrength according to $d_pc_score?
+#		d_pc_maxstrength imposes limit on how much one may carry?
+#		implement dead npc's?
+#
+
+############################################################################
+# Some notes regarding temporary variable usage:
+#
+# The variables d_person, d_object, d_location, d_name, d_sentence,
+# d_remember and d_how may be used in command functions, and these may
+# not be altered in helper functions (except when it is e.g. a pathname
+# correction function). There is one function pair that passes d_remember:
+# d_describe and d_desc_eval.
+#
+# The variable d_temp may be changed by helper functions. Therefore,
+# command functions should only use it when there are no function calls
+# between the point of setting it and the point of using it.
+# Exception: d_wrap and d_wrap_noeol do *not* alter d_temp.
+
+############################################################################
+# find shell type - catch unsupported shells.
+
+# catch csh and tcsh
+test "$shell" && echo "Your shell ($shell) is not supported."
+test "$shell" && echo "Please start ksh, bash, or zsh, and source this file with . nadvsh"
+test "$shell" && exit
+
+# when sourcing this file in zsh, $0 equals the name of this file.
+# therefore, use this tricky construction to find the shelltype.
+# also remove a leading '-' used in login shells.
+# this must be done outside any function.
+d_shelltype=${ZSH_NAME:-${0#-}}
+
+# catch sh and ash
+if [ "$d_shelltype" = ash -o "$d_shelltype" = sh ]; then
+	echo "Your shell ($d_shelltype) is not supported."
+	echo "Please start ksh, bash, or zsh, and source this file with . nadvsh"
+	return 1
+fi
+
+############################################################################
+# constants (variables have been moved to d_initplay)
+
+d_wrap_margin=8			# text margin to right side of terminal
+d_up='back'			# alternative name for cd ..
+d_desc_file='.nadvsh'		# per-directory description file
+d_desc_obscurity=.5		# degree of obscurity in obscured locations
+d_backpack='.nadvbackpack'	# backpack directory
+d_wielding='.nadvwield'		# wielding/wearing/using directory
+d_backpackobj='backpack'	# backpack object filename
+d_indep_suppress=${d_indep_suppress:-false}	# for debugging
+d_version='v1.85.3'
+
+# herebelow follow functions - executable code resumes at label '# main'
+
+############################################################################
+# helper functions
+
+d_welcome() {
+	# we will need d_wrap now, set the necessary vars
+	d_find_fmt
+	echo
+	d_wrap	"Welcome to the new adventure shell." \
+		"Use the commands 'play' and 'noplay' to start/stop playing."
+	echo
+}
+
+d_debugarrays() {
+	tput smul
+	printf	"%-10s %-24s %-29s %-2s %-3s %-3s %-3s\n" \
+		'id' 'full name' 'location' 'ge' 'str' 'cha' 'dex'
+	tput rmul
+	d_npc_iteration() {
+		d_npc_extract "$d_npc_index"
+		printf	"%-10s %-24s" "$d_id" "$d_name"
+		if [ ${#d_name} -gt 24 ]; then
+			printf " --------------------- \\\\\n%-35s" '\ ---------------------------------'
+		fi
+		printf " %-29s" "$d_location"
+		if [ ${#d_location} -gt 29 ]; then
+			printf "\n%-65s" \\
+		fi
+		printf " %-2s %3d %3d %3d\n" $d_gender $d_strength $d_charm $d_dexterity
+	}
+	d_foreach_npc d_npc_iteration
+}
+
+d_debug() {
+	set -x
+	"$@"
+	set +x
+}
+
+d_not() {
+	# some Un*xes do not recognize ! <command>
+	if "$@"; then
+		return 1
+	else
+		return 0
+	fi
+}
+
+d_sum() {
+	$d_awk '{ total += $1 } END { print total }'
+}
+
+d_col_name() {
+	case "${1:-7}" in
+		0) echo black;;
+		1) echo red;;
+		2) echo green;;
+		3) echo yellow;;
+		4) echo blue;;
+		5) echo magenta;;
+		6) echo cyan;;
+		7) echo white;;
+	esac
+}
+
+d_isbackpacked() {
+	if egrep -l "$d_obcl_backpack" "$d_pc_wielding/"* 2>/dev/null; then
+		# a backpack is used.
+		# Note that the 'egrep' above sent the item name(s) to stdout.
+		# I'd use 'head -1' here if it didn't hide the return value of egrep.
+		return 0
+	else
+		return 1
+	fi
+}
+
+d_isilluminated() {
+	# find out whether this location owes its visibility
+	# to a wielded light source
+	if d_not expr "x$d_loc_flags" : '.*:dark' >/dev/null; then
+		# it's a light location
+		return 1
+	elif d_isday && expr "x$d_loc_flags" : '.*:darkbynight:' >/dev/null; then
+		# it's only dark by night; now it's day
+		return 1
+	elif egrep -l "$d_obcl_light" "$d_pc_wielding/"* 2>/dev/null; then
+		# a lightsource is wielded.
+		# Note that the 'egrep' above sent the item name(s) to stdout.
+		# I'd use 'head -1' here if it didn't hide the return value of egrep.
+		return 0
+	else
+		# no lightsource in a dark place
+		return 1
+	fi
+}
+
+d_isdark() {
+	# find out whether this location is dark.
+	if egrep "$d_obcl_light" "$d_pc_wielding/"* >/dev/null 2>&1; then
+		# wielding lightsource - it's light
+		return 1
+	elif expr "x$d_loc_flags" : '.*:dark:' >/dev/null; then
+		# it's 'dark'
+		return 0
+	elif d_not expr "x$d_loc_flags" : '.*:darkbynight:' >/dev/null; then
+		# not dark, not even dark by night
+		return 1
+	elif d_isday; then
+		return 1
+	else
+		return 0
+	fi
+}
+
+d_isradiationarea() {
+	expr "x$d_loc_flags" : '.*:radiation:' >/dev/null
+}
+
+d_isobscured() {
+	expr "x$d_loc_flags" : '.*:obscured:' >/dev/null
+}
+
+d_isairless() {
+	expr "x$d_loc_flags" : '.*:noair:' \| "x$d_loc_flags" : '.*:underwater:' >/dev/null
+}
+
+d_isalive() {
+	test "$d_strength" -ge 0
+}
+
+d_isday() {
+	# dark by night. find out if it is night
+	d_temp=`/usr/bin/date +%H`
+	# don't make it too hard, it's only a game
+	test $d_temp -ge 6 -a $d_temp -le 20
+}
+
+d_ishere() {
+	test "$d_location" = "$PWD"
+}
+
+d_iswearingclass() {
+	d_object="$(egrep -l "$($d_awk '/'"$d_obcl_clothing"'/ { print substr($0,1,3) }' "$1")" "$d_pc_wielding/"*)"
+#	2>/dev/null
+}
+
+d_iscarrying() {
+	grep "$1" "$d_pc_backpack/"* >/dev/null 2>&1
+}
+
+d_iscatnull() {
+	expr "$1" : '.0' >/dev/null
+}
+
+d_ifhereact() {
+	d_ishere && d_act "$@" 
+}
+
+d_act() {
+	d_wrap "$(d_capitalize `d_the $d_name`) $*"
+}
+
+d_translate() {
+	# d_translate { 1|2|3 } [back]
+	case "$1.$2" in
+		0.*)	cat ;;
+		1.back)	tr $d_translate_lang1 a-zA-Z ;;
+		2.back)	tr $d_translate_lang2 a-zA-Z ;;
+		3.back)	tr $d_translate_lang3 a-zA-Z ;;
+		1.*)	tr a-zA-Z $d_translate_lang1 ;;
+		2.*)	tr a-zA-Z $d_translate_lang2 ;;
+		3.*)	tr a-zA-Z $d_translate_lang3 ;;
+	esac
+}
+
+d_indep_unless_auto() {
+	$d_auto_action || d_indep_main
+}
+
+d_readable() {
+	test -r "$1" -a -x "$1"
+}
+
+d_writable() {
+	test -w "$1" -a -x "$1"
+}
+
+d_owner() {
+	/bin/ls -ld "$1" | awk '{ print $3 }'
+}
+
+d_wakeup() {
+	# invocation: d_wakeup 'reason'
+	if d_not $d_pc_wake; then
+		d_pc_wake=true
+		d_wrap	"You wake up $*"
+	fi
+}
+
+d_pc_woken() {
+	# you wake up more easily if you are well-rested
+	if d_not $d_pc_wake && [ $(($RANDOM % 10 - 2)) -lt $d_pc_strength ]; then
+		d_pc_wake=true
+		case $(($RANDOM % 3)) in
+			0) d_wrap "Something woke you up.";;
+			1) d_wrap "A sound woke you up.";;
+			2) d_wrap "A strange smell woke you up.";;
+		esac
+	fi
+	$d_pc_wake
+}
+
+d_npc_summon() {
+	if [ "$#" -ge 1 ]; then
+		d_npc_seek "$1"
+		d_npc_locations[$d_npc_index]="$PWD"
+		d_wrap "$(d_capitalize `d_the "$d_name"`) appears."
+	fi
+}
+
+d_lousy_reason() {
+	case $(($RANDOM % 6)) in
+		0) echo dark     ;;
+		1) echo misty    ;;
+		2) echo rainy    ;;
+		3) echo obscured ;;
+		4) echo far away ;;
+		5) echo cloudy   ;;
+	esac
+}
+
+d_dotdot() {
+	# invocation: d_dotdot [ hard ]
+	# adds .. entry to exit listing if it would be absent otherwise
+	# (except in strict mode)
+	#
+	# look      (strict)      ls -l			      don't add ..
+	# look      (semistrict)  ls -l			      add extra ..
+	# look      (nostrict)    ls -l			      add extra ..
+	# look hard (strict)      ls -l ${d_lsopt} = ls -l    don't add ..
+	# look hard (semistrict)  ls -l ${d_lsopt} = ls -la   don't add ..
+	# look hard (nostrict)    ls -l ${d_lsopt} = ls -la   don't add ..
+	#
+	# ksh cannot handle a '-a' string, change it into X-a
+	if [ "$1" != 'hard' -a "X$d_lsopt" = 'X-a' ]; then
+		echo 'drwxrwxrwx 3 root root 1024 Mon 00 00:00 ..'
+	fi
+}
+
+d_findparent() {
+	# assumption: $1 is an absolute path
+	# I'd use dirname(1) if it weren't too slow
+	# next line accidentally removes the only slash when $1=/
+	d_temp="${1%/*}"
+	# next line puts it back
+	echo "/${d_temp#/}"
+	# the returned value should have the conventional notation now (no trailing slash)
+}
+
+d_findsubdir() {
+	d_temp="$1"
+	if [ -L "$d_temp" ]; then
+		d_temp="$( ( unalias cd; $d_cdcommand "$d_temp"; pwd $d_pwdopt ) )"
+	fi
+	echo "$d_temp" | sed -e's,//,/,g'
+}
+
+d_chargecount() {
+	$d_awk '/'"$d_obcl_charges"'/ { print substr($0, 2, 1) }' "$1"
+}
+
+d_decrement_chargecount() {
+	if [ "$#" -lt 1 ]; then
+		return 1
+	elif [ ! -f "$1" ]; then
+		return 1
+	fi
+	# the original file may not be writable by us
+	# (e.g. if it was stolen from somebody else)
+	# therefore, create a unique name for a temporary file
+	d_temp="$1.$$.$RANDOM"
+	$d_awk '{
+		if ($0 ~ /'"$d_obcl_charges"'/) {
+			chrg = substr($0, 2, 1)
+			rest = substr($0, 4)
+			printf "'"$d_obcl_charges_template"'%s\n", --chrg, rest
+		} else {
+			print
+		}
+	}' "$1" > "$d_temp"
+	rm "$1"
+	if grep "$d_obcl_charges_zero" "$d_temp" >/dev/null; then
+		rm "$d_temp"
+		d_wrap "$(d_capitalize `d_the $1`) fades and disappears."
+	else
+		mv "$d_temp" "$1"
+	fi
+}
+
+d_getpwnam() {
+	$d_awk -F: '$1 == username {
+		split($5, gcos, ",")
+		print (length(gcos[1])>0 ? gcos[1] : "Nameless user (" username ")")
+	}' username="$1" /etc/passwd
+}
+
+d_getpwhome() {
+	$d_awk -F: '{
+		split($5, gcos, ",")
+		if (($1 == username) || (gcos[1] == username)) {
+			print $6
+		}
+	}' username="$1" /etc/passwd
+}
+
+d_getinitials() {
+	# apparently this set-echo construction is necessary
+	# for splitting $* in the right number of positional parameters
+        set `echo $*`
+        while [ "$#" -ge 1 ]; do
+                echo $d_n "`echo $1 | cut -c1`$d_c"
+                shift
+        done
+	echo
+}
+
+d_seekpwuser() {
+	# empty vars
+	d_id=
+	d_name=
+	# we cannot find out a user's gender (it is not in the passwd file).
+	# set it to 'singular'. At least this allows us to conjugate verbs
+	# for users correctly, if not choose the correct pronoun.
+	d_gender=s
+	# we must provide a default username for $1
+	# because '' could match with an empty gcos field.
+	# bash is evil: echo somestring | read somevar # does not work correctly
+	eval $($d_awk -F: '{
+		split($5, gcos, ",")
+		if (($1 == username) || (gcos[1] == username)) {
+			print "d_id=" $1 "\nd_name=\"" gcos[1] "\""
+		}
+	}' username="${1:-:}" /etc/passwd)
+	# specify a default because the gcos field might be empty
+	test "$d_id" && : ${d_name:=$d_id}
+	# return success if d_id is set
+	test "$d_id"
+}
+
+d_capitalize() {
+	echo "$*" | $d_awk '
+	NR == 1 {
+		print toupper(substr($0,1,1)) substr($0,2)
+	}
+	NR != 1 {
+		print
+	}'
+}
+
+d_me1() {
+	case "$d_gender" in
+		[mfns]*) echo "I"  ;;
+		p*)	 echo "we" ;;
+	esac
+}
+
+d_me2() {
+	case "$d_gender" in
+		[mfns]*) echo "my"  ;;
+		p*)	 echo "our" ;;
+	esac
+}
+
+d_me4() {
+	case "$d_gender" in
+		[mfns]*) echo "me" ;;
+		p*)	 echo "us" ;;
+	esac
+}
+
+d_pronoun1() {
+	case "$d_gender" in
+		[ms]*) echo "he"   ;;
+		f*)    echo "she"  ;;
+		n*)    echo "it"   ;;
+		p*)    echo "they" ;;
+	esac
+}
+
+d_pronoun2() {
+	case "$d_gender" in
+		[ms]*) echo "his"   ;;
+		f*)    echo "her"   ;;
+		n*)    echo "its"   ;;
+		p*)    echo "their" ;;
+	esac
+}
+
+alias d_pronoun3=d_pronoun4
+
+d_pronoun4() {
+	case "$d_gender" in
+		[ms]*) echo "him"  ;;
+		f*)    echo "her"  ;;
+		n*)    echo "it"   ;;
+		p*)    echo "them" ;;
+	esac
+}
+
+d_a() {
+	if echo "$*" | egrep "^([A-Z].*|$d_awk_cardinals|some |a |an )" >/dev/null; then
+		# this is assumed to be a proper name like "Gandalf's staff"
+		# or a numbered item like "six gold coins"
+		echo "$*"
+	elif [ "${1#[aeiou]}" != "$1" ]; then
+		# vowel
+		echo "an $*"
+	else
+		# consonant
+		echo "a $*"
+	fi
+}
+
+d_the() {
+	if [ "${1#[A-Z]}" != "$1" ]; then
+		# this is assumed to be a proper name like "Gandalf's staff"
+		echo "$*"
+	else
+		# vowels, consonants, numbered items all get the same treatment
+		# but remove any '(some|one|1)' at the beginning
+		echo "$*" | sed -e's/^some //' -e's/^1 //' -e's/^one //' -e's/^/the /'
+	fi
+}
+
+d_is() {
+	if [ "${d_gender#p}" != $d_gender ]; then echo 'are'; else echo 'is'; fi
+}
+
+d_has() {
+	if [ "${d_gender#p}" != $d_gender ]; then echo 'have'; else echo 'has'; fi
+}
+
+d_does() {
+	if [ "${d_gender#p}" != $d_gender ]; then echo 'do'; else echo 'does'; fi
+}
+
+d_conjugate() {
+	# invocation: d_conjugate 'verb'
+	if [ "${d_gender#p}" != $d_gender ]; then
+		echo "$1"
+	elif [ "${1%s}" != "$1" -o "${1%sh}" != "$1" -o "${1%ch}" != "$1" ]; then
+		echo "$1es"
+	else
+		echo "$1s"
+	fi
+}
+
+d_currency_pluralize() {
+	if [ "$1" -eq 1 ]; then
+		echo "$1 $d_currency_singular"
+		return 1
+	else
+		echo "$1 $d_currency_plural"
+	fi
+}
+
+d_currency_symbol() {
+	if [ "$1" -eq 1 ]; then
+		echo '{scurrency}'
+	else
+		echo '{pcurrency}'
+	fi
+}
+
+d_mode_display() {
+	if d_not alias cd >/dev/null 2>&1; then
+		echo noplay
+	else
+		echo "$d_mode_strict and $d_mode_safe"
+	fi
+}
+
+d_foreach_npc() {
+	# invocation: d_foreach_npc command...
+	d_npc_index=$d_npc_total
+	while [ $((d_npc_index-=1)) -ge 0 ]; do
+		"$@"
+	done
+}
+
+d_wrap() {
+	# add an extra space as a word terminator.
+	d_line="$d_wrap_residue$* "
+	d_wrap_residue=
+	# terminal may have been resized
+	let d_wrap_linewidth=`tput cols`-$d_wrap_margin
+	test "$d_wrap_linewidth" -lt 10 && d_wrap_linewidth=80
+	if [ $(( $d_wrap_lastlinelength + $d_wrap_margin )) -ge $d_wrap_linewidth ]; then
+		# leftover space smaller than margin: advance to next line
+		echo
+		d_wrap_lastlinelength=0
+	fi
+	if [ "$d_fmt" -a $d_wrap_lastlinelength -eq 0 ]; then
+		# only use fmt when there is no leftover space
+		echo $d_line | $d_fmt ${d_fmtopt}$d_wrap_linewidth
+	else
+		while test "$d_line"; do
+			d_firstline=`echo "$d_line" | sed -e "s/^\(.\{0,$(( $d_wrap_linewidth - $d_wrap_lastlinelength ))\}\) .*/\1/"`
+			d_line=`     echo "$d_line" | sed -e "s/^.\{0,$(( $d_wrap_linewidth - $d_wrap_lastlinelength ))\} //"`
+			if [ "$d_line" = "$d_firstline" ]; then
+				# not enough leftover space to fit text in
+				# try again on next line
+				d_firstline=
+			fi
+			echo "$d_firstline"
+			d_wrap_lastlinelength=0
+		done
+	fi
+}
+
+d_wrap_noeol() {
+	# do not add an extra space: word may not be terminated
+	d_line="$d_wrap_residue$*"
+	if [ "$d_line" = "${d_line% }" ]; then
+		# line does not end in a space: unterminated word will be kept
+		# in d_wrap_residue for next pass
+		d_wrap_residue="${d_line##* }"
+		# does the line contain any space at all?
+		if expr "$d_line" : '.* ' >/dev/null; then
+			# if yes, keep first part of d_line
+			d_line="${d_line% *} "
+		else
+			# empty d_line otherwise (it has been completely transferred to d_wrap_residue)
+			d_line=
+		fi
+	else
+		d_wrap_residue=
+	fi
+	test -z "$d_line" && return
+	# terminal may have been resized
+	let d_wrap_linewidth=`tput cols`-$d_wrap_margin
+	test "$d_wrap_linewidth" -lt 10 && d_wrap_linewidth=80
+	if [ $(( $d_wrap_lastlinelength + $d_wrap_margin )) -ge $d_wrap_linewidth ]; then
+		# leftover space smaller than margin: advance to next line
+		echo
+		d_wrap_lastlinelength=0
+	fi
+	while test "$d_line"; do
+		d_firstline=`echo "$d_line" | sed -e "s/^\(.\{0,$(( $d_wrap_linewidth - $d_wrap_lastlinelength ))\}\) .*/\1/"`
+		d_line=`     echo "$d_line" | sed -e "s/^.\{0,$(( $d_wrap_linewidth - $d_wrap_lastlinelength ))\} //"`
+		if [ "$d_line" = "$d_firstline" ]; then
+			# not enough leftover space to fit text in
+			# try again on next line
+			d_firstline=
+		fi
+		if [ "$d_line" ]; then
+			echo "$d_firstline"
+			d_wrap_lastlinelength=0
+		else
+			# print an extra space. there was, after all, a space
+			# after every word in $d_line (residue is in d_wrap_residue)
+			echo $d_n "$d_firstline $d_c"
+			let d_wrap_lastlinelength=${#d_firstline}+$d_wrap_lastlinelength+1
+		fi
+	done
+}
+
+d_setprompthead() {
+	d_prompt_head="$1"
+	d_setprompt
+}
+
+d_setpromptmain() {
+	d_prompt_main="$1"
+	d_setprompt
+}
+
+d_setprompt() {
+	if [ "$d_prompt_head" -o "$d_prompt_main" ]; then
+		PS1="${d_prompt_head:-You are in} $d_prompt_main."
+		$d_allow_teleport && PS1="$PS1 ($PWD)"
+	else
+		PS1="You are in $PWD"
+	fi
+	case "$d_shelltype" in
+		zsh)
+			PS1="${PS1}
+%{${d_col_ps1}%}What now?%{$d_col_sgr0%} "
+			;;
+		bash)
+			PS1="${PS1}
+\[$d_col_ps1\]What now?\[$d_col_sgr0\] "
+			;;
+		*)
+			PS1="${PS1}
+What now? "
+			;;
+	esac
+}
+
+d_cardinal() {
+	# this is huge overkill. But I wanted to have this script anyway.
+	echo "$1" | $d_awk '
+		BEGIN {
+			irr[10] = "ten";
+			irr[11] = "eleven";	ones[1] = "one";	tens[1] = "ten"
+			irr[12] = "twelve";	ones[2] = "two";	tens[2] = "twenty"
+			irr[13] = "thirteen";	ones[3] = "three";	tens[3] = "thirty"
+			irr[14] = "fourteen";	ones[4] = "four";	tens[4] = "forty"
+			irr[15] = "fifteen";	ones[5] = "five";	tens[5] = "fifty"
+			irr[16] = "sixteen";	ones[6] = "six";	tens[6] = "sixty"
+			irr[17] = "seventeen";	ones[7] = "seven";	tens[7] = "seventy"
+			irr[18] = "eighteen";	ones[8] = "eight";	tens[8] = "eighty"
+			irr[19] = "nineteen";	ones[9] = "nine";	tens[9] = "ninety"
+			#
+			pow[++maxpow] = "thousand"
+			pow[++maxpow] = "million"
+			pow[++maxpow] = "billion"
+			pow[++maxpow] = "trillion"
+		}
+		function upto_thousand(num999) {
+			result = ""
+			num900 = substr(num999,1,1)
+			num90  = substr(num999,2,1)
+			num99  = substr(num999,2,2)
+			num9   = substr(num999,3,1)
+			if (num900 != 0)                  result = result sprintf("%s hundred ", ones[num900])
+			if (num900 != 0 && num99 != "00") result = result sprintf("and ")
+			if (               num99 != "00") {
+				if (num90 == 1) {
+					result = result sprintf("%s ", irr[num99])
+				} else {
+					if      ( num90 != 0             ) result = result sprintf("%s", tens[num90])
+					if      ( num90 != 0 && num9 != 0) result = result sprintf("-")
+					else if ( num90 != 0 || num9 == 0) result = result sprintf(" ")
+					if      (               num9 != 0) result = result sprintf("%s ", ones[num9])
+				}
+			}
+			return result
+		}
+		{
+			intvalue = $0
+			if (intvalue == 0) print "zero"
+			# add +0 for converting string to integer
+			else if (intvalue + 0 >= 10 ** (3 * maxpow + 3)) print "unknown"
+			else {
+				strvalue   = ""
+				currentpow = 0
+				while (intvalue > 0) {
+					curvalue =    (intvalue % 1000)
+					intvalue = int(intvalue / 1000)
+					addvalue = upto_thousand(sprintf("%03d", curvalue))
+					if (addvalue != "")     strvalue = addvalue pow[currentpow] " " strvalue
+					if (intvalue > 0 && curvalue < 100 && curvalue > 0)
+								strvalue = "and " strvalue
+					currentpow++
+				}
+				gsub(" *$", "", strvalue)
+				print strvalue
+			}
+		}
+	'
+}
+
+############################################################################
+# array handling
+
+d_npc_push() {
+	# invocation: d_npc_push <id> <name> <location> <gender> <strength> <charm> <dexterity>
+	# note: the description is not pushed.
+	# It is assigned separately while reading in the theme file.
+	d_npc_ids[$d_npc_total]="$1"
+	d_npc_names[$d_npc_total]="$2"
+	d_npc_locations[$d_npc_total]="$3"
+	d_npc_genders[$d_npc_total]="$4"
+	d_npc_strengths[$d_npc_total]="$5"
+	d_npc_charms[$d_npc_total]="$6"
+	d_npc_dexterities[$d_npc_total]="$7"
+	let d_npc_total+=1
+}
+
+d_npc_seek() {
+	let d_npc_index=$d_npc_total-1
+	while [ $d_npc_index -ge 0 ] \
+	&& [ "${d_npc_names[$d_npc_index]}" != "$1" -a "${d_npc_ids[$d_npc_index]}" != "$1" ]; do
+		let d_npc_index-=1
+	done
+	if [ $d_npc_index -lt 0 ]; then
+		d_npc_index=
+		return 1
+	fi
+	d_npc_extract $d_npc_index
+}
+
+d_npc_extract() {
+	# many functions will require that the individual values
+	# are retrievable as global simple variables.
+	# The description is not extracted.
+	test "$#" -lt 1 && return 1
+	d_id="${d_npc_ids[$1]}"
+	d_name="${d_npc_names[$1]}"
+	d_location="${d_npc_locations[$1]}"
+	d_gender="${d_npc_genders[$1]}"
+	d_strength="${d_npc_strengths[$1]}"
+	d_charm="${d_npc_charms[$1]}"
+	d_dexterity="${d_npc_dexterities[$1]}"
+}
+
+d_npc_remove() {
+	# remove one NPC from the arrays (e.g. because he/she is dead)
+	# implemented by replacing npc[to_remove] with npc[maxindex]
+	# the description is also removed.
+	test "$#" -lt 1 && return 1
+	d_npc_ids[$1]="${d_npc_ids[$d_npc_total-1]}"
+	d_npc_names[$1]="${d_npc_names[$d_npc_total-1]}"
+	d_npc_locations[$1]="${d_npc_locations[$d_npc_total-1]}"
+	d_npc_genders[$1]="${d_npc_genders[$d_npc_total-1]}"
+	d_npc_strengths[$1]="${d_npc_strengths[$d_npc_total-1]}"
+	d_npc_charms[$1]="${d_npc_charms[$d_npc_total-1]}"
+	d_npc_dexterities[$1]="${d_npc_dexterities[$d_npc_total-1]}"
+	d_npc_descriptions[$1]="${d_npc_descriptions[$d_npc_total-1]}"
+	let d_npc_total-=1
+}
+
+############################################################################
+# item handling
+
+d_pick_item() {
+	# return an object index in d_obj_index, if an object of the requested class exists.
+	# call with object class argument: ^^?[a-zA-Z][a-zA-Z0-9](:(.*)?)?$
+	d_obj_index=$(
+		let d_obj_index=$d_obj_total
+		d_temp=".*${1#^}"
+		while [ $((d_obj_index-=1)) -ge 0 ]; do
+			if expr "${d_obj_data[$d_obj_index]}" : "$d_temp" >/dev/null; then
+				echo $d_obj_index
+			fi
+		done | $d_awk "$d_awk_pickrandom"
+	)
+}
+
+d_pick2_item() {
+	# return an object index in d_obj_index, if an object of the requested class exists.
+	# call with two object class arguments of the form: ^^?[a-zA-Z][a-zA-Z0-9](:(.*)?)?$
+	d_obj_index=$(
+		let d_obj_index=$d_obj_total
+		d_temp=".*${1#^}"
+		d_temp2=".*${2#^}"
+		while [ $((d_obj_index-=1)) -ge 0 ]; do
+			if expr "${d_obj_data[$d_obj_index]}" : "$d_temp" >/dev/null \
+			&& expr "${d_obj_data[$d_obj_index]}" : "$d_temp2" >/dev/null; then
+				echo $d_obj_index
+			fi
+		done | $d_awk "$d_awk_pickrandom"
+	)
+}
+
+d_pick_ordinary() {
+	# we need this exception because expr(1) cannot handle ERE's :(
+	# call with object class argument: $d_obcl_ordinary_extended
+	d_obj_index=$(
+		let d_obj_index=$d_obj_total-1
+		while [ $((d_obj_index-=1)) -ge 0 ]; do
+			if echo "${d_obj_data[$d_obj_index]}" | egrep "$1"  >/dev/null; then
+				echo $d_obj_index
+			fi
+		done | $d_awk "$d_awk_pickrandom"
+	)
+}
+
+d_pick_clothing() {
+	# we need this exception because 'buy clothing' should not offer armor
+	# call with object class argument: ^^?c[0-9](:(.*)?)?$
+	d_obj_index=$(
+		let d_obj_index=$d_obj_total-1
+		d_temp=".*${1#^}"
+		d_temp2=".*${d_obcl_clothing_disallowed#^}"
+		while [ $((d_obj_index-=1)) -ge 0 ]; do
+			if       expr "${d_obj_data[$d_obj_index]}" : "$d_temp"  >/dev/null \
+			&& d_not expr "${d_obj_data[$d_obj_index]}" : "$d_temp2" >/dev/null; then
+				echo $d_obj_index
+			fi
+		done | $d_awk "$d_awk_pickrandom"
+	)
+}
+
+d_create_item() {
+	if [ "$2" = ordinary ]; then
+		d_pick_ordinary "$1"
+	else
+		d_pick_item "$@"
+	fi
+	echo $d_n "${d_obj_data[$d_obj_index]}$d_c" > "$d_location/${d_obj_ids[$d_obj_index]}"
+}
+
+d_create_money() {
+	# d_create_money <dir> <amount>
+	echo "$d_obcl_money_template$2 `d_currency_symbol $2`." > "$1/`d_currency_pluralize $2`"
+}
+
+d_create_treasure() {
+	case $(($RANDOM % 25)) in
+		[012])   d_create_item "$d_obcl_weapon" ;;
+		[345])   d_create_item "$d_obcl_mweapon" ;;
+		[678])   d_create_item "$d_obcl_missile" ;;
+		9|10|11) d_create_item "$d_obcl_armor" ;;
+		12|13)   d_create_item "$d_obcl_valuable" ;;
+		14|15)   d_create_item "$d_obcl_potion" ;;
+		16|17)   d_create_item "$d_obcl_scroll" ;;
+		18|19)   d_create_item "$d_obcl_ring" ;;
+		20|21)   d_create_money "$d_location" $(($RANDOM % 100 + 1)) ;;
+		22)      d_create_item "$d_obcl_staff" ;;
+		23)      d_create_item "$d_obcl_wand" ;;
+		24)      d_create_item "$d_obcl_rod" ;;
+	esac
+}
+
+############################################################################
+# setup functions
+
+d_find_awk() {
+	if [ -x /usr/bin/nawk ]; then
+		d_awk=/usr/bin/nawk
+	elif [ -x /usr/xpg4/bin/awk ]; then
+		d_awk=/usr/xpg4/bin/nawk
+	else
+		d_awk=/usr/bin/awk
+	fi
+}
+
+d_find_pwd() {
+	if [ $d_shelltype = zsh ]; then
+		# for zsh 3
+		d_pwdopt='-r'
+	else
+		d_pwdopt='-P'
+	fi
+}
+
+d_find_fuser() {
+	for d_fuser in /usr/sbin /sbin /etc /usr/bin; do
+		test -x $d_fuser/fuser && break
+	done
+	d_fuser=${d_fuser:-/usr/bin}/fuser
+}
+
+d_find_fmt() {
+	d_wrap_lastlinelength=0
+	if [ -x /usr/bin/fmt ]; then
+		d_fmt=/usr/bin/fmt
+	elif [ -x /usr/ucb/fmt ]; then
+		d_fmt=/usr/ucb/fmt
+	else
+		d_fmt=
+		d_fmtopt=
+		return
+	fi
+	# AIX fmt uses fmt -80 instead of fmt -w 80
+	if echo | $d_fmt -w80 >/dev/null 2>&1; then
+		d_fmtopt='-w'
+	else
+		d_fmtopt='-'
+	fi
+}
+
+d_find_grep() {
+	# does grep know -a (force ascii interpretation)?
+	if echo a | grep -a a >/dev/null 2>&1; then
+		d_grepopt='-a'
+	else
+		d_grepopt=
+	fi
+}
+
+d_find_pager() {
+	if [ -x "${PAGER:-/dev/null}" ]; then
+		d_pager="$PAGER"
+	elif [ -x /usr/bin/less ]; then
+		d_pager=/usr/bin/less
+	else
+		d_pager=/usr/bin/more
+	fi
+}
+
+d_find_echo() {
+	if echo '\t' | grep t >/dev/null; then
+		shopt -s xpg_echo
+	fi
+	if echo '\c' | grep c >/dev/null; then
+		d_c=
+		d_n='-n'
+	else
+		d_c='\c'
+		d_n=
+	fi
+}
+
+d_setup_aliases() {
+	alias play=d_play
+	alias replay='d_noplay; . nadvsh'
+	alias noplay=d_noplay
+	alias quit=d_quitplay
+	alias go=d_cd
+	alias enter=d_cd
+	alias leave='d_cd ..'
+	alias xyzzy="d_cd ''"
+	alias u='d_cd up'         up='d_cd up'
+	alias d='d_cd down'       down='d_cd down'
+	# this replaces the normal use of w(1)
+	alias n='d_cd north'      north='d_cd north'
+	alias s='d_cd south'      south='d_cd south'
+	alias e='d_cd east'       east='d_cd east'
+	alias w='d_cd west'       west='d_cd west'
+	alias ne='d_cd northeast' northeast='d_cd northeast'
+	alias se='d_cd southeast' southeast='d_cd southeast'
+	alias sw='d_cd southwest' southwest='d_cd southwest'
+	alias nw='d_cd northwest' northwest='d_cd northwest'
+	# Linux has a look(1), but i think grep(1) is as good
+	alias look=d_look
+	alias lo=d_look
+	alias desc=d_desc_cmd
+	alias describe=d_desc_cmd
+	alias exam=d_examine
+	alias examine=d_examine
+	# HP-UX has an inv(1), but who uses that?
+	alias inv=d_inventory
+	alias inventory=d_inventory
+	alias take=d_take
+	alias get=d_take
+	alias drop=d_drop
+	alias steal=d_steal
+	alias give=d_give
+	alias destroy=d_destroy
+	alias rename=d_rename
+	alias open='d_chmod open'
+	alias unlock='d_chmod unlock'
+	alias close='d_chmod close'
+	alias lock='d_chmod lock'
+	alias eat=d_eat
+	alias drink=d_drink
+	alias quaff=d_quaff
+	alias wield=d_wield
+	alias wear=d_wear
+	alias don=d_wear
+	alias unwield=d_stow
+	alias unwear=d_stow
+	alias stow=d_stow
+	alias put=d_put
+	alias use=d_use
+	alias fire=d_fire
+	alias buy=d_buy
+	alias sell=d_sell
+	alias say=d_tell
+	alias tell=d_tell
+	alias shout=d_shout
+	alias talk=d_talk
+	alias emote=d_emote
+	alias help=d_help
+	alias date=d_date
+	alias cal=d_cal
+	alias score=d_scoreboard
+	alias status=d_scoreboard
+	# the normal use of kill(1) is preserved
+	alias kill=d_fight
+	alias hit=d_fight
+	alias fight=d_fight
+	alias attack=d_fight
+	alias sleep=d_sleep
+	alias currency=d_currency
+	alias wait=d_wait
+	alias where=d_where
+	alias debug='d_debug '
+	alias colors=d_colors
+	alias nocolors='d_colors nocolor nocolor'
+	alias theme=d_theme
+}
+
+d_setup_awk_scripts() {
+	# must be called *after* d_setup_obcl
+	d_awk_armorprice='
+		BEGIN { srand() }
+		/'"$d_obcl_armor"'/ { printf "%d\n", 20 * substr($0,2,1) * (0.85 + 0.3 * rand()) }
+	'
+	d_awk_pickrandom='
+		BEGIN	{ srand() }
+			{ entry[NR]=$0 }
+		END	{ print entry[int(rand()*NR+1)] }
+	'
+	d_awk_picksome='
+		BEGIN		{ srand() }
+		rand() < frac	{ print }
+	'
+	# a hundred; a thousand; a million; a dozen; a gross; a score
+	d_awk_cardinals='one |two |three |four |five |six |seven |eight |nine |ten |eleven |twelve |thirteen |fourteen |fifteen |sixteen |seventeen |eighteen |nineteen |twenty[- ]|thirty[- ]|forty[- ]|fifty[- ]|sixty[- ]|seventy[- ]|eighty[- ]|ninety[- ]|[0-9][0-9]* '
+	d_awk_listitems='
+		function a(obj) {
+			if      (substr(obj,1,1) != tolower(substr(obj,1,1)) \
+			||	obj ~ /^('"$d_awk_cardinals"'|some |a |an )/)
+							{ return obj }
+			else if (obj ~ /^[aeiou]/) 	{ return "an " obj }
+			else				{ return "a "  obj }
+		}
+		{
+			if (last != "") {
+				printf "%s, ", last
+			} else {
+				printf " %s ", carry_ing
+			}
+			cnt++
+			last = a($0)
+		}
+		END {
+			if	(cnt == 0) { printf " not %s anything.\n", carry_ing }
+			else if	(cnt == 1) { printf "%s.\n", last }
+			else		   { printf "and %s.\n", last }
+		}
+	'
+}
+
+d_setup_escapes() {
+	d_col_=
+	d_col_nocolor=
+	# i like to have my scripts all-ascii
+	d_col_esc=`printf '\033'`
+	d_col_smso=`tput smso`
+	d_col_rmso=`tput rmso`
+	d_col_smul=`tput smul`
+	d_col_rmul=`tput rmul`
+	d_col_bold=`tput bold`
+	d_col_sgr0=`tput sgr0`
+	d_col_black=${d_col_esc}'[30m'
+	d_col_red=${d_col_esc}'[31m'
+	d_col_green=${d_col_esc}'[32m'
+	d_col_yellow=${d_col_esc}'[33m'
+	d_col_blue=${d_col_esc}'[34m'
+	d_col_magenta=${d_col_esc}'[35m'
+	d_col_cyan=${d_col_esc}'[36m'
+	d_col_white=${d_col_esc}'[37m'
+	d_col_onred=${d_col_esc}'[41m'
+	d_col_ongreen=${d_col_esc}'[42m'
+	d_col_onyellow=${d_col_esc}'[43m'
+	d_col_onblue=${d_col_esc}'[44m'
+	d_col_onmagenta=${d_col_esc}'[45m'
+	d_col_oncyan=${d_col_esc}'[46m'
+	d_col_onwhite=${d_col_esc}'[47m'
+	d_col_onblack=${d_col_esc}'[40m'
+	# put onblack last, in case we are running set -x
+}
+
+d_setup_color() {
+	# set up escape codes for colors
+	d_setup_escapes
+	# test whether color is supported
+	d_col_capable=`{
+		# commands that may possibly output the text 'color'
+		# e.g. TERM=xterm-color
+		# or   ls=ls --color=auto
+		echo "$TERM"
+		[ "$TERM" = linux ] && echo linux-console-color
+		alias ls 2>/dev/null
+	} | grep color`
+	# now set the color handling variables
+	if [ "$NADVSH_PS1COLOR" ]; then
+		eval 'd_col_ps1=$d_col_'"$NADVSH_PS1COLOR"
+	elif [ "$d_col_capable" ]; then
+		d_col_ps1=$d_col_cyan
+	fi
+	if [ "$NADVSH_DESCCOLOR" ]; then
+		eval 'd_col_desc=$d_col_'"$NADVSH_DESCCOLOR"
+	elif [ "$d_col_capable" ]; then
+		d_col_desc=$d_col_yellow
+	fi
+}
+
+d_setup_backpack() {
+	if [ ! -d "$d_pc_backpack" ]; then
+		d_setup_backpack_act		
+		if mkdir "$d_pc_backpack"; then
+			d_setup_backpack_items "$d_pc_backpack" pc
+		else
+			d_setup_backpack_problem "$d_pc_backpack" backpack
+		fi
+	fi
+	if [ ! -d "$d_pc_wielding" ]; then
+		if mkdir "$d_pc_wielding"; then
+			d_setup_backpack_backpack "$d_pc_wielding" "`d_getpwnam $d_pc_name`"
+		else
+			d_setup_backpack_problem "$d_pc_wielding" wielding
+		fi
+	else
+		if d_not d_isbackpacked >/dev/null; then
+			d_setup_backpack_backpack "$d_pc_wielding" "`d_getpwnam $d_pc_name`"
+		fi
+	fi
+}
+
+d_setup_backpack_act() {
+	d_wrap "You buy yourself a new backpack, and equipment for the journey."
+}
+
+d_setup_backpack_problem() {
+	d_wrap	"Warning: you don't have a suitable $2 directory!" \
+		"Please create a writable directory $1" \
+		"and run d_setup_backpack"
+}
+
+d_setup_backpack_backpack() {
+	echo	"ba:A flexible leather backpack, imprinted with the letters" \
+		"$(d_getinitials "$2")." > "$1/$d_backpackobj"
+}
+
+d_setup_backpack_items() {
+	d_location="$1"
+	d_create_item "$d_obcl_food"
+	d_create_item "$d_obcl_drink"
+	d_create_item "$d_obcl_clothing"
+	d_create_item "$d_obcl_clothing"
+	d_create_item "$d_obcl_ordinary_extended" ordinary
+	if [ $(($RANDOM % 3)) -eq 0 ]; then
+		d_create_item "$d_obcl_mweapon"
+		d_create_item "$d_obcl_missile"
+		d_create_item "$d_obcl_missile"
+		d_create_item "$d_obcl_missile"
+	else
+		d_create_item "$d_obcl_weapon"
+	fi
+	d_create_item "$d_obcl_armor"
+	if [ "${2:-pc}" != pc ]; then
+		case $(($RANDOM % 10)) in
+			0) d_create_item "$d_obcl_potion" ;;
+			1) d_create_item "$d_obcl_valuable" ;;
+			2) d_create_item "$d_obcl_ring" ;;
+			3) d_create_money "$d_location" $(($RANDOM % 30 + 1)) ;;
+		esac
+	fi
+}
+
+d_setup_npc_home() {
+	# setup NPC home for storing backpacks
+	if [ -d /var/nadvsh ]; then
+		d_npc_home=/var/nadvsh
+	else
+		d_npc_home=/var/tmp/nadvsh
+#		if mv /var/tmp/nadvsh/ /var/nadvsh/ 2>/dev/null; then
+#			d_npc_home=/var/nadvsh
+#			# we checked that /var/tmp/nadvsh/ has been moved as a
+#			# directory, so there can be no security issues, right?
+##			chown -R root "$d_npc_home"
+#			# same holds for chmod
+##			chmod -R 777 "$d_npc_home"
+#		else 
+#			d_npc_home=/var/tmp/nadvsh
+#		fi
+	fi
+}
+
+d_setup_npc_backpack() {
+	# npc's only have one backpack dir: they don't use/wield etc.
+	d_npc_extract $d_npc_index
+	if [ ! -d "$d_npc_home/$d_id/$d_backpack" -a "${d_gender%o}" = "$d_gender" ]; then
+		mkdir -m 777 -p "$d_npc_home/$d_id/$d_backpack"
+		d_setup_backpack_backpack "$d_npc_home/$d_id/$d_backpack" "$d_name"
+		d_setup_backpack_items "$d_npc_home/$d_id/$d_backpack" npc &
+	fi
+}
+
+d_setup_obcl() {
+	# when listing objects, only consider files smaller than this (in bytes)
+	d_max_objsize=2000
+	# end object class marker
+	d_obcl_lcbo=':[a-zA-Z0-9]'
+	# object classes
+	d_obcl_any='^[a-zA-Z][a-zA-Z0-9]'"$d_obcl_lcbo"
+	d_obcl_any_minimal='^[a-zA-Z][a-zA-Z0-9]:'
+	d_obcl_find_type='^.\([0-9]\):.*'
+	d_obcl_armor='^a[0-9]'"$d_obcl_lcbo"
+	d_obcl_armor_template='a%d:'
+	d_obcl_backpack='^ba'"$d_obcl_lcbo"
+	d_obcl_backpack_template='ba:'
+	d_obcl_charges='^C[0-9]'"$d_obcl_lcbo"
+	d_obcl_charges_template='C%d:'
+	d_obcl_charges_zero='^C0'"$d_obcl_lcbo"
+	d_obcl_clothing='^c[0-9]'"$d_obcl_lcbo"
+	# objects in this category are "clothing plus"
+	d_obcl_clothing_disallowed='^[aD][0-9]'"$d_obcl_lcbo"
+	d_obcl_clothing_template='c%d:'
+	d_obcl_clothing_helmet_template='c1:'
+	d_obcl_clothing_armor_template='c4:'
+	d_obcl_clothing_shield_template='c7:'
+	d_obcl_device='^D[0-9]:'"$d_obcl_lcbo"
+	d_obcl_drink='^dr'"$d_obcl_lcbo"
+	d_obcl_drink_template='dr:'
+	d_obcl_food='^fo'"$d_obcl_lcbo"
+	d_obcl_food_template='fo:'
+	d_obcl_light='^li'"$d_obcl_lcbo"
+	d_obcl_mweapon='^m[0-9]'"$d_obcl_lcbo"
+	d_obcl_mweapon_template='m%d:'
+	d_obcl_money='^mo'"$d_obcl_lcbo"
+	d_obcl_money_template='mo:'
+	d_obcl_musical='^mu'"$d_obcl_lcbo"
+	d_obcl_nonportable='^n[fh]'"$d_obcl_lcbo"
+	d_obcl_nonport_fixed='^nf'"$d_obcl_lcbo"
+	d_obcl_nonport_heavy='^nh'"$d_obcl_lcbo"
+	d_obcl_missile='^o[0-9]'"$d_obcl_lcbo"
+	d_obcl_missile_template='o%d:'
+	d_obcl_potion='^p[0-9]'"$d_obcl_lcbo"
+	d_obcl_rod='^R[0-9]'"$d_obcl_lcbo"
+	d_obcl_ring='^r[0-9i]'"$d_obcl_lcbo"
+	d_obcl_staff='^S[0-9]'"$d_obcl_lcbo"
+	d_obcl_scroll='^s[0-9]'"$d_obcl_lcbo"
+	d_obcl_scuba='^sc:'"$d_obcl_lcbo"
+	d_obcl_teleporter='^te'"$d_obcl_lcbo"
+	d_obcl_valuable='^v[0-9]'"$d_obcl_lcbo"
+	d_obcl_wand='^W[0-9]'"$d_obcl_lcbo"
+	d_obcl_weapon='^w[0-9]'"$d_obcl_lcbo"
+	d_obcl_weapon_template='w%d:'
+	# egrep understands this perfectly fine, but sed gives problems
+	d_obcl_ordinary='(^ob|^bo|^ke|^sb)'"$d_obcl_lcbo"
+	d_obcl_ordinary_template='ob:'
+	d_obcl_ordinary_extended='(^ob|^bo|^ba|^ke|^li|^mu)'"$d_obcl_lcbo"
+	d_obcl_wearable='(^[acr].)'"$d_obcl_lcbo"
+	d_obcl_wieldable='(^[RSWmw].|^ba|^li)'"$d_obcl_lcbo"
+	# no more than two of these, in total
+	d_obcl_wieldable_restricted='^[RSWmw].'"$d_obcl_lcbo"
+}
+
+d_setup_strictmode() {
+	# the d_allow_* vars are slightly redundant,
+	# however, this allows us to maybe add more modes
+	if [ "$1" = strict ]; then
+		# cd .. will be disallowed. This means you will only be able to
+		# return to your parent directory using a symbolic link.
+		d_allow_cdup=false
+		# cd '(any pathname containing slashes)' will be disallowed.
+		# You will have to walk to your destination one step at a time.
+		d_allow_teleport=false
+		# ls(1) must not see dotfiles/directories
+		d_lsopt=
+	elif [ "$1" = semistrict ]; then
+		# semistrict; allow cd up, but not teleport
+		d_allow_cdup=true
+		d_allow_teleport=false
+		# set -a option for ls(1)
+		d_lsopt='-a'
+	else
+		# not very strict.
+		d_allow_cdup=true
+		d_allow_teleport=true
+		# set -a option for ls(1)
+		d_lsopt='-a'
+	fi
+}
+
+d_setup_autocommand() {
+	# for bash, set up PROMPT_COMMAND
+	# for zsh,  set up precmd()
+	# for ksh,  set up a flag to call the independent action proc
+	case $d_shelltype in
+		bash)
+			if d_not expr "x$PROMPT_COMMAND" : '.*d_indep_main' >/dev/null; then
+				PROMPT_COMMAND="${PROMPT_COMMAND:+$PROMPT_COMMAND;}d_indep_main"
+			fi
+			d_auto_action=true 
+			;;
+		zsh)
+			# save previous function
+			d_temp=`typeset -f precmd` || d_temp='precmd() {}'
+			# d_saved_precmd must not invoke itself
+			if d_not expr "$d_temp" : '.*d_saved_precmd' >/dev/null; then
+				eval "d_saved_$d_temp"
+				precmd() {
+					d_indep_main
+					d_saved_precmd
+				}
+			fi
+			d_auto_action=true
+			;;
+		*)
+			d_auto_action=false
+			;;
+	esac
+}
+
+d_setup_cd_command() {
+	if [ $d_shelltype = zsh ]; then
+		d_cdcommand=chdir
+	elif [ $d_shelltype = ksh -a $d_osname = Linux ]; then
+		# Linux pdksh is more susceptible to recursion
+		d_cdcommand='command cd'
+	elif [ $d_shelltype = ksh -a \( $d_osname = AIX -o $d_osname = SunOS \) ]; then
+		d_cdcommand="cd $d_cdopt_phys"
+	else
+		d_cdcommand=cd
+	fi
+}
+
+d_cleanup() {
+	# bash is evil: unalias etc. does not seem to work correctly
+	# in bash when executed from inside a function; therefore, create
+	# a temp file and source it
+	d_unsetnames="/tmp/d_unsetnames.$$.$RANDOM"
+	{
+		# remove all aliases
+		alias | sed -e 's/^alias //g' | grep "^[a-zA-Z0-9_]*=[']*d_" | \
+		sed -e "s/=[']*d_.*//" | while read d_temp; do
+			echo "unalias $d_temp"
+		done
+		# unset all functions
+		typeset -f | sed -e 's/^declare -f //' -e 's/() *{* *}*//' | grep '^d_' | \
+		while read d_temp; do
+			echo "unset -f $d_temp"
+		done
+		# unset all variables and arrays
+		set | grep $d_grepopt '^d_' | grep -v '()' | sed -e 's/=.*//g' | \
+		while read d_temp; do
+			echo "unset $d_temp"
+		done
+		# remove temp file
+		echo "rm $d_unsetnames"
+		# do not unset environment variables NADVSH_*
+	} > $d_unsetnames
+	. $d_unsetnames
+}
+
+############################################################################
+# start/stop playing
+
+d_initplay() {
+	# set up some vars: points, strength, dexterity
+	d_pc_wake=true
+	d_pc_score=0
+	d_pc_money=$((30 + $RANDOM % 20))
+	d_pc_strength=$(( 7 + $RANDOM % 3))
+	d_pc_dexterity=$((7 + $RANDOM % 3))
+	d_pc_breath=0
+	# homedir, file locations
+	d_pc_name=`whoami || echo $USER`
+	d_pc_backpack="$HOME/$d_backpack"
+	d_pc_wielding="$HOME/$d_wielding"
+	# favorite currency unit
+	d_currency_plural="${NADVSH_CURRENCY%%/*}"
+	d_currency_plural="${d_currency_plural:-florins}"
+	d_currency_singular="${NADVSH_CURRENCY##*/}"
+	d_currency_singular="${d_currency_singular:-${d_currency_plural%s}}"
+	# languages
+	d_translate_lang1='ecdfighjoklmnpuqrstvywxzabECDFIGHJOKLMNPUQRSTVYWXZAB'
+	d_translate_lang2='ubcdofghyjklmnapqrstevwxizUBCDOFGHYJKLMNAPQRSTEVWXIZ'
+	d_translate_lang3='opstavqjehgnrmyfklzdiwbxucOPSTAVQJEHGNRMYFKLZDIWBXUC'
+	# which OS are we on?
+	d_osname=`uname`
+	# do not keep symbolic links in pathnames, but resolve them.
+	# although set -o physical (undocumented) seems to work in zsh 4.0.2,
+	# zsh 3 does not understand it.
+	exec 3>&2
+	if [ $d_shelltype = zsh ]; then
+		set -o chaselinks
+		if [ "${ZSH_VERSION#3}" != "$ZSH_VERSION" ]; then
+			# This leaves $PWD still incorrect, but cd -P is not supported.
+			d_cdopt_phys=
+		else
+			d_cdopt_phys='-P'
+		fi
+	elif [ $d_osname != SunOS -a $d_osname != AIX ] && set -o physical 2>/dev/null; then
+		d_cdopt_phys=
+	else
+		d_cdopt_phys='-P'
+	fi
+	# correct redirection of stderr to /dev/null - no prompt etc. otherwise
+	exec 2>&3
+	exec 3>&-
+	# do not overwrite any existing files (that could be a security problem)
+	set -o noclobber
+	# use the ksh way for handling arrays (base 0)
+	if [ $d_shelltype = zsh ]; then
+		setopt ksharrays
+	fi
+	# if d_mode_safe is nosafe,
+	# then only execute files from directories matched by this regexp
+	d_mode_safe_dirs="^$HOME($|/)"
+	# find how pwd works
+	d_find_pwd
+	# find a suitable awk
+	d_find_awk
+	# find the location of fuser
+	d_find_fuser
+	# find best pager
+	d_find_pager
+	# find out if grep -a works
+	d_find_grep
+	# find out how to suppress newline and echo tabs
+	d_find_echo
+	# set up use of color, if supported
+	d_setup_color
+	# set up object classes
+	d_setup_obcl
+	# set up awk scripts (needs d_obcl_* constants)
+	d_setup_awk_scripts
+	# set up npc homedir
+	d_setup_npc_home
+	# select theme
+	d_loc_total=0
+	d_obj_total=0
+	d_npc_total=0
+	d_theme_select "$NADVSH_THEME"
+	# find/create backpack
+	d_setup_backpack
+	# this can be done in the background:
+	# it does not set variables, it only fills directories
+	d_foreach_npc d_setup_npc_backpack
+}
+
+d_play() {
+	if [ "$d_pc_strength" = quit ]; then
+		d_wrap "Sorry, you have given up. Use 'replay' to start over."
+		return 1
+	elif [ "$d_pc_strength" -lt 0 ]; then
+		d_wrap "Sorry, it seems you are dead. Use 'replay' to start over."
+		return 1
+	fi
+	# default settings
+	d_mode_play=play
+	d_mode_safe=safe
+	d_mode_strict=nostrict
+	while [ "$#" -gt 0 ]; do
+		case "$1" in
+			*play)   d_mode_play="${1#*-}"   ;;
+			*safe)   d_mode_safe="${1#*-}"   ;;
+			*strict) d_mode_strict="${1#*-}" ;;
+		esac
+		shift
+	done
+	d_setup_strictmode "$d_mode_strict"
+	# set up aliases (but not for 'cd')
+	d_setup_aliases
+	# Return now if already playing. This prevents the d_saved_prompt
+	# and PROMPT_COMMAND/d_saved_precmd() from becoming corrupt.
+	# Checking it at this point does allow you to switch between
+	# strict and normal play.
+	alias cd >/dev/null 2>&1
+	case "$?.$d_mode_play" in
+		0.noplay) #   play -> noplay
+			d_noplay
+			return
+			;;
+		0.play)   #   play -> play
+			d_describe
+			return
+			;;
+		1.noplay) # noplay -> noplay
+			unalias cd kill wait date cal look talk w e 2>/dev/null
+			;;
+		1.play)   # noplay -> play
+			# save prompt string
+			d_saved_prompt="$PS1"
+			# run independent action routine automatically.
+			d_setup_autocommand
+			# find out how to do a 'real' cd when ours has been aliased
+			d_setup_cd_command
+			alias cd=d_cd
+			# describe current location
+			d_look
+			;;
+	esac
+}
+
+d_noplay() {
+	unalias cd kill wait date cal look talk w e 2>/dev/null
+	# this 'feels' better.. but doesn't do anything actually..
+	d_mode_play=noplay
+	# set auto_action :) this prevents d_indep_action from
+	# being triggered in noplay mode by adventure commands
+	d_auto_action=true
+	# restore prompt and PROMPT_COMMAND/precmd()
+	PS1="$d_saved_prompt"
+	case $d_shelltype in
+		bash)
+			PROMPT_COMMAND="$(echo "$PROMPT_COMMAND" | sed -e 's/d_indep_main/:/' -e 's/:;//')"
+			;;
+		zsh)
+			# restore previous precmd
+			d_temp="`typeset -f d_saved_precmd`"
+			eval "${d_temp#d_saved_}"
+			;;
+		# nothing else to reset for ksh
+	esac
+}
+
+d_quitplay() {
+	d_noplay
+	d_pc_strength=quit
+	d_scoreboard
+	d_wrap "Goodbye, $(d_getpwnam $d_pc_name)!"
+	d_cleanup
+}
+
+############################################################################
+# implementation of user commands
+
+d_theme() {
+	if [ "$1" = write ]; then
+		shift
+		d_theme_write "$@"
+		return
+	elif [ "$1" = new ]; then
+		shift
+		d_loc_old=0
+		d_obj_old=0
+		d_npc_old=0
+		d_how='read'
+	else
+		if [ "$1" = add ]; then
+			# do nothing special as this is the default anyway
+			shift
+		fi
+		d_loc_old=$d_loc_total
+		d_obj_old=$d_obj_total
+		d_npc_old=$d_npc_total
+		d_how='added'
+	fi
+	if [ "$#" -lt 1 ]; then
+		echo "Number of descriptions currently in memory:"
+		printf "%5d location%c\n"  $d_loc_total `test $d_loc_total -ne 1 && echo s`
+		printf "%5d object%c\n"    $d_obj_total `test $d_obj_total -ne 1 && echo s`
+		printf "%5d character%c\n" $d_npc_total `test $d_npc_total -ne 1 && echo s`
+		return
+	elif [ "$1" = default ]; then
+		d_loc_old=0
+		d_obj_old=0
+		d_npc_old=0
+		d_how='read'
+		set ''
+	# allow pipes, /dev/null etc.
+	elif [ ! -e "$1" ]; then
+		d_wrap "File $1 does not exist."
+		return 1
+	fi
+	# clear arrays, if applicable, by setting total=0
+	d_loc_total=$d_loc_old
+	d_obj_total=$d_obj_old
+	d_npc_total=$d_npc_old
+	d_theme_select "$1"
+	# count additions
+	d_loc_old=$(( d_loc_total - d_loc_old ))
+	d_obj_old=$(( d_obj_total - d_obj_old ))
+	d_npc_old=$(( d_npc_total - d_npc_old ))
+	echo "Descriptions $d_how:\tCurrent total:"
+	printf "%5d location%c\t\t%5d location%c\n" \
+		$d_loc_old   "$(test $d_loc_old   -ne 1 && echo s)" \
+		$d_loc_total "$(test $d_loc_total -ne 1 && echo s)"
+	printf "%5d object%c\t\t%5d object%c\n"     \
+		$d_obj_old   "$(test $d_obj_old   -ne 1 && echo s)" \
+		$d_obj_total "$(test $d_obj_total -ne 1 && echo s)"
+	# we need an extra space here, because we would otherwise end in column 15
+	printf "%5d character%c\t%5d character%c\n" \
+		$d_npc_old   "$(test $d_npc_old   -ne 1 && echo s || echo ' ')" \
+		$d_npc_total "$(test $d_npc_total -ne 1 && echo s)"
+}
+
+d_theme_select() {
+	# read in the theme file, if it exists; otherwise use default
+	if [ -r "$1" ]; then
+		d_theme_file="$(cat "$1")"
+		# if it is a location file, add a loc: line
+		if [ "$(basename "$1")" = "$d_desc_file" ]; then
+			d_temp="`dirname $1`"
+			if [ "${d_temp#/}" = "$d_temp" ]; then
+				# make relative path absolute
+				d_temp="$PWD/$d_temp"
+			fi
+			d_theme_file="loc:$d_temp\n$d_theme_file"
+		fi
+		# bash is evil: the following example shows why:
+		# a=0; echo | while read dummy; do a=4; done; echo $a
+		# therefore, we need to do another 'eval' trick. how ugly.
+		eval "$(d_theme_parse)"
+	else
+		# these have been split to try to prevent bash on HP from segfaulting
+		eval "$(d_theme_default_loc1 | d_theme_parse_stdin)"
+		eval "$(d_theme_default_loc2 | d_theme_parse_stdin)"
+		eval "$(d_theme_default_obj1 | d_theme_parse_stdin)"
+		eval "$(d_theme_default_obj2 | d_theme_parse_stdin)"
+		eval "$(d_theme_default_obj3 | d_theme_parse_stdin)"
+		eval "$(d_theme_default_obj4 | d_theme_parse_stdin)"
+		eval "$(d_theme_default_npc  | d_theme_parse_stdin)"
+	fi
+	# d_loc/obj_total now follow the same convention that is used for d_npc_total:
+	# the arrays hold $d_loc/obj_total values numbered 0 .. $((d_loc/obj_total-1))
+	unset d_theme_file
+}
+
+d_theme_parse() {
+	echo "$d_theme_file" | d_theme_parse_stdin
+}
+
+d_theme_parse_stdin() {
+	# unfortunately all three record types are quite different.
+	# maybe fix this later?
+	$d_awk '
+		# we cannot make a d_loc_push and d_obj_push
+		# because these occupy multiple lines
+		/^loc:/ {
+			recordtype="l"
+			loctotal++
+			printf "d_loc_ids[%d]=\"%s\"\n", loctotal, substr($0, 5)
+			printf "d_loc_data[%d]=\n", loctotal
+		}
+		/^obj:/ {
+			recordtype="o"
+			objtotal++
+			printf "d_obj_ids[%d]=\"%s\"\n", objtotal, substr($0, 5)
+			printf "d_obj_data[%d]=\n", objtotal
+		}
+		/^npc:/ {
+			recordtype="c"
+			print "d_npc_push " substr($0, 5)
+			print "d_npc_descriptions[$((d_npc_total-1))]=\n"
+		}
+		# skip comments and empty lines
+		/./ && /^[^#]/ && !/^(loc|obj|npc):/ {
+			gsub("\"", "\\\"", $0)
+			if (recordtype == "l") {
+				printf "d_loc_data[%d]=\"${d_loc_data[%d]}%s\n\"\n", loctotal, loctotal, $0
+			} else if (recordtype == "o") {
+				printf "d_obj_data[%d]=\"${d_obj_data[%d]}%s\n\"\n", objtotal, objtotal, $0
+			} else if (recordtype == "c") {
+				printf "d_npc_descriptions[$((d_npc_total-1))]=\"${d_npc_descriptions[$((d_npc_total-1))]}%s\n\"\n", $0
+			}
+		}
+		END   {
+			printf "d_loc_total=%d\n", loctotal+1
+			printf "d_obj_total=%d\n", objtotal+1
+		}
+		# this decrement makes the arrays easier to manipulate:
+		# d_loc/obj_total now points to the last entry present
+	' loctotal="$((d_loc_total-1))" objtotal="$((d_obj_total-1))"
+}
+
+d_theme_write() {
+	echo 'Theme writing not implemented.'
+}
+
+d_colors() {
+	# Specifying '.' will leave the current value unchanged.
+	# Specifying 'nocolor' will unset the color code.
+	# Specifying an escape sequence will select that escape sequence.
+	# Specifying a color name (e.g. yellow) will select the escape sequence
+	# in that variable (e.g. $d_col_yellow, $d_col_onred)
+	if [ "$1" != '.' ]; then
+		eval 'd_col_ps1=$d_col_'"$1"
+	fi
+	test "$1" && shift
+	if [ "$1" != '.' ]; then
+		eval 'd_col_desc=$d_col_'"$1"
+	fi
+#	d_describe
+}
+
+d_currency() {
+	# maybe implement singular form someday.
+	# amounts in 1 currency unit *do* occur.
+	if [ "$#" -lt 1 ]; then
+		d_currency_name 'In this place, we do business in'
+	else
+		# this also makes it possible to do:
+		# currency markoi/marko
+		d_currency_plural="${1%%/*}"
+		# default singular is plural with final 's' removed
+		d_currency_singular="${2:-${1%s}}"
+		d_currency_singular="${d_currency_singular##*/}"
+		d_currency_name 'Okay. From now on, we will do business in'
+	fi
+}
+
+d_currency_name() {
+	d_wrap_noeol "$1 $d_currency_plural"
+	if [ "$d_currency_singular" != "$d_currency_plural" ]; then
+		d_wrap_noeol " (singular: $d_currency_singular)"
+	fi
+	d_wrap '.'
+}
+
+d_desc_list_exits() {
+	# invocation: d_desc_list_exits [ hard ]
+	if d_isdark; then
+		d_wrap "You can see no exits."
+		return
+	elif d_isobscured; then
+		d_wrap "Your vision is obscured."
+		d_awk_script="$d_awk_picksome"
+	else
+		d_awk_script="{ print }"
+	fi
+	test "$1" = hard && d_temp=$d_lsopt || d_temp=
+	d_wrap "$({ d_dotdot $1; /bin/ls -lL $d_temp; } | $d_awk "$d_awk_script" frac=$d_desc_obscurity | $d_awk '
+		/^d/ && $9 != "." {
+			if (last != "") {
+				print last ", "
+			} else {
+				print "Exits lead to "
+			}
+			cnt++
+			last = $9
+			for (i = 10; i <= NF; i++) {
+				# this inserts the wrong number of spaces :(
+				# we should never use more than one.
+				last = last " " $i
+			}
+		}
+		END {
+			if	(cnt == 0)	{ print "There are no exits." }
+			else if	(cnt == 1)	{ print last "." }
+			else			{ printf "and %s.", last }
+		}
+	')"
+}
+
+d_desc_list_items() {
+	# Show items in the current dir.
+	if d_isdark; then
+		return
+	elif d_isobscured; then
+		d_awk_script="$d_awk_picksome"
+	else
+		d_awk_script="{ print }"
+	fi
+	# This is definitely one of the most exotic commands I have ever written
+	# Thank vim for the syntax highlighting :)
+	d_temp="$(
+		/bin/ls -l | $d_awk "$d_awk_script" frac=$d_desc_obscurity | $d_awk '
+		/^-/ && ($5 < maxobjsize) {
+			printf "%s", $9
+			for (i = 10; i <= NF; i++) {
+				# this inserts the wrong number of spaces :(
+				# we should never use more than one.
+				# use substr() instead?
+				printf " %s", $i
+			}
+			printf "\n"
+		}' maxobjsize=$d_max_objsize | while read d_object; do
+			egrep "$d_obcl_any" "$d_object" >/dev/null 2>&1 \
+			&& echo "$d_object"
+		done | $d_awk '
+		function a(obj) {
+			if	(substr(obj,1,1) != tolower(substr(obj,1,1)) \
+			||	obj ~ /^('"$d_awk_cardinals"'|some |a |an )/)
+							{ return obj }
+			else if (obj ~ /^[aeiou]/) 	{ return "an " obj }
+			else				{ return "a "  obj }
+		}
+		{
+			if (last != "") {
+				printf "%s, ", last
+			} else {
+				printf "You can see "
+			}
+			cnt++
+			last = a($0)
+		}
+		END {
+			if	(cnt == 1)	{ printf "%s.\n", last }
+			else if (cnt != 0)	{ printf "and %s.", last }
+		}'
+	)"
+	# only print if any objects have been found
+	# (we would produce an empty line otherwise)
+	test "$d_temp" && d_wrap "$d_temp"
+}
+
+d_desc_list_people() {
+	d_npc_iteration() {
+		d_npc_extract $d_npc_index
+		if d_ishere; then
+			if [ "${d_name#[A-Z]}" != "$d_name" ]; then
+				d_wrap "$d_name `d_is` here."
+			else
+				d_wrap "There `d_is` `d_a $d_name` here."
+			fi
+		fi
+	}
+	d_foreach_npc d_npc_iteration
+	d_desc_list_fusers | while read d_name; do
+		d_wrap "`d_getpwnam $d_name` is here."
+	done
+}
+
+d_desc_list_fusers() {
+	# next loop is sloooooow, *especially* in /
+	# this is not supported on all systems, e.g. Linux 2.4 - why?
+	for d_pid in `$d_fuser -u . 2>&1`; do
+		if [ "$d_pid" != "${d_pid%c\(*}" ]; then
+			d_person=`echo "$d_pid" | sed -e's/.*c(\(.*\))/\1/'`
+			if [ "$d_person"			\
+			  -a "$d_person" != "$d_pc_name"	\
+			  -a "$d_person" != nobody ]
+			then
+				echo "$d_person"
+			fi
+		fi
+	done | sort | uniq
+}
+
+d_desc_eval() {
+	# We (or root) must be the owner of the description file and of the described
+	# directory, and these may not be writable by anyone else.
+	if [ \( -O "$d_desc_file"  -o `d_owner "$d_desc_file"`  = root \)   \
+	-a   \( -O "$d_location/" -o `d_owner "$d_location/"` = root \) ] \
+	&& /bin/ls -ld "$d_desc_file" . | d_not grep -v '^.....[^w]..[^w]' >/dev/null 2>&1; then
+		# only eval() if d_mode_safe is set to 'nosafe'
+		if [ "$d_mode_safe" == nosafe ] && echo "$d_location" | egrep "$d_mode_safe_dirs" >/dev/null; then
+			if [ "$1" = 'r:' ]; then
+				d_indep_location="$d_indep_location${d_indep_location:+;}$2"
+			elif [ "$1" = 'e:' ]; then
+				eval "$2"
+			fi
+		else
+			d_remember='(..)'
+		fi
+	fi
+}
+
+d_desc_parse() {
+	# parse one line of description input
+	d_line="$1"
+	shift
+	case "$d_line" in
+		d:*)
+			# make one continuous description: use noeol
+			if d_not d_isdark; then
+				d_wrap_noeol "${d_line#d:} "
+				d_desc_printed=1
+			fi
+			;;
+		e:*)
+			d_desc_eval e: "${d_line#e:}"
+			;;
+		f:*)
+			# current flags variable already ends in ':'
+			d_loc_flags="$d_loc_flags${d_line#f:}:"
+			# if it is dark print something like:
+			d_temp="`d_isilluminated | head -1`"
+			if [ "$d_temp" ]; then
+				d_wrap_noeol "It is dark, but your $(basename "$d_temp")" \
+					"illuminates your surroundings. "
+				d_desc_printed=1
+			fi
+			;;
+		h:*)
+			d_prompt_head="$d_prompt_head${d_prompt_head:+ }${d_line#h:}"
+			;;
+		p:*)
+			d_prompt_main="$d_prompt_main${d_prompt_main:+ }${d_line#p:}"
+			;;
+		r:*)
+			d_desc_eval r: "${d_line#r:}"
+			;;
+		# discard invalid lines; in particular, discard
+		# 'loc:' lines at this stage (only important in theme files)
+	esac
+}
+
+d_desc_parse_file() {
+	if [ -r "$d_location/$d_desc_file" ]; then
+		# cat file into pipe (see fi | while below)
+		cat "$d_location/$d_desc_file"
+	else
+		# no description file present, search through $d_loc_ids
+		d_temp=$d_loc_total
+		while [ $((d_temp-=1)) -ge 0 ]; do
+			if echo "$d_location" | egrep "^${d_loc_ids[$d_temp]}$" >/dev/null; then
+				# echo description into pipe
+				echo $d_n "${d_loc_data[$d_temp]}$d_c"
+				# exit search loop
+				break
+			fi
+		done
+	# escape metacharacters with a regiment of toothpicks
+	fi | sed -e's/[][{}()"`'\''&;|><$#*? ]/\\\\&/g' | while read d_line; do
+		echo "d_desc_parse $d_line"
+	done
+}
+
+d_describe() {
+	if d_isairless; then
+		d_wasairless=true
+	else
+		d_wasairless=false
+	fi
+	d_indep_location=
+	d_prompt_head=
+	d_prompt_main=
+	d_loc_flags=:
+	d_location="${1:-$PWD}"
+	d_desc_printed=
+	d_remember=
+	echo $d_n "$d_col_desc$d_c"
+	# select input from description file (if present), or theme array
+	# bash is evil! 'while' loops with redirected stdin
+	# do not change the global vars. use eval() again. sigh.
+	eval "$(d_desc_parse_file)"
+	# provide eol, because the description has been printed with noeol.
+	# also, print a marker to indicate when an eval() has been rejected 
+	test "$d_remember$d_desc_printed" && d_wrap "$d_remember"
+	d_wrap_lastlinelength=0
+	# find out if the location is dark
+	if d_isdark && [ -z "$d_desc_printed" ]; then
+		d_wrap "It is too dark to see."
+	fi
+	# install r: repetitive eval lines. d_indep_location has only been
+	# built up if all criteria have been met, so we can simply install it
+	eval "d_indep_location() { ${d_indep_location:-:}; }"
+	# install prompt
+	d_setprompt
+	echo $d_n "$d_col_sgr0$d_c"
+	# find out if the underwater status has changed
+	if d_not d_isairless; then
+		d_pc_breath=0
+		if $d_wasairless; then
+			d_wrap "You fill your lungs with fresh air."
+		fi
+	elif d_not $d_wasairless; then
+		d_pc_breath=$d_pc_strength
+	fi
+}
+
+d_desc_cmd() {
+	if [ "$#" -ge 1 ]; then
+		d_look into "$@"
+	else
+		d_describe
+	fi
+}
+
+d_look() {
+	d_how="$1"
+	if [ "$1" = hard -o "${1#in}" = to -o "$1" = at ]; then
+		shift
+	fi
+	if [ -d "$1" -a "${d_how#in}" = to ]; then
+		# look into other location
+		d_prompt="$PS1"
+		{
+			# this output is discarded; we need only
+			# d_describe to set d_prompt_main
+			if [ "${1#/}" != "$1" ]; then
+				# absolute path
+				d_describe "$1"
+			elif [ "$1" = '..' ]; then
+				d_describe "$(d_findparent "$PWD")"
+			else
+				d_describe "$(d_findsubdir "$PWD/$1")"
+			fi
+			# redirect this output to fd#3 so that it is printed
+			if [ "$d_prompt_main" ]; then
+				d_wrap "You look into $1. You can see $d_prompt_main there."
+			else
+				d_wrap "It is too `d_lousy_reason` to see what's there."
+			fi 1>&3
+		} 3>&1 1>/dev/null
+		PS1="$d_prompt"
+	elif [ "$#" -ge 1 -a "$d_how" = at ]; then
+		# look at person or object
+		d_examine "$@"
+		return
+	elif [ "$#" -ge 1 ]; then
+		d_wrap "Look at what?"
+		d_wrap "Usage:\tlook [ hard ]"
+		d_wrap "\tlook into <location>"
+		d_wrap "\tlook at { <person> | <object> }"
+	else
+		# look around in this location
+		d_describe
+		d_desc_list_exits "$d_how"
+		d_desc_list_items
+		d_desc_list_people
+	fi
+	d_indep_unless_auto
+}
+
+d_chmod() {
+	if [ "$#" -lt 2 ]; then
+		d_wrap "Which location?"
+		d_wrap "Usage: [ open | close | lock | unlock ] <location>"
+		return 1
+	fi
+	case "$1" in
+		open)	d_mode='go+rwX'	;;
+		unlock)	d_mode='go+rX'	;;
+		close)	d_mode='go-w'	;;
+		lock)	d_mode='go-rwx'	;;
+	esac
+	d_object="$2"
+	# special name for your backpack
+	if [ "$d_object" = "$d_backpackobj" -a ! -f "$d_backpackobj" ]; then
+		d_object="$d_pc_backpack"
+	fi
+	# I suppose not every chmod(1) understands conditional 'X': replace it
+	if [ -d "$d_object" -o -x "$d_object" ]; then
+		d_mode=`echo $d_mode | tr X x`
+	else
+		d_mode=`echo $d_mode | tr -d X`
+	fi
+	# no check performed for opening an already-opened file, etc.
+	# but this is not really necessary.
+	if chmod $d_mode "$d_object" >/dev/null 2>&1; then
+		d_wrap "O.K. you $1 `d_the $d_object`."
+	else
+		d_wrap "Sorry, you do not have permission to $1 `d_the $d_object`."
+	fi
+	d_indep_unless_auto
+}
+
+d_sleep_act() {
+	d_pc_wake=false
+	/bin/sleep 1
+	until $d_pc_wake || [ $d_pc_strength -ge 6 ]; do
+		let d_npc_index=$RANDOM%$d_npc_total
+		d_indep_action # others might wake you up
+		if [ $(($RANDOM % 2)) -eq 0 ] && d_not $d_pc_wake; then
+			let d_pc_strength+=1
+		fi
+	done
+	$d_pc_wake || d_wrap 'You awaken refreshed.'
+	d_pc_wake=true
+}
+
+d_sleep() {
+	if [ "$#" -lt 1 ]; then
+		if [ $(($RANDOM % 10)) -lt $d_pc_strength  ]; then
+			d_wrap 'You are not sleepy.'
+		else
+			d_wrap 'Okay. You fall asleep.'
+			d_sleep_act
+			d_desc_list_people
+		fi
+	else
+		/bin/sleep "$@"
+	fi
+}
+
+d_cal() {
+	# if we use shire date for date(1), we also have to use the shire calendar
+	if [ "$#" -gt 0 ]; then
+		/usr/bin/cal "$@"
+	else
+		cat <<-_endCalendar_
+
+		   (1) Afteryule           (2) Solmath             (3) Rethe
+		St Su Mo Tr He Me Hi   St Su Mo Tr He Me Hi   St Su Mo Tr He Me Hi
+		2Y  1  2  3  4  5  6             1  2  3  4                   1  2
+		 7  8  9 10 11 12 13    5  6  7  8  9 10 11    3  4  5  6  7  8  9
+		14 15 16 17 18 19 20   12 13 14 15 16 17 18   10 11 12 13 14 15 16
+		21 22 23 24 25 26 27   19 20 21 22 23 24 25   17 18 19 20 21 22 23
+		28 29 30               26 27 28 29 30         24 25 26 27 28 29 30
+		
+		    (4) Astron            (5) Thrimidge          (6) Forelithe
+		St Su Mo Tr He Me Hi   St Su Mo Tr He Me Hi   St Su Mo Tr He Me Hi
+		 1  2  3  4  5  6  7          1  2  3  4  5                1  2  3
+		 8  9 10 11 12 13 14    6  7  8  9 10 11 12    4  5  6  7  8  9 10
+		15 16 17 18 19 20 21   13 14 15 16 17 18 19   11 12 13 14 15 16 17
+		22 23 24 25 26 27 28   20 21 22 23 24 25 26   18 19 20 21 22 23 24
+		29 30                  27 28 29 30            25 26 27 28 29 30 1L
+		
+		                           Midyear's Day
+		                            (Overlithe)
+		
+		  (7) Afterlithe           (8) Wedmath           (9) Halimath
+		St Su Mo Tr He Me Hi   St Su Mo Tr He Me Hi   St Su Mo Tr He Me Hi
+		2L  1  2  3  4  5  6             1  2  3  4                   1  2
+		 7  8  9 10 11 12 13    5  6  7  8  9 10 11    3  4  5  6  7  8  9
+		14 15 16 17 18 19 20   12 13 14 15 16 17 18   10 11 12 13 14 15 16
+		21 22 23 24 25 26 27   19 20 21 22 23 24 25   17 18 19 20 21 22 23
+		28 29 30               26 27 28 29 30         24 25 26 27 28 29 30
+		
+		 (10) Winterfilth         (11) Blotmath          (12) Foreyule
+		St Su Mo Tr He Me Hi   St Su Mo Tr He Me Hi   St Su Mo Tr He Me Hi
+		 1  2  3  4  5  6  7          1  2  3  4  5                1  2  3
+		 8  9 10 11 12 13 14    6  7  8  9 10 11 12    4  5  6  7  8  9 10
+		15 16 17 18 19 20 21   13 14 15 16 17 18 19   11 12 13 14 15 16 17
+		22 23 24 25 26 27 28   20 21 22 23 24 25 26   18 19 20 21 22 23 24
+		29 30                  27 28 29 30            25 26 27 28 29 30 1Y
+
+_endCalendar_
+	fi
+	d_indep_unless_auto
+}
+
+d_date_shire() {
+	# try to print date in Shire format. Errors only by exit code.
+	perl -MDate::Tolkien::Shire -e '
+		chop ( $time = qx[/usr/bin/date +"%H:%M:%S"] );
+		$sdate = Date::Tolkien::Shire->new(time);
+		$event = $sdate->on_date;
+		chop $event;
+		$event =~ s/\n\n(.*)?$/\n($1)/s;
+		print $time, " ", $event, "\n";
+	' 2>/dev/null
+}
+
+d_date() {
+	if [ "$#" -lt 1 ]; then
+		# don't use wrap: perl formats the output string
+		d_date_shire || /usr/bin/date
+	else
+		/usr/bin/date "$@"
+	fi
+	d_indep_unless_auto
+}
+
+d_inventory() {
+	if d_seekpwuser "$1"; then
+		d_inv_indent='- '
+		d_sentence="$(d_capitalize `d_the $d_name`) `d_is`"
+		d_location="`d_getpwhome $d_id`/$d_backpack/"
+		d_inv_carrying
+		d_location="`d_getpwhome $d_id`/$d_wielding/"
+		d_inv_wielding
+		d_inv_wearing
+	elif d_npc_seek "$1"; then
+		d_inv_indent=
+		# allow 'inv <npc>' only if he/she is at the same location?
+		d_sentence="$(d_capitalize `d_the $d_name`) `d_is`"
+		d_location="$d_npc_home/$d_id/$d_backpack/"
+		d_inv_carrying
+		# npc's do not wield
+	elif [ "$#" -eq 0 ]; then
+		d_inv_indent='- '
+		d_sentence="You are"
+		d_location="$d_pc_backpack"
+		d_inv_carrying
+		d_location="$d_pc_wielding"
+		d_inv_wielding
+		d_inv_wearing
+		d_inv_money
+	else
+		d_wrap 'I do not know who you are talking about.'
+		return 1
+	fi
+	d_indep_unless_auto
+}
+
+d_inv_carrying() {
+	if [ ! -d "$d_location" ]; then
+		if [ "$d_name" ]; then
+			# d_gender (used by d_does) has been set by d_seekpwuser or d_npc_seek
+			d_wrap "$(d_capitalize `d_the $d_name`) `d_does` not have a backpack."
+		else
+			d_wrap "You do not have a backpack."
+		fi
+	elif [ ! -r "$d_location" -o ! -x "$d_location" ]; then
+		# we cannot determine the gender of users... aarghh
+		d_wrap "You cannot look into $(d_the "$d_name")'s backpack: it is closed too tightly."
+	else
+		d_wrap "$d_inv_indent$(echo $d_n $d_sentence$d_c; /bin/ls "$d_location" | $d_awk "$d_awk_listitems" carry_ing=carrying)"
+	fi
+}
+
+d_inv_wielding() {
+	if [ -d "$d_location" -a -r "$d_location" -a -x "$d_location" ]; then
+		d_wrap "$d_inv_indent$(echo $d_n $d_sentence$d_c; egrep -l "$d_obcl_wieldable" "$d_location"/* 2>/dev/null | while read d_line; do
+			basename "$d_line"
+		done | $d_awk "$d_awk_listitems" carry_ing=using)"
+	fi
+}
+
+d_inv_wearing() {
+	if [ -d "$d_location" -a -r "$d_location" -a -x "$d_location" ]; then
+		d_wrap "$d_inv_indent$(echo $d_n $d_sentence$d_c; egrep -l "$d_obcl_wearable" "$d_location"/* 2>/dev/null | while read d_line; do
+			basename "$d_line"
+		done | $d_awk "$d_awk_listitems" carry_ing=wearing)"
+	fi
+}
+
+d_inv_money() {
+	d_wrap "${d_inv_indent}You possess `d_currency_pluralize $d_pc_money`."
+}
+
+d_take() {
+	if [ "$#" -lt 1 ]; then
+		d_wrap "Take which object?"
+		d_wrap "Usage: take <object> [ as <new_object_name> ]"
+		return 1
+	elif [ "$1" = off ]; then
+		shift
+		d_stow "$@"
+		return
+	elif [ "$2" = as ]; then
+		d_object="$3"
+	else
+		d_object=
+	fi
+	if grep "$d_obcl_nonportable" "$1" >/dev/null 2>&1; then
+		if grep "$d_obcl_nonport_heavy" "$1" >/dev/null 2>&1; then
+			d_wrap "You cannot take `d_the $1` with you: it is too heavy."
+		else
+			d_wrap "You cannot take `d_the $1` with you: it is fixed to something."
+		fi
+	elif grep "$d_obcl_money" "$1" >/dev/null 2>&1; then
+		d_temp="$(sed -e's/^'"$d_obcl_money_template"'//' -e"s/[^0-9].*//" "$1")"
+		if d_not d_writable .; then
+			d_take_regret "$1"
+			return
+		elif [ "$d_temp" ]; then
+			# no invalid chars
+			rm "$1"
+			let d_pc_money+=$d_temp
+			d_wrap	"Okay. You take `d_the $1`." \
+				"You now possess `d_currency_pluralize $d_pc_money`."
+		else
+			# we found invalid chars: just take the bloody thing
+			d_wrap "Okay. You take `d_the $1`. It does not seem to be money."
+			mv "$1" "$d_pc_backpack/$d_object" 2>/dev/null
+		fi
+	elif mv "$1" "$d_pc_backpack/$d_object" 2>/dev/null; then
+		d_wrap_noeol "Okay. You take `d_the $1`"
+		test "$d_object" && d_wrap_noeol " and call it `d_a $d_object`"
+		d_wrap '.'
+	elif [ -f "$1" ]; then
+		d_take_regret "$1"
+	else
+		d_wrap "You do not see `d_a $1` here."
+	fi
+	d_indep_unless_auto
+}
+
+d_take_regret() {
+	d_wrap "You do not have permission to take `d_the $1`."
+}
+
+d_drop() {
+	if [ "$#" -lt 1 ]; then
+		d_wrap "Drop which object?"
+		d_wrap "Usage:\tdrop <object> [ as <new_object_name> ]"
+		d_wrap "\tdrop <amount> <currency_unit>"
+		return 1
+	elif [ "$2" = "$d_currency_plural" -o "$2" = "$d_currency_singular" ] \
+	&& d_not expr "$1" : '.*[^0-9]' >/dev/null; then
+		if [ $((d_pc_money-$1)) -lt 0 ]; then
+			d_wrap "You don't have that much money."
+			return
+		elif d_not d_writable .; then
+			d_drop_regret "$1 $2"
+		else
+			# create money object.
+			if d_create_money . "$1"; then
+				let d_pc_money-=$1
+				d_wrap	"Okay. You drop $1 $2." \
+					"You now possess `d_currency_pluralize $d_pc_money`."
+			else
+				# don't send 2> to the bit bucket, anything could be wrong
+				d_wrap "You can't."
+			fi
+		fi
+	else
+		if [ "$2" = as ]; then
+			d_object="$3"
+		else
+			d_object=
+		fi
+		if mv "$d_pc_backpack/$1" "./$d_object" 2>/dev/null; then
+			d_wrap_noeol "Okay. You drop `d_the $1`"
+			test "$d_object" && d_wrap_noeol " and declare that" \
+				"henceforth, it shall be called `d_a $d_object`"
+			d_wrap '.'
+		elif [ -f "$d_pc_backpack/$1" ]; then
+			d_drop_regret "$1"
+		else
+			d_wrap "You are not carrying `d_a $1`."
+		fi
+	fi
+	d_indep_unless_auto
+}
+
+d_drop_regret() {
+	d_wrap "You have no permission to leave `d_the $1` here."
+}
+
+d_destroy() {
+	if [ "$#" -lt 1 ]; then
+		d_wrap "Destroy which object?"
+		d_wrap "Usage: destroy <object>"
+		return 1
+	fi
+	if rm "$d_pc_backpack/$1" 2>/dev/null; then
+		d_wrap "Okay. You destroy `d_the $1`."
+	elif [ -f "$d_pc_backpack/$1" ]; then
+		d_wrap "You have no permission to destroy `d_the $1`."
+	elif rm "$d_pc_wielding/$1" 2>/dev/null; then
+		d_wrap "Okay. You destroy `d_the $1`."
+	elif [ -f "$d_pc_wielding/$1" ]; then
+		d_wrap "You have no permission to destroy `d_the $1`."
+	else
+		d_wrap "You are not carrying `d_a $1`."
+	fi
+	d_indep_unless_auto
+	
+}
+
+d_rename() {
+	if [ "$#" -lt 3 -o "$2" != 'to' ]; then
+		d_wrap "Rename which object?"
+		d_wrap "Usage: rename <object> to <new_object_name>"
+		return 1
+	fi
+	if [ ! -f "$d_pc_backpack/$1" -a ! -f "$d_pc_wielding/$1" ]; then
+		d_wrap "You don't have `d_a $1`."
+		return
+	else
+		# find out whether we are wielding the object to be renamed
+		if [ -f "$d_pc_backpack/$1" ]; then
+			d_location="$d_pc_backpack"
+		else
+			d_location="$d_pc_wielding"
+		fi
+		if [ -f "$d_pc_backpack/$3" -o -f "$d_pc_wielding/$3" ]; then
+			d_wrap "You already have `d_a $3`."
+			return
+		else
+			if mv "$d_location/$1" "$d_location/$3"; then
+				d_wrap "Okay. You decide to name `d_the $1` `d_a $3`."
+			else
+				d_wrap "You have no permission to rename `d_the $1`."
+			fi
+		fi
+	fi
+	d_indep_unless_auto
+}
+
+d_examine() {
+	if [ "$#" -lt 1 ]; then
+		d_wrap "Examine which object or person?"
+		d_wrap "Usage: exam[ine] { <object> | <person> }"
+		return 1
+	fi
+	if d_npc_seek "$1"; then
+		# examine npc
+		if d_not d_ishere; then
+			d_wrap "$(d_capitalize "`d_the $d_name`") is not here."
+		elif [ "${d_npc_descriptions[$d_npc_index]}" ]; then
+			# get rid of excess newline
+			d_wrap "$(echo ${d_npc_descriptions[$d_npc_index]})"
+		else
+			d_wrap "You can see nothing special."
+		fi
+	elif d_seekpwuser "$1"; then
+		# examine PC
+		finger "$d_id"
+	else
+		# assume this is an object
+		if [ -f "$1" ]; then
+			d_object="$1"
+		elif [ -f "$d_pc_backpack/$1" ]; then
+			d_object="$d_pc_backpack/$1"
+		elif [ -f "$d_pc_wielding/$1" ]; then
+			d_object="$d_pc_wielding/$1"
+		else
+			d_wrap "You do not see $(d_a "$1") here."
+			return
+		fi
+		# fill in correct currency
+		d_wrap "$(strings "$d_object" | sed -e"s/$d_obcl_any_minimal//" \
+			-e's/{pcurrency}/'"$d_currency_plural"'/g' \
+			-e's/{scurrency}/'"$d_currency_singular"'/g' \
+			-e's/{chargecount}/'"$(d_cardinal "$(d_chargecount "$d_object")")"'/g')"
+	fi
+	d_indep_unless_auto
+}
+
+d_person_regret() {
+	d_wrap "I'm sorry, I do not understand who \"$d_person\" is."
+}
+
+d_steal() {
+	if [ "$#" -lt 3 ]; then
+		d_wrap 'Steal what from whom?'
+		d_wrap "Usage: steal <object> from <person>"
+		return 1
+	elif [ "$2" = "from" ]; then
+		d_person="$3"
+		d_object="$1"
+	elif [ "$1" = "from" ]; then
+		d_person="$2"
+		d_object="$3"
+	fi
+	d_npc_index=
+	if d_seekpwuser "$d_person"; then
+		d_location="`d_getpwhome $d_id`/$d_backpack/"
+	elif d_npc_seek "$d_person"; then
+		d_location="$d_npc_home/$d_id/$d_backpack/"
+	else
+		d_person_regret
+		return
+	fi
+	# allow 'steal from <character>' only if he/she is at the same location?
+	d_wrap_noeol "Okay, you try to steal the $d_object from `d_the $d_name`."
+	d_result=$(($d_pc_dexterity - $RANDOM % 10))
+	case $d_result in
+		-*)	# this produces the wrong pronoun for users
+			d_wrap " No luck, `d_pronoun1` just looked at you." ;;
+		*)	if mv "$d_location/$d_object" "$d_pc_backpack/" 2>/dev/null; then
+				d_wrap " You succeed!"
+				let d_pc_score+=5
+				if [ $d_result -eq 0 -a "$d_npc_index" ]; then
+					# detected by npc!
+					d_npc_charms[$d_npc_index]=$(($d_charm - 1))
+				elif [ $d_result -eq 0 ]; then
+					# detected by user!
+					d_seekpwuser "$d_pc_name"
+					echo "$d_name is fiddling with your backpack!" \
+						"It feels lighter now!" | write $d_id
+				fi
+			elif [ -z "$d_npc_index" ] && [ -f "`d_getpwhome $d_id`/$d_wielding/$d_object" ]; then
+				# we cannot determine the gender of a user. Use the full name instead.
+				d_wrap " You cannot steal it: $d_name is using it."
+			elif [ ! -d "$d_location/" -o ! -x "$d_location/" -o ! -w "$d_location/" ]; then
+				# we cannot determine the gender of a user. Use the full name instead.
+				d_wrap " You cannot reach into $(d_the $d_name)'s backpack."
+			else # [ ! -f "$d_location/$d_object" ]; then
+				# we cannot determine the gender of a user. Use the full name instead.
+				d_wrap " $(d_capitalize `d_the $d_name`) is not carrying `d_a $d_object`."
+			fi ;;
+	esac
+	d_indep_unless_auto
+}
+
+d_give() {
+	[ "$1" = "to" ] && shift
+	if [ \( "$2" = "to" -a "$#" -lt 3 \) -o "$#" -lt 2 ]; then
+		d_wrap 'Give what to whom?'
+		d_wrap "Usage: give <object> to <person>"
+		return 1
+	elif [ "$2" = "to" ]; then
+		d_person="$3"
+		d_object="$1"
+	else
+		d_person="$1"
+		d_object="$2"
+	fi
+	d_npc_index=
+	if d_seekpwuser "$d_person"; then
+		d_location="`d_getpwhome $d_id`/$d_backpack/"
+	elif d_npc_seek "$d_person"; then
+		d_location="$d_npc_home/$d_id/$d_backpack/"
+	else
+		d_person_regret
+		return
+	fi
+	# allow 'give' only if he/she is at the same location?
+	if mv "$d_pc_backpack/$d_object" "$d_location/" 2>/dev/null \
+	|| mv "$d_pc_wielding/$d_object" "$d_location/" 2>/dev/null; then
+		d_wrap_noeol "Okay. You give `d_the $d_object` to `d_the $d_name`."
+		if [ "$d_npc_index" ]; then
+			if [ $d_charm -ge 4 ]; then
+				d_wrap " $(d_capitalize `d_pronoun1`) `d_conjugate say`: \"Why, thank you!\""
+			else
+				d_wrap " $(d_capitalize `d_pronoun1`) `d_conjugate seem` indifferent."
+			fi
+			d_npc_charms[$d_npc_index]=$(($d_charm + 1))
+		else
+			# provide eol
+			d_wrap
+		fi
+	elif [ ! -f "$d_pc_backpack/$d_object" -a ! -f "$d_pc_wielding/$d_object" ]; then
+		d_wrap "You don't have `d_a $d_object`."
+	else
+		# permission problems or something?
+		d_wrap "You cannot reach into `d_the $d_name`'s backpack."
+	fi
+	d_indep_unless_auto
+}
+
+d_quaff() {
+	# quaff potion
+	d_wrap "Quaff not implemented"
+	d_indep_unless_auto
+}
+
+d_use() {
+	# use command matrix:
+#
+# use(wield)	a# c# r# w# m0 m# li ba    S#         
+# use(fire)	         w# m0 m#       W#    R# p# s#
+# wear		a# c# r#
+# wield		         w# m0 m# li ba W# S# R#
+# fire/aim	                        W# 
+# quaff		                                 p#
+# 
+# 
+# use:
+# 	armor clothing ring			-> wear
+# 	weapon mweapon				-> at whom?
+# 	lightsource backpack staff rod	-> wield
+# 	wand firearm				-> fire/aim
+# 	potion					-> quaff
+# 	scroll					-> ?
+# 
+	d_wrap "Use not implemented."
+	d_decrement_chargecount
+	d_indep_unless_auto
+}
+
+d_wear() {
+	if [ "$#" -lt 1 ]; then
+		d_wrap "Wear which object?"
+		d_wrap "Usage: wear <object>"
+		return 1
+	fi
+	if [ ! -f "$d_pc_backpack/$1" ]; then
+		if [ -f "$d_pc_wielding/$1" ]; then
+			d_wrap "You are already wearing `d_the $1`."
+		else
+			d_wrap "You don't have `d_a $1`."
+		fi
+	elif d_not egrep "$d_obcl_wearable" "$d_pc_backpack/$1" >/dev/null; then
+		d_wrap "You cannot wear `d_the $1`!"
+	elif egrep "$d_obcl_ring" "$d_pc_backpack/$1" >/dev/null \
+	&& [ $(egrep -h "$d_obcl_ring" "$d_pc_wielding/"* 2>/dev/null | wc -l) -ge 2 ]; then
+		d_wrap "You are already wearing a ring on every hand!"
+	elif egrep "$d_obcl_clothing" "$d_pc_backpack/$1" >/dev/null \
+	&& d_iswearingclass "$d_pc_backpack/$1"; then
+		d_wrap "You cannot. Take off your $(basename "$d_object") first."
+	elif mv "$d_pc_backpack/$1" "$d_pc_wielding/$1"; then
+		d_wrap "Okay. You put on `d_the $1`."
+	else
+		# this is more like an internal error; luckily fd#2 is not discarded
+		d_wrap "You were unable to put on `d_the $1`."
+	fi
+	d_indep_unless_auto
+}
+
+d_wield() {
+	if [ "$#" -lt 1 ]; then
+		d_wrap "Wield which object?"
+		d_wrap "Usage: wield <object>"
+		return 1
+	fi
+	if [ ! -f "$d_pc_backpack/$1" ]; then
+		if [ -f "$d_pc_wielding/$1" ]; then
+			d_wrap "You are already wielding `d_the $1`."
+		else
+			d_wrap "You don't have `d_a $1`."
+		fi
+	elif d_not egrep "$d_obcl_wieldable" "$d_pc_backpack/$1" >/dev/null; then
+		d_wrap "You cannot wield `d_the $1`!"
+	elif egrep "$d_obcl_wieldable_restricted" "$d_pc_backpack/$1" >/dev/null \
+	&& [ $(egrep -h "$d_obcl_wieldable_restricted" "$d_pc_wielding/"* 2>/dev/null | wc -l) -ge 2 ]; then
+		d_wrap "You are already using one item in every hand!"
+	elif mv "$d_pc_backpack/$1" "$d_pc_wielding/$1"; then
+		d_wrap "Okay. You wield `d_the $1`."
+	fi
+	d_indep_unless_auto
+}
+
+d_put() {
+	if [ "${1:-x}" -eq on ]; then
+		shift
+		d_wear "$@"
+	elif [ "$#" -ge 1 ]; then
+		d_stow "$@"
+	else
+		d_wrap "Which object?"
+		d_wrap "Usage:\tput on <object>"
+		d_wrap "\tput [ away ] <object>"
+		return 1
+	fi
+	# indep_act is called in d_wear or d_stow
+}
+
+d_stow() {
+	# unwear, unwield, stow away, put
+	if [ "${1:-x}" = away ]; then
+		shift
+	fi
+	if [ "$#" -lt 1 ]; then
+		d_wrap "Stow away which object?"
+		d_wrap "Usage: stow [ away ] <object>"
+		return 1
+	fi
+	if mv "$d_pc_wielding/$1" "$d_pc_backpack/$1" 2>/dev/null; then
+		d_wrap "Okay. You stow away `d_the $1`."
+	elif [ -f "$d_pc_backpack/$1" ]; then
+		d_wrap "You are not using `d_the $1`."
+	else
+		d_wrap "You don't have `d_a $1`."
+	fi
+	d_indep_unless_auto
+}
+
+d_buy() {
+	if [ "$#" -lt 1 ]; then
+		d_wrap "Buy what?"
+		d_wrap "Usage:\tbuy <object_class> [ as <object_name> ] [ for <amount> ]"
+		d_wrap "\tbuy <object_name> [ for <amount> ]"
+		d_wrap "Allowed classes: weapon, 'missile weapon', missile, armor," \
+			"helmet, shield, clothing, backpack, food, drink, object."
+		return 1
+	fi
+	d_category="$1"
+	shift
+	d_name=
+	if [ "${1:-x}" = as -a "$#" -gt 1 ]; then
+		d_name="$2"
+		shift 2
+		if [ -f "$d_pc_backpack/$d_name" ]; then
+			d_wrap "You are already carrying `d_a $d_name`. Please drop or rename it first."
+			return
+		fi
+	fi
+	d_amount=
+	if [ "${1:-x}" = for -a "$#" -gt 1 ]; then
+		d_amount="$2"
+		if [ "$d_amount" -lt 1 ]; then
+			d_buy_regret
+			return
+		fi
+		# no shift: this facilitates the recursive calls below, that will need the amount
+	fi
+	case "$d_category" in
+		# weapon types, bought by category; quality according to bid
+		weapon)
+				d_amount="${d_amount:-$(($RANDOM % 40 + 10))}"
+				d_category="$(d_buy_category "$d_obcl_weapon_template" 10 5)"
+				if d_iscatnull "$d_category"; then
+					d_buy_regret; return
+				fi
+				d_pick_item "^$d_category"
+				;;
+		'missile weapon')
+				d_amount="${d_amount:-$(($RANDOM % 40 + 10))}"
+				d_category="$(d_buy_category "$d_obcl_mweapon_template" 10 5)"
+				if d_iscatnull "$d_category"; then
+					d_buy_regret; return
+				fi
+				d_pick_item "^$d_category"
+				;;
+		missile)
+				d_amount="${d_amount:-$(($RANDOM % 10 + 2))}"
+				d_category="$(d_buy_category "$d_obcl_missile_template" 2 5)"
+				if d_iscatnull "$d_category"; then
+					d_buy_regret; return
+				fi
+				d_pick_item "^$d_category"
+				;;
+		# armor types, bought by two categories: clothing type and armor type; quality according to bid
+		# these have been split up into: buy helmet(c1)/armor(c4)/shield(c7)
+		# gauntlets(c6) are not (yet?) for sale
+		armor)
+				d_category2="$d_obcl_clothing_armor_template"
+				if [ "$d_amount" ]; then
+					d_category="$(d_buy_category "$d_obcl_armor_template" 20 6)"
+					if d_iscatnull "$d_category"; then
+						d_buy_regret; return
+					fi
+					d_pick2_item "$d_category" "^$d_category2"
+				else
+					d_category="$d_obcl_armor"
+					d_pick2_item "$d_category" "^$d_category2"
+					d_amount=$(echo "${d_obj_data[$d_obj_index]}" | $d_awk "$d_awk_armorprice")
+				fi
+				;;
+		helmet)
+				d_category2="$d_obcl_clothing_helmet_template"
+				if [ "$d_amount" ]; then
+					d_category="$(d_buy_category "$d_obcl_armor_template" 20 2)"
+					if d_iscatnull "$d_category"; then
+						d_buy_regret; return
+					fi
+					d_pick2_item "$d_category" "^$d_category2"
+				else
+					d_category="$d_obcl_armor"
+					d_pick2_item "$d_category" "^$d_category2"
+					d_amount=$(echo "${d_obj_data[$d_obj_index]}" | $d_awk "$d_awk_armorprice")
+				fi
+				;;
+		shield)
+				d_category2="$d_obcl_clothing_shield_template"
+				if [ "$d_amount" ]; then
+					d_category="$(d_buy_category "$d_obcl_armor_template" 20 2)"
+					if d_iscatnull "$d_category"; then
+						d_buy_regret; return
+					fi
+					d_pick2_item "$d_category" "^$d_category2"
+				else
+					d_category="$d_obcl_armor"
+					d_pick2_item "$d_category" "^$d_category2"
+					d_amount=$(echo "${d_obj_data[$d_obj_index]}" | $d_awk "$d_awk_armorprice")
+				fi
+				;;
+		# clothing types, bought by category, but skip armor-only clothing
+		clothing)
+				d_amount="${d_amount:-$(($RANDOM % 8 + 2))}"
+				# prevent picking c4 or c7: these are _armor only_
+				d_category="$($d_awk '
+					BEGIN {
+						srand()
+						do {
+							category = int(1 + (rand() * 9))
+						} while ((category == 4) || (category == 7))
+						printf "'"$d_obcl_clothing_template"'", category
+					}
+				')"
+				d_pick_clothing "^$d_category"
+				;;
+		# ordinary objects
+		backpack)
+				d_amount="${d_amount:-$(($RANDOM % 8 + 2))}"
+				d_category="$d_obcl_backpack_template"
+				d_pick_item "^$d_category"
+				;;
+		food)
+				d_amount="${d_amount:-$(($RANDOM % 8 + 2))}"
+				d_category="$d_obcl_food_template"
+				d_pick_item "^$d_category"
+				;;
+		drink)
+				d_amount="${d_amount:-$(($RANDOM % 8 + 3))}"
+				d_category="$d_obcl_drink_template"
+				d_pick_item "^$d_category"
+				;;
+#		'light source')	:;;
+		# magic items for sale
+#		scroll)		:;;
+		# sword is a synonym for 'weapon as sword'
+		sword)
+				# specifying "$@" keeps "for <amount>" part of command
+				buy weapon as "${d_name:-sword}" "$@"
+				return $?
+				;;
+		# user-specified objects
+		object)
+				d_amount="${d_amount:-$(($RANDOM % 8 + 2))}"
+				d_name="${d_name:-$d_category}"
+				d_category="$d_obcl_ordinary_template"
+				;;
+		*)
+				buy object as "${d_name:-${d_category:-object}}" "$@"
+				return $?
+				;;
+	esac
+	# d_category has now changed to item class.
+	if [ -z "$d_obj_index" -a -z "$d_name" ]; then
+		d_wrap "Sorry, we don't have that kind of product in stock."
+		d_indep_unless_auto
+		return
+	fi
+	if [ "$d_name" ]; then
+		if echo "$d_name" | egrep "^($d_awk_cardinals)" >/dev/null \
+		&& [ "${d_name#one }" = "$d_name" ]; then
+			d_object="${d_category}These are `d_a $d_name`."
+		else
+			d_object="${d_category}This is `d_a $d_name`."
+		fi
+	else
+		d_object="${d_obj_data[$d_obj_index]}"
+	fi
+	d_name="${d_name:-${d_obj_ids[$d_obj_index]}}"
+	d_wrap_noeol "I have `d_a $d_name` for sale. Only `d_currency_pluralize $d_amount` for such a fine quality"
+	if [ "$d_amount" -gt "$d_pc_money" ]; then
+		d_wrap ", but... I see you will not be able to pay for it."
+	else
+		d_wrap_noeol ". Do you accept (y/n)? "
+		read d_temp
+		d_wrap_lastlinelength=0
+		if [ "$d_temp" = y ]; then
+			d_wrap "A pleasure to do business with you!"
+			# this might add an extra empty line at the end of the file,
+			# when the object was picked from $d_obj_data[*].
+			# this is not a problem, however.
+			# OTOH, if the item was created on-the-fly, we will want the
+			# trailing newline.
+			echo "$d_object" > "$d_pc_backpack/$d_name"
+			let d_pc_money-=$d_amount
+			d_wrap "You now have `d_currency_pluralize $d_pc_money` left."
+		else
+			d_wrap "All right, the deal is off."
+		fi
+	fi
+	d_indep_unless_auto
+}
+
+d_buy_category() { # [object class template] [gp per category] [max category]
+	# specify category by price
+	printf "$1" $((d_amount > ($3 * $2) ? $3 : d_amount/$2))
+}
+
+d_buy_regret() {
+	d_wrap "Sorry, for that price I cannot offer you anything."
+}
+
+d_sell() {
+	if [ "$#" -lt 1 ]; then
+		d_wrap "Sell which item?"
+		d_wrap "Usage: sell <object>"
+		return 1
+	elif [ ! -f "$d_pc_backpack/$1" -a ! -f "$d_pc_wielding/$1" ]; then
+		d_wrap "You are not carrying `d_a $1`."
+	else
+		if [ -f "$d_pc_wielding/$1" ]; then
+			d_location="$d_pc_wielding"
+		else
+			d_location="$d_pc_backpack"
+		fi
+		if grep "$d_obcl_money" "$d_location/$1" >/dev/null 2>&1; then
+			# cash in money directly
+			d_temp="$(sed -e's/^'"$d_obcl_money_template"'//' -e's/[^0-9].*//' "$d_location/$1")"
+			if [ "$d_temp" ]; then
+				# found an amount
+				rm "$d_location/$1"
+				let d_pc_money+=$d_temp
+				d_wrap	"You cash in `d_the $1`." \
+					"You now possess `d_currency_pluralize $d_pc_money`."
+			else
+				# no amount found (assume the description is plural)
+				d_wrap "Sorry, `d_the $1` do not seem to be valid money."
+			fi
+		else
+			d_amount=$($d_awk '
+				function linear(maxrange) {
+					return maxrange * substr($0,2,1) * (0.85 + 0.3 * rand())
+				}
+				BEGIN {
+					srand()
+				}
+				/'"$d_obcl_mweapon"'/ || /'"$d_obcl_weapon"'/ {
+					# weapons
+					amount = linear(10)
+				}
+				/'"$d_obcl_armor"'/ {
+					# armor
+					amount = linear(20)
+				}
+				/'"$d_obcl_scroll"'/ {
+					# scrolls
+					amount = linear(50)
+				}
+				/'"$d_obcl_potion"'/ {
+					# potion
+					amount = linear(60)
+				}
+				/'"$d_obcl_charges"'/ || /'"$d_obcl_ring"'/ {
+					# rings, rods, staves, wands
+					amount = linear(100)
+				}
+				/'"$d_obcl_valuable"'/	{
+					# valuables according to category (see the manual)
+					# not linear, but exponential
+					amount = 3 * 3.16228 ** (substr($0,2,1) + rand())
+				}
+				END {
+					# default value for ordinary objects
+					printf "%d\n", (amount>0 ? amount : rand()*5+3 )
+				}
+			' "$d_location/$1")
+			# use a wandering merchant?
+			d_wrap_noeol "I offer `d_currency_pluralize $d_amount` for `d_the $1`. Do you accept (y/n)? "
+			read d_temp
+			d_wrap_lastlinelength=0
+			if [ "$d_temp" = y ]; then
+				d_wrap "A pleasure to do business with you!"
+				rm "$d_location/$1"
+				let d_pc_money+=$d_amount
+				d_wrap "You now have `d_currency_pluralize $d_pc_money`."
+			else
+				d_wrap "All right, the deal is off."
+			fi
+		fi
+	fi
+	d_indep_unless_auto
+}
+
+d_eat() {
+	if [ "$#" -lt 1 ]; then
+		d_wrap "Eat what?"
+		d_wrap "Usage: eat <object>"
+		return 1
+	fi
+	if grep "$d_obcl_food" "$d_pc_backpack/$1" >/dev/null 2>&1; then
+		d_wrap_noeol "Okay. You eat `d_the $1`."
+		rm "$d_pc_backpack/$1"
+		if [ $d_pc_strength -lt 8 ]; then
+			d_wrap " You feel a little better."
+			let d_pc_strength+=1
+		else
+			# provide end of line
+			d_wrap
+		fi
+	elif [ -f "$d_pc_backpack/$1" ]; then
+		d_wrap "You cannot eat `d_the $1`!"
+	else
+		d_wrap "You are not carrying `d_a $1`."
+	fi
+	d_indep_unless_auto
+}
+
+d_drink() {
+	if [ "$#" -lt 1 ]; then
+		d_wrap "Drink what?"
+		d_wrap "Usage: drink <object>"
+		return 1
+	fi
+	if grep "$d_obcl_drink" "$d_pc_backpack/$1" >/dev/null 2>&1; then
+		d_wrap_noeol "Okay. You drink `d_the $1`."
+		rm "$d_pc_backpack/$1"
+		if [ $d_pc_strength -lt 10 ]; then
+			d_wrap " That did you good!"
+			let d_pc_strength+=1
+		else
+			# provide end of line
+			d_wrap
+		fi
+	elif [ -f "$d_pc_backpack/$1" ]; then
+		d_wrap "You cannot drink `d_the $1`!"
+	else
+		d_wrap "You are not carrying `d_a $1`."
+	fi
+	d_indep_unless_auto
+}
+
+d_tell() {
+	if [ "$#" -lt 3 ]; then
+		d_wrap 'Talk to whom?'
+		d_wrap "Usage:\tsay '<sentence>' to <person>"
+		d_wrap "\tsay to <person> <sentence>"
+		return 1
+	elif [ "$1" = "to" ]; then
+		d_person="$2"
+		shift 2
+		d_sentence="$*"
+	else
+		d_sentence="$1"
+		d_person="$3"
+	fi
+	d_npc_index=
+	if d_not d_npc_seek "$d_person"; then
+		d_seekpwuser "$d_person"
+	fi
+	d_wrap "Okay. You say \"$d_sentence\" to $d_name."
+	if [ -z "$d_npc_index" ]; then
+		echo "$d_sentence" | write $d_id
+	fi
+	d_indep_unless_auto
+}
+
+d_tell2() {
+	if [ "$#" -lt 2 ]; then
+		d_wrap "Tell what to whom?"
+		d_wrap "Usage: tell <person> <command> [ <args> ... ]"
+		return 1
+	fi
+	d_fk1="$1"
+	shift
+	# via case - indact?
+	d_wrap 'Not implemented.'
+}
+
+d_talk() {
+	test "$1" = "to" && shift
+	talk "$@"
+	d_indep_unless_auto
+}
+
+d_shout() {
+	if [ "$#" -lt 1 ]; then
+		d_wrap 'Shout what?'
+		d_wrap 'Usage: shout sentence'
+	else
+		d_wrap "Okay. You shout \"$*\"."
+		echo "$*" | wall
+		d_indep_unless_auto
+	fi
+}
+
+d_emote() {
+	if [ "$#" -lt 1 ]; then
+		d_wrap 'Usage: emote <sentence>'
+	else
+		d_sentence="$(d_getpwnam $d_pc_name) $*"
+		d_desc_list_fusers | while read d_id; do
+			echo "$d_sentence" | write $d_id
+		done
+		d_indep_unless_auto
+	fi
+}
+
+d_where() {
+	d_npc_iteration() {
+		# do not comment out the next line: d_foreach_npc does not do a d_npc_seek
+		d_npc_extract $d_npc_index
+		d_wrap "$(d_capitalize `d_the $d_name`) `d_is` now in $d_location."
+	}
+	if [ "$#" -lt 1 ]; then
+		d_foreach_npc d_npc_iteration
+	else
+		if d_npc_seek "$1"; then
+			d_npc_iteration
+		elif d_seekpwuser "$1"; then
+			if /usr/bin/w | grep "$d_id" | grep -v grep >/dev/null; then
+				if fuser -u . 2>&1 | grep $d_id >/dev/null; then
+					d_wrap "$(d_capitalize `d_pronoun1`) is right here!"
+				elif fuser -u "`d_getpwhome $d_id`" 2>&1 | grep $d_id >/dev/null; then
+					d_wrap "$(d_capitalize `d_pronoun1`) is at home."
+				else
+					# full search would take too much time
+					# imagine: find / -type d -exec fuser -u {} | grep ... :(
+					d_wrap "I don't know... far, far away, probably."
+				fi
+			else
+				d_wrap "I have not seen $d_name in a long time."
+			fi
+		else
+			d_wrap "I have not seen `d_a $*`."
+		fi
+	fi
+	d_indep_unless_auto
+}
+
+d_fight() {
+	# much later, probably not before I'm old and retired,
+	# I might extend this to support "fight hobbit for ring",
+	# and if he loses, he'll give up the ring ;)
+	d_weapon=0
+	d_object=
+	if [ "$#" -lt 1 ]; then
+		d_wrap "Kill whom?"
+		d_wrap "Usage: [ kill | fight ] { <pid> | <person> }"
+		return 1
+	elif [ "$#" -ge 3 -a "$2" = 'with' ]; then
+		# determine which object the player specified...
+		d_object="$3"
+		if [ ! -f "$d_pc_backpack/$d_object" -a ! -f "$d_pc_wielding/$d_object" ]; then
+			d_wrap "You don't have `d_a $d_object`."
+			d_indep_unless_auto
+			return
+		fi
+		# ...and whether it is a valid weapon
+		d_weapon="$( {
+			egrep -h "$d_obcl_weapon"  "$d_pc_backpack/$d_object" "$d_pc_wielding/$d_object" 2>/dev/null \
+		     || egrep -h "$d_obcl_mweapon" "$d_pc_backpack/$d_object" "$d_pc_wielding/$d_object" 2>/dev/null
+		} | sed -e"s/$d_obcl_find_type/\1/")"
+		if [ -z "$d_weapon" ]; then
+			d_wrap "You cannot attack with `d_the $d_object`!"
+			d_indep_unless_auto
+			return
+		fi
+	else
+		# determine strongest (melee) weapon
+		d_weapon="$(egrep -h "$d_obcl_weapon" "$d_pc_wielding/"* 2>/dev/null | sort -r | head -1)"
+		# yeah, grep again
+		d_object="`basename "$(egrep -l "$d_weapon" "$d_pc_wielding/"* 2>/dev/null)"`"
+		d_weapon="$(echo "$d_weapon" | sed -e"s/$d_obcl_find_type/\1/")"
+		if [ -z "$d_weapon" ]; then
+			# select missile weapon... later
+			:
+		fi
+	fi
+	# now, d_object contains the short description of the object
+	# and d_weapon contains the numeric strength of the weapon
+	if d_seekpwuser "$1"; then
+		d_wrap "You cannot attack $d_name."
+		return
+	elif d_npc_seek "$1"; then
+		if d_ishere; then
+			# check weapon
+			d_wrap_noeol "Okay. You attack `d_the $d_name`"
+			if [ "$d_weapon" ]; then
+				d_wrap_noeol " with your $d_object"
+			else
+				d_wrap_noeol ' with your bare hands'
+			fi
+			d_armor=0
+			# count all armor (npc's do not wear/wield).
+			if [ "${d_gender%o}" = "$d_gender" ]; then
+				eval "$(
+					egrep -h "$d_obcl_armor" "$d_npc_home/$d_id/$d_backpack/"* 2>/dev/null \
+					| sed -e"s/$d_obcl_find_type/\1/" | while read d_temp; do
+						echo "let d_armor+=$d_temp"
+					done
+				)"
+			fi
+			# random(7)-3 is in the range {-3,-2,-1,0,1,2,3}
+			d_result=$((d_pc_strength + d_weapon - d_strength - d_armor + ($RANDOM % 7) - 3))
+			case $d_result in
+				-*)	if [ $d_result -lt $((-d_strength - 4)) ]; then	
+						d_wrap " but miss, and `d_pronoun1` `d_conjugate hit` you in the chest."
+					elif [ $d_result -lt $((-d_strength - 2)) ]; then	
+						d_wrap " but miss, and `d_pronoun1` `d_conjugate hit` you in the abdomen."
+					elif [ $d_result -lt $((-d_strength)) ]; then	
+						d_wrap " but miss, and `d_pronoun1` `d_conjugate hit` you on your head."
+					else
+						d_wrap ", but `d_pronoun1` `d_conjugate ward` off the attack."
+					fi ;;
+				0)	d_wrap " and just scratch `d_pronoun2` clothes." ;;
+				[1-2])	d_wrap " and hit `d_pronoun4` on the arm." ;;
+				[3-4])	d_wrap " and hit `d_pronoun4` in the abdomen." ;;
+				[5-6])	d_wrap " and hit `d_pronoun4` hard in the chest." ;;
+				[7-9])	d_wrap " and hit `d_pronoun4` very hard!" ;;
+				??*)	d_wrap " and make mincemeat of `d_pronoun4`!" ;;
+			esac
+			if [ $d_result -gt 0 ]; then
+				let d_pc_score+=$((d_result * 5))
+				d_npc_strengths[$d_npc_index]=$(($d_strength - $d_result))
+				d_npc_charms[$d_npc_index]=$(($d_charm - $d_result))
+				if [ ${d_npc_strengths[$d_npc_index]} -lt 0 ]; then
+					d_wrap "You have killed `d_pronoun4`!"
+					# drop all his items
+					if [ "${d_gender%o}" != "$d_gender" ]; then
+						# monster
+						# note that d_location (needed by create_item) is equal to $PWD
+						d_create_item "$d_obcl_valuable"
+					elif d_not mv "$d_npc_home/$d_id/$d_backpack/"* . 2>/dev/null; then
+						if mv "$d_npc_home/$d_id/$d_backpack/"* "$d_pc_backpack" 2>/dev/null; then
+							d_wrap "You pick up all `d_pronoun2` possessions."
+							# if he did not have any possessions, we won't spout that fact
+						fi
+					fi
+					d_npc_remove $d_npc_index
+				fi
+			elif [ $d_result -lt $((-d_strength)) ]; then
+				let d_pc_strength=$((d_pc_strength + d_result + d_strength))
+				d_npc_charms[$d_npc_index]=$(($d_charm - 1))
+				if [ $d_pc_strength -lt 0 ]; then
+					d_wrap "You fall down writhing, and write your will in blood on the ground..."
+					d_noplay
+					d_scoreboard
+					# no indep action when you're dead
+					return
+				fi
+			fi
+		else
+			d_wrap "$(d_capitalize `d_pronoun1`) is not here!"
+		fi
+	else
+		# unalias this so that the builtin kill %2 etc. works
+		# ('builtin' is not available in all shells)
+		unalias kill
+		kill "$@"
+		alias kill=d_fight
+	fi
+	d_indep_unless_auto
+}
+
+d_wait() {
+	if [ "$#" -ge 1 ]; then
+		# unalias this so that the builtin kill %2 etc. works
+		# ('builtin' is not available in all shells)
+		unalias wait
+		wait "$@"
+		alias wait=d_wait
+	fi
+	d_indep_unless_auto
+}
+
+d_scoreboard() {
+	# 1 xp per visited location (counted by d_cd)
+	# 2 xp per successful defend (counted by d_indep_fight)
+	# 3 xp per object, valuable or not
+	#      we cannot combine the ls: a header would be printed
+	d_totalscore=$(($d_pc_score + $( { /bin/ls "$d_pc_backpack"; /bin/ls "$d_pc_wielding"; } 2>/dev/null | wc -l) * 3))
+	# 5 xp per successful hit (counted by d_fight)
+	# 5 xp per object successfully stolen (counted by d_steal)
+	# extra score for valuables (with approximate value):
+	# v0:    0-  10 gp:  0 xp       v5:   1000-  3000 gp: 50 xp  
+	# v1:   10-  30 gp: 10 xp       v6:   3000- 10000 gp: 60 xp
+	# v2:   30- 100 gp: 20 xp       v7:  10000- 30000 gp: 70 xp
+	# v3:  100- 300 gp: 30 xp       v8:  30000-100000 gp: 80 xp
+	# v4:  300-1000 gp: 40 xp       v9: 100000+       gp: 90 xp
+	egrep -h "$d_obcl_valuable" "$d_pc_backpack/"* 2>/dev/null \
+	| sed -e"s/$d_obcl_find_type/\1/" | while read d_object; do
+		let d_totalscore+=$((10 * $d_object))
+	done
+	# score calculated.
+	d_wrap "You have acquired $d_totalscore experience points."
+	d_inv_indent=
+	d_inv_money
+	case "$d_pc_strength" in
+		q*)	d_wrap "You have given up." ;;
+		-*)	d_wrap "You are dead." ;;
+		0)	d_wrap "You feel like you're dead!" ;;
+		[12])	d_wrap "You are exhausted." ;;
+		[34])	d_wrap "You are very tired." ;;
+		5)	d_wrap "You are tired." ;;
+		6)	d_wrap "You are rested." ;;
+		7)	d_wrap "You are well-rested." ;;
+		8)	d_wrap "You feel strong." ;;
+		9)	d_wrap "You feel very strong." ;;
+		1?)	d_wrap "You feel extremely strong!" ;;
+		*)	d_wrap "You feel unearthly!" ;;
+	esac
+	d_indep_unless_auto
+}
+
+d_help() {
+	# title colors
+	d_col_smti=${d_col_smso}
+	if [ "$d_col_capable" ]; then
+		d_col_smti="${d_col_smti}${d_col_blue}${d_col_onwhite}"
+	fi
+	d_col_rmti=${d_col_sgr0}
+	# output directly to stdout because d_wrap cannot handle escape codes.
+	# tabs don't work (why?), so use spaces instead
+	# this is a mess. unfortunately I don't know a less messy implementation
+	cat <<-_endHelp_
+	${d_col_bold}Nadvsh $d_version${d_col_sgr0} running on $d_osname in $d_shelltype.
+	Currently running in `d_mode_display` mode.
+	${d_col_smti}Movement commands:                      Pseudocommands:                         ${d_col_rmti}
+	- go/enter ${d_col_smul}location${d_col_rmul}                     - play [[semi|no]strict] [[no]safe]
+	- north, south, east, west              - replay [[semi|no]strict] [[no]safe]
+	- ne, se, sw, nw, up, down, leave       - noplay
+	- desc[ribe]                            - quit
+	- look [ hard | into ${d_col_smul}location${d_col_rmul} ]         - theme [default | [new|add|write] ${d_col_smul}file${d_col_rmul}]
+	- open/unlock/close/lock ${d_col_smul}location${d_col_rmul}       - currency [ ${d_col_smul}pcurrency${d_col_rmul} [ ${d_col_smul}scurrency${d_col_rmul} ] ]
+	${d_col_smti}Object-related commands:                ${d_col_rmti}- colors [nocolor|.|${d_col_smul}color${d_col_rmul}|${d_col_smul}escape_codes${d_col_rmul}]*
+	- take/get ${d_col_smul}object${d_col_rmul} [ as ${d_col_smul}object${d_col_rmul} ]         - nocolors
+	- drop ${d_col_smul}object${d_col_rmul} [ as ${d_col_smul}object${d_col_rmul} ]             - score
+	- exam[ine]/look at ${d_col_smul}object${d_col_rmul}              - help
+	- destroy ${d_col_smul}object${d_col_rmul}                        ${d_col_smti}Person-related commands:                ${d_col_rmti}
+	- rename ${d_col_smul}object${d_col_rmul} to ${d_col_smul}object${d_col_rmul}               - look at ${d_col_smul}person${d_col_rmul}
+	- buy ${d_col_smul}class${d_col_rmul} [ as ${d_col_smul}name${d_col_rmul} ] [ for ${d_col_smul}amount${d_col_rmul} ]  - inv[entory] [ ${d_col_smul}person${d_col_rmul} ]
+	- sell ${d_col_smul}object${d_col_rmul}                           - where [ ${d_col_smul}person${d_col_rmul} ]
+	- eat/drink ${d_col_smul}object${d_col_rmul}                      - steal ${d_col_smul}object${d_col_rmul} from ${d_col_smul}person${d_col_rmul}
+	- wear/wield ${d_col_smul}armor/clothing/weapon${d_col_rmul}      - give ${d_col_smul}object${d_col_rmul} to ${d_col_smul}person${d_col_rmul}
+	- unwield/stow [away] ${d_col_smul}weapon${d_col_rmul}            - say/tell to ${d_col_smul}person${d_col_rmul} ${d_col_smul}sentence${d_col_rmul}
+	- unwear/stow [away] ${d_col_smul}armor/clothing${d_col_rmul}     - talk [to] ${d_col_smul}person${d_col_rmul}
+	- use ${d_col_smul}wand/scroll${d_col_rmul}                       - shout "${d_col_smul}sentence${d_col_rmul}"
+	- quaff ${d_col_smul}potion${d_col_rmul}                          - emote "${d_col_smul}sentence${d_col_rmul}"
+	${d_col_smti}Miscellaneous commands:                 ${d_col_rmti}- kill/fight ${d_col_smul}person${d_col_rmul} [ with ${d_col_smul}object${d_col_rmul} ]
+	- sleep                                 ${d_col_smti}Un*x commands:                          ${d_col_rmti}
+	- wait                                  any
+	- $(d_date_shire >/dev/null && echo 'date/cal' || echo 'cal     ')                                   
+	See 'man nadvsh' for more details.
+_endHelp_
+	# don't call independent action
+}
+
+d_cd() {
+	d_location="$*"
+	# this does not (yet) filter out 'cd' and 'cd -'
+	if [ "${d_location%/*}" != "$d_location" ] && d_not $d_allow_teleport; then
+		if d_not egrep "$d_obcl_teleporter" "$d_pc_backpack/"* "$d_pc_wielding/"* >/dev/null 2>&1; then
+			d_wrap "You don't have a teleporter!"
+			return
+		else
+			d_object="$(egrep -l "$d_obcl_teleporter" "$d_pc_backpack"/* "$d_pc_wielding/"* 2>/dev/null | head -1)"
+			# change color according to type?
+			d_wrap_noeol "Your $(basename "$d_object") radiates a "
+			if egrep "$d_obcl_device" "$d_object" >/dev/null; then
+				d_wrap_noeol 'fluorescent '
+			fi
+			# calculate unique color for each teleporter object
+			d_wrap "$(d_col_name $(( $(cksum "$d_object" | $d_awk '{ print $1 }') % 7 + 1)) ) glow that envelops you..."
+		fi
+	fi
+	if [ "$d_location" = '..' -o "$d_location" = "$d_up" ] && d_not $d_allow_cdup; then
+		d_wrap "There is no such exit."
+		return 1
+	fi
+	# OK, we will allow the chdir.
+	# cd might not be an alias here because of recursion. discard errors
+	unalias cd 2>/dev/null
+	# we need quotes around $d_location to support names with spaces,
+	# but these spoil the meaning of 'cd' and 'cd -'
+	# in the next lines, we examine these special cases
+	test '-' = "$d_location" && d_location="$OLDPWD"
+	test -z    "$d_location" && d_location="$HOME"
+	if $d_cdcommand "$d_location" 2>/dev/null; then
+		let d_pc_score+=1
+		if [ $(($d_pc_score % 50)) -eq 0 ]; then
+			let d_pc_strength-=1
+			if [ $d_pc_strength -ge 0 ]; then
+				d_wrap "You grow a bit more weary."
+			else
+				# sleep_act might wake you up unrested.
+				# therefore, use a while loop.
+				while [ $d_pc_strength -lt 0 ]; do
+					d_wrap "You faint from exhaustion."
+					d_sleep_act
+				done
+			fi
+		fi
+		d_describe
+		d_desc_list_people
+#		d_desc_list_items
+	else
+		# chdir did not succeed
+		if [ -d "$d_location" ]; then
+			d_wrap "An invisible force blocks your way."
+		elif [ "$d_location" = "$d_up" ]; then
+			$d_cdcommand ..
+			let d_pc_score+=1
+			d_describe
+			d_desc_list_people
+		else
+			d_wrap "There is no such exit."
+		fi
+	fi
+	d_indep_unless_auto
+	alias cd=d_cd
+}
+
+############################################################################
+# independent action
+
+d_indep_talk(){
+	if d_ishere; then
+		d_wakeup "from the sounds of `d_the $d_name` walking around in the room."
+		# monsters should not talk :)
+		if [ ${d_gender%o} = $d_gender ]; then
+			# not a monster
+			case $(($RANDOM % 13)) in
+				 0) test -f "$d_pc_backpack/$d_backpackobj" && d_act "`d_conjugate look` interested at your backpack.";;
+				 1) d_act "`d_conjugate complain`: \"You know, this mother-in-law of mine...\"";;
+				 2) d_act "`d_conjugate say`: \"Would you believe this place has been built by `d_me2` grandfather?\"";;
+#				    d_act "`d_conjugate say`: \"$(echo "Would you believe this place has been built by `d_me2` grandfather?" | d_translate 1)\""
+				 3) d_act "`d_conjugate mumble`: \"Oh no, he has escaped...\"";;
+				 4) d_act "`d_conjugate whistle` a tune.";;
+				 5) d_act "`d_conjugate hum` a tune.";;
+				 6) d_act "`d_conjugate scratch` `d_pronoun2` head.";;
+				 7) d_act "`d_conjugate sneeze`.";;
+				 8) d_act "`d_conjugate sigh`: \"If only `d_me2` poor old mother could see this.\"";;
+				 9) d_act "`d_conjugate whisper`: \"It is rumored that every man who enters this place, becomes" \
+					"infected with disease within a few days time!\" $(d_capitalize `d_pronoun1`) `d_conjugate nod`" \
+					"enthusiastically.";;
+				10) d_act "`d_conjugate ask`: \"You don't happen to have anything to eat?\"";;
+				11) d_act "`d_conjugate say`: \"Beware the Jubjub bird, and shun the frumious Bandersnatch!\"";;
+				12) d_act "`d_conjugate pull` a sad face.";;
+			esac
+		fi
+	fi
+}
+
+d_indep_walk() {
+	d_temp="$({ d_dotdot; /bin/ls -lL $d_lsopt "$d_location" 2>/dev/null; } | $d_awk '
+		BEGIN			{ srand() }
+		/^d/ && $9 != "."	{ doors[NR]=$9 }
+		END			{ print doors[int(rand()*NR)] }
+	')"
+	if [ -z "$d_temp" ]; then
+		# the present directory might not exist any more,
+		# or the permissions may have been restricted
+		test -d "$d_location" -a -r "$d_location" -a -x "$d_location" && return
+		# if not, move the npc one directory up
+		d_temp='..'
+		# this solution requires that the parent directory exist
+		while [ ! -d "$d_location/.." ]; do
+			# otherwise move the npc one more directory up
+			d_location="${d_location%/*}"
+		done
+	fi
+	if d_readable "$d_location/$d_temp"; then
+		if [ "$d_temp" = ".." ]; then
+			d_ishere && d_pc_woken && d_act "`d_conjugate leave`."
+			d_location="$(d_findparent "$d_location")"
+		else
+			d_ishere && d_pc_woken && d_act "`d_conjugate walk` to $d_temp."
+			d_location="$(d_findsubdir "$d_location/$d_temp")"
+		fi
+		d_ishere && d_pc_woken && d_act "`d_conjugate enter`."
+		# store new location
+		d_npc_locations[$d_npc_index]="$d_location"
+	else
+		if d_ishere; then
+			if $d_pc_wake; then
+				d_act "`d_conjugate bump` into a closed door."
+			else
+				d_wakeup "from the sound of `d_the $d_name`" \
+					 "bumping into a closed door."
+			fi
+		fi
+	fi
+}
+
+d_indep_fight() {
+	d_temp=$(($RANDOM % 10))
+	if [ "${d_gender%o}" = "$d_gender" ]; then
+		# persons are less inclined to attack than monsters.
+		# let's call that 'alignment'
+		let d_temp-=2
+	fi
+	# attack only if npc is strong enough and pc is still alive, and rnd() > charm
+	if d_ishere && [ "$d_temp" -gt "$d_charm" -a "$d_strength" -gt 2 -a "$d_pc_strength" -ge 0 ]; then
+		# find best weapon but exclude monsters, they do not use weapons
+		if [ "${d_gender%o}" = "$d_gender" ]; then
+			d_weapon="$(egrep -h "$d_obcl_weapon" "$d_npc_home/$d_id/$d_backpack/"* 2>/dev/null | sort -r | head -1)"
+			d_object="`basename "$(egrep -l "$d_weapon" "$d_npc_home/$d_id/$d_backpack/"* 2>/dev/null)"`"
+			d_weapon="$(echo "$d_weapon" | sed -e"s/$d_obcl_find_type/\1/")"
+			if [ -z "$d_weapon" ]; then
+				# select missile weapon... later
+				:
+			fi
+		else
+			d_weapon=
+			d_object=
+		fi
+		# now, d_object contains the short description of the object
+		# and d_weapon contains the numeric strength of the weapon
+		if [ "$d_weapon" ]; then
+			d_how="with `d_pronoun2` $d_object"
+		else
+			d_how="with `d_pronoun2` bare hands"
+		fi
+		d_armor=0
+		# only count worn armor
+		eval "$(
+			egrep -h "$d_obcl_armor" "$d_pc_wielding/"* 2>/dev/null \
+			| sed -e"s/$d_obcl_find_type/\1/" | while read d_temp; do
+				echo "let d_armor+=$d_temp"
+			done
+		)"
+		# random(7)-3 is in the range {-3,-2,-1,0,1,2,3}
+		d_result=$(($d_strength + $d_weapon - $d_armor + $RANDOM % 7 - 3))
+		# no strength benefits while sleeping... uh oh...
+		if $d_pc_wake; then let d_result-=$d_pc_strength; fi
+		d_remember=$d_pc_wake
+		case "$d_pc_wake.$d_result" in
+			true.-*)	if [ $d_result -lt $((-d_pc_strength)) ]; then
+						d_act "`d_conjugate attack` you $d_how, but `d_conjugate miss` you."
+					else
+						d_act "`d_conjugate attack` you $d_how, but you ward off the attack."
+					fi ;;
+			true.0)		d_act "`d_conjugate attack` you $d_how, and `d_conjugate scratch` your clothes." ;;
+			true.[1-2])	d_act "`d_conjugate attack` you $d_how, and `d_conjugate hit` you on the arm." ;;
+			true.[3-4])	d_act "`d_conjugate attack` you $d_how, and `d_conjugate hit` you in the abdomen." ;;
+			true.[5-6])	d_act "`d_conjugate attack` you $d_how, and `d_conjugate hit` you hard in the chest." ;;
+			true.[7-9])	d_act "`d_conjugate attack` you $d_how, and `d_conjugate hit` you very hard!" ;;
+			true.??*)	d_act "`d_conjugate attack` you $d_how, and `d_conjugate make` mincemeat from you!" ;;
+			false.-[1-4])	d_wakeup "from the sound of `d_a $d_name` attacking you $d_how. $(d_capitalize `d_pronoun1`) `d_conjugate miss` you." ;;
+			false.-*)	: PC does not wake up ;;
+			false.0)	d_wakeup "from the sound of `d_a $d_name` attacking you $d_how. $(d_capitalize `d_pronoun1`) barely `d_conjugate miss` you." ;;
+			false.[1-2])	d_wakeup "from `d_a $d_name` attacking you $d_how. $(d_capitalize `d_pronoun1`) `d_conjugate hit` you on the arm." ;;
+			false.[3-4])	d_wakeup "from `d_a $d_name` attacking you $d_how. $(d_capitalize `d_pronoun1`) `d_conjugate hit` you in the abdomen." ;;
+			false.[5-6])	d_wakeup "from `d_a $d_name` attacking you $d_how. $(d_capitalize `d_pronoun1`) `d_conjugate hit` you hard in the chest." ;;
+			false.[7-9])	d_wakeup "from `d_a $d_name` attacking you $d_how. $(d_capitalize `d_pronoun1`) `d_conjugate hit` you very hard!" ;;
+			false.??*)	d_wakeup "from `d_a $d_name` attacking you $d_how. $(d_capitalize `d_pronoun1`) `d_conjugate make` mincemeat from you!" ;;
+			*)		d_wrap "$0: An internal error has occurred ($d_pc_wake.$d_result)" ;;
+		esac
+		if [ $d_result -gt 0 ]; then
+			# you lost
+			let d_pc_strength=$((d_pc_strength - d_result))
+			if [ $d_pc_strength -lt 0 ]; then
+				d_wrap "You fall down writhing, and bleed to death on the ground..."
+				d_noplay
+				d_scoreboard
+				return
+			fi
+		else
+			# you won
+			if $d_remember; then
+				# you were awake: assign 2 pts per 'defend point'
+				let d_pc_score-=$((d_result * 2))
+			fi
+			# npc hurts himself >:)
+			d_npc_strengths[$d_npc_index]=$((d_strength - 1))
+			# npc cannot be dead: strength > 2 was condition for attacking
+		fi
+	fi
+}
+
+d_indep_drop() {
+	if [ "${d_gender%o}" = "$d_gender" ] && d_writable "$d_location" && d_ishere && d_pc_woken; then
+		# some variants of ls(1) only give the basename, others the full pathname
+#		d_object="$(/bin/ls "$d_npc_home/$d_id/$d_backpack" | $d_awk "$d_awk_pickrandom")"
+		d_object="$(basename "$(/bin/ls "$d_npc_home/$d_id/$d_backpack" | $d_awk "$d_awk_pickrandom")" )"
+		if [ "$d_object" ]; then
+			d_wrap "$(d_capitalize `d_the $d_name`) `d_conjugate drop` `d_a $d_object`."
+			mv "$d_npc_home/$d_id/$d_backpack/$d_object" .
+		fi
+	fi
+}
+
+d_indep_examine() {
+	if [ "${d_gender%o}" = "$d_gender" ] && d_ishere && d_pc_woken; then
+		# some variants of ls(1) only give the basename, others the full pathname
+#		d_object="$(/bin/ls "$d_npc_home/$d_id/$d_backpack" | $d_awk "$d_awk_pickrandom")"
+		d_object="$(basename "$(/bin/ls "$d_npc_home/$d_id/$d_backpack" | $d_awk "$d_awk_pickrandom")" )"
+		if [ "$d_object" ]; then
+			d_wrap "$(d_capitalize `d_the $d_name`) closely `d_conjugate examine` `d_pronoun2` $d_object."
+		fi
+	fi
+}
+
+d_indep_consume() {
+	d_pc_woken
+	d_result=$(($RANDOM % 3))
+	if [ $d_result -eq 0 ]; then
+		# eat
+		d_object="$(egrep -l "$d_obcl_food" "$d_npc_home/$d_id/$d_backpack"/* 2>/dev/null | $d_awk "$d_awk_pickrandom")"
+		if [ "$d_object" ]; then
+			d_ishere && $d_pc_wake && d_act "`d_conjugate eat` $(d_a "$(basename "$d_object")")."
+			rm "$d_object"
+			if [ ${d_npc_strengths[$d_npc_index]} -lt 8 ]; then
+				let d_npc_strengths[$d_npc_index]+=1
+			fi
+		fi
+	elif [ $d_result -eq 1 ]; then
+		# drink
+		d_object="$(egrep -l "$d_obcl_drink" "$d_npc_home/$d_id/$d_backpack"/* 2>/dev/null | $d_awk "$d_awk_pickrandom")"
+		if [ "$d_object" ]; then
+			d_ishere && $d_pc_wake && d_act "`d_conjugate drink` $(d_a "$d_object")."
+			rm "$d_object"
+			if [ ${d_npc_strengths[$d_npc_index]} -lt 10 ]; then
+				let d_npc_strengths[$d_npc_index]+=1
+			fi
+		fi
+	elif d_ishere && $d_pc_wake; then
+		# drop 'core'
+		d_act "`d_conjugate eat` an apple." \
+			"Having eaten it, `d_pronoun1` `d_conjugate drop` the core."
+		if d_writable "$d_location" && [ ! -e "$d_location/core" ]; then
+			# of course it's ridiculous that the core is classified as 'food'
+			# but this actually gives purpose to 1) core files and
+			# 2) this indep_action so I think this is fun.
+			echo "${d_obcl_food_template}The core of an apple." > "$d_location/core"
+		fi
+	fi
+}
+
+d_indep_give() {
+	:
+}
+
+d_indep_steal() {
+#	indact_steal should consider charm
+#	also consider stealing money
+	:
+}
+
+d_indep_action() {
+	# the variable $d_indep_suppress allows for easy debugging
+	# by disabling independent action
+	$d_indep_suppress && return
+	d_npc_extract $d_npc_index
+	case $(($RANDOM % 10)) in
+		0)	d_indep_talk ;;
+		[1-3])	d_indep_walk ;;
+		4)	d_indep_fight ;;
+		5)	d_indep_drop ;;
+		6)	d_indep_examine ;;
+		7)	d_indep_consume ;;
+		8)	d_indep_give ;;
+		9)	d_indep_steal ;;
+		10)	: create object? ;;
+		11)	: capture player? ;;
+		12)	: sleep? ;;
+		13)	: wake up? ;;
+	esac
+}
+
+d_indep_environment() {
+	if d_isairless; then
+		# "your $1 provides the necessary air to breathe."
+		if [ $d_pc_breath -gt 1 ]; then
+			let d_pc_breath-=1
+			d_wrap "You are holding your breath."
+		elif [ $d_pc_breath -gt 0 ]; then
+			let d_pc_breath-=1
+			d_wrap "You are holding your breath. You will not be able to hold it any longer."
+		else
+			let d_pc_strength-=1
+			case $d_pc_strength in
+				1?*)	d_wrap "You are weakening from lack of oxygen." ;;
+				[8-9])	d_wrap "You are weakening from lack of oxygen." ;;
+				[6-7])	d_wrap "You are turning blue from lack of oxygen." ;;
+				[4-5])	d_wrap "You are blue from lack of oxygen." ;;
+				[2-3])	d_wrap "You could do a good imitation of a smurf by now." ;;
+				[0-1])	d_wrap "Your lungs hurt." ;;
+				-*)	d_wrap "You suffocate!"; d_noplay; d_scoreboard ;;
+			esac
+		fi
+	fi
+	if d_isradiationarea; then
+		if [ $((d_pc_strength-=1)) -gt 1 ]; then
+			d_wrap "You are exposed to radiation! It hurts!"
+		elif [ $d_pc_strength -lt 0 ]; then
+			d_wrap "You have been fried by radiation!"
+			d_noplay
+			d_scoreboard
+		else
+			d_wrap "You are dying from the radiation!"
+		fi
+	fi
+}
+
+d_indep_main() {
+	d_foreach_npc d_indep_action
+#	d_indep_objects # talking swords etc.
+	d_indep_location
+	d_indep_environment
+}
+
+############################################################################
+# default theme
+
+# the locations, objects and npc's were put in portions
+# in order to try to stop bash on HP from segfaulting
+
+d_theme_default_loc1() {
+	# This theme is by Dean "Gandalf" Swift, used with permission.
+	echo '
+loc:/
+f:darkbynight
+d:You are in a desert. A tumbleweed passes. You see a signpost but the
+d:words are obscure and abbreviated. Footprints indicate that the gurus
+d:have passed here many times before. If you stay here long enough, you
+d:will grow a beard.
+p:a desert
+
+loc:/root
+f:darkbynight
+d:You see a vast cavern with no quota limit. There might be treasure here
+d:but it is too dark to see. The walls by the entrance are scorched. A wise
+d:old dragon lives here. The dragon is subtle and quick to anger. Should
+d:you be here?
+p:a vast cavern
+
+loc:(/boot|/stand)
+f:darkbynight
+d:You are in a cave. This place was the beginning of civilisation.
+p:a cave
+
+loc:/dev
+d:You are in the vast engine room of an alien spacecraft. Or it might be a
+d:holographic projection room. There are many exotic instruments, gauges,
+d:blinking lights and a sign in another language. Do not touch!
+p:a vast engine room
+
+loc:/etc
+f:darkbynight
+d:You are in a junkyard. Well, you think it is a junkyard. Scrap metal and
+d:wood is piled conically all around you. You see crude, fearsome machines
+d:but you are unsure of their purpose. A stone tablet of names and encrypted
+d:passwords hangs from a crane. This rubble was once an important building.
+p:a junkyard
+
+loc:/bin
+d:You are in the reference section of an old library. It is extremely
+d:dusty and hard to read the book titles. You can tell that this was once
+d:a place of profound discovery in golden era. You feel that this place
+d:may be useful in an emergency.
+p:an old library
+
+loc:/tmp
+f:darkbynight
+d:You are in a large deserted marketplace. The weather is overcast and
+d:you feel cold. The flagstones are uneven and a newspaper soaks in a
+d:small puddle. Occasionally, useful information can be found here.
+p:a deserted marketplace
+
+loc:/opt
+f:darkbynight
+d:You see a newly created cavern. Two gurus are arguing over the usefulness
+d:of this new area. Bugs and bloatware have already infested the area. You
+d:see some vendorware in the distance.
+p:a cavern
+
+loc:/usr
+d:You are in a tall, sparkling glass building. The building is curved and
+d:clear except for the light green turrets. A flying car passes.
+p:a tall glass building
+
+loc:/usr/local
+#d:You are in a modern town.
+p:a modern town
+
+loc:/proc
+d:You are in an office. You see many cubicles and hear a humming noise
+d:from the nearby supercomputer. Or maybe the hum is the air conditioning.
+p:an office
+
+loc:/var
+#d:You are in the lobby of a hotel.
+p:the lobby of a hotel
+
+loc:/var/spool
+d:You are in the lounge of a hotel. You hear tasteful music playing
+d:quietly. Low comfy seating is arranged around palm trees and ferns. Soft
+d:lighting shines from the white ceiling. You would feel uneasy staying
+d:here too long.
+p:the lounge of a hotel
+
+loc:/mnt
+#d:You are at an airport.
+h:You are at
+p:an airport
+
+loc:/mnt/[^/]*
+#d:You are in an airplane.
+p:an airplane
+
+loc:/site
+d:You are in a trendy suburb. Residential and commercial properties are
+d:intermixed.
+p:a trendy suburb
+
+loc:.*lost\+found
+#d:You are in a lost property office.
+p:a lost property office
+'
+}
+
+d_theme_default_loc2() {
+	# This theme is by Dean "Gandalf" Swift, used with permission.
+	echo '
+loc:(/usr/local/bin|/usr/bin)
+d:You are in a modern factory. Many of the machines form a single automated
+d:production line. Occasionally, a machine makes a loud noise, but there
+d:is no pattern.
+p:a modern factory
+
+loc:(/www|/home/httpd/html)
+d:You are in the centre of a vast printing room. Loud machines surround
+d:you and they are producing thousands of informative magazines every
+d:minute. The noise is deafening.
+p:a printing room
+
+loc:(/www.*/cgi-bin|.*/httpd/cgi-bin)
+d:You are standing in a custom printing room. The most bizarrely designed
+d:machines are brought from miles around to work in this room. Steam
+d:prevents you seeing clearly.
+p:a custom printing room
+
+loc:(/www.*/log|.*/httpd/log|.*/apache/log)
+d:You are in the accounting room of the printers. Open ledgers can be
+d:found on elf size wooden desks. You wish the elves would write more
+d:clearly and spend less time getting drunk.
+p:a custom printing room
+
+loc:(/home/gandalf|.*/home/bsp)
+#d:You are in a disorganised room.
+p:a disorganised room
+
+loc:/opt/xirium
+d:You are not sure why this room is here. A bell rings as you open the
+d:glass door. You see an arrangement of scrolls and a quaint photocopier,
+d:which is free to use. There is a generic desk with a generic sign
+d:that says "tech@xirium.com". You see an assortment of gadgets,
+d:some unfinished. Finally, you see some bones. A wumpus has eaten the
+d:shopkeeper.
+p:a xirium office
+
+loc:(/usr/local/lib|/usr/lib)
+d:You are in a workshop. You see many interesting tools. Some are general
+d:purpose and some are for highly specialised uses.
+p:a workshop
+
+loc:(/usr/tmp|/var/tmp)
+f:darkbynight
+d:You squeeze past a tall metal gate with a notice that reads "Property
+d:left here at owners risk". You see a concrete yard with a large
+d:bin. People don'\''t come here any more, not since the machines replaced
+d:the workers.
+p:a concrete yard
+
+loc:/home
+d:This is the home of the lesser gurus and the neophytes. You see pasty
+d:people sleeping. Some have a keyboard pattern imprinted on one side of
+d:their faces. These people need to get out more.
+p:the Unix users'\'' home
+
+loc:(/usr/local/man|/usr/man)
+d:You are standing by an information kiosk. The kiosk has a curved front
+d:and is painted in white, dark green and purple. It is quite gaudy. You see
+d:many leaflets on exotic subjects. The leaflets are written in a strange,
+d:terse language, but are extensively cross referenced. No one is present,
+d:but you see a sign that says "Please take a leaflet or five".
+h:You are at
+p:an information kiosk
+
+loc:(/var/spool/mail,/var/mail)
+d:You are in an oak panel room with plush carpet. You see pigeon holes
+d:for people'\''s mail. You are curious and want to read. There are tubes to
+d:deliver mail and tubes to send mail. A mangle sits in the corner.
+p:a mail delivery room
+
+# These descriptions are actually mine (RU).
+loc:/var/cache
+f:darkbynight
+#d:You are in a haven.
+p:a haven
+
+loc:/var/cache/[^/]*
+#d:You are aboard a ship.
+h:You are aboard
+p:a ship
+
+loc:/etc/skel
+f:darkbynight
+d:You are in a boneyard. Carcasses of beasts and humanoids crack under
+d:your feet as you step on them. In the distance lies an elephant skeleton.
+p:a boneyard
+'
+}
+
+d_theme_default_obj1() {
+	echo '
+# ordinary objects
+obj:broom
+ob:It is a regular broom.
+obj:piece of soap
+ob:A piece of soap, smelling of fine flowers.
+obj:purse
+ob:It is a purse.
+obj:saddle
+ob:It is a saddle.
+obj:bridle
+ob:A bridle.
+obj:fishing net
+ob:A fishing net.
+obj:piece of rope
+ob:A long piece of rope.
+obj:quiver
+ob:A quiver.
+obj:chain
+ob:A steel chain.
+obj:hourglass
+ob:An hourglass.
+obj:fork and knife
+ob:A fork and knife.
+obj:pair of scissors
+ob:A pair of scissors.
+obj:gardening book
+ob:A book about gardening.
+obj:chest
+ob:The chest is made of solid oak, which is still in a very good condition.
+
+# musical instruments
+obj:bagpipe
+mu:This is a bagpipe.
+obj:horn
+mu:It is a horn.
+obj:mandolin
+mu:It is a mandolin.
+obj:harp
+mu:It is a harp.
+obj:flute
+mu:It is a flute.
+
+# light sources
+obj:torch
+li:A wooden torch.
+obj:bullseye lantern
+li:A bullseye lantern.
+obj:hooded lantern
+li:A hooded lantern.
+
+# backpacks
+obj:backpack
+ba:A strong leather backpack.
+obj:knapsack
+ba:An old knapsack.
+
+# food
+obj:crust
+fo:It is a crust of bread, and it looks quite wholesome.
+obj:loaf of bread
+fo:A loaf of bread.
+obj:strip of beef
+fo:A strip of beef.
+obj:fish
+fo:A dried fish.
+obj:egg
+fo:An egg.
+obj:apple
+fo:An apple.
+obj:orange
+fo:An orange.
+obj:sausage
+fo:A sausage.
+obj:piece of cheese
+fo:A piece of cheese.
+obj:lump of butter
+fo:A lump of butter.
+obj:handful of nuts
+fo:A handful of nuts.
+
+# drink
+obj:flask of cider
+dr:A flask of cider.
+obj:wineskin
+dr:A wineskin filled with sweet wine.
+obj:sack of wine
+dr:It is a leather sack with a sour wine.
+obj:bottle of ale
+dr:It is a bottle of ale.
+obj:bottle of mead
+dr:It is a bottle of mead.
+obj:bottle of beer
+dr:It is a bottle of brown beer.
+'
+}
+
+d_theme_default_obj2() {
+	echo '
+# clothing
+obj:cap
+c1:A cap.
+obj:hat
+c1:A woollen hat.
+obj:mask
+c2:A leather mask.
+obj:pair of spectacles
+c2:A pair of spectacles.
+obj:tunic
+c3:An embroidered tunic.
+obj:jacket
+c3:A jacket.
+obj:vest
+c3:A vest.
+obj:mantle
+c5:A mantle.
+obj:cape
+c5:A cape.
+obj:toga
+c5:A toga.
+obj:robe
+c5:A robe.
+obj:pair of gloves
+c6:A pair of gloves.
+obj:pair of mittens
+c6:A pair of mittens.
+obj:skirt
+c8:A skirt.
+obj:pair of pants
+c8:A pair of pants.
+obj:dress
+c8:A dress.
+obj:pair of trousers
+c8:A pair of trousers.
+obj:frock
+c8:A frock.
+obj:pair of breeches
+c8:A pair of breeches.
+obj:pair of boots
+c9:A pair of boots.
+obj:pair of shoes
+c9:A pair of shoes.
+obj:pair of sandals
+c9:A pair of sandals.
+
+# missile weapons
+obj:small dart
+o0:A throwing dart.
+obj:medium dart
+o0:A throwing dart.
+obj:large dart
+o0:A throwing dart.
+obj:throwing knife
+o0:A throwing knife.
+obj:sling
+m1:A sling.
+obj:light crossbow
+m2:A light crossbow.
+obj:heavy crossbow
+m3:A heavy crossbow.
+obj:short bow
+m4:A short bow, made by elven hand.
+obj:longbow
+m5:A light longbow, made by elven hand.
+
+# missiles
+obj:small bullet
+o1:A sling bullet.
+obj:medium bullet
+o1:A sling bullet.
+obj:large bullet
+o1:A sling bullet.
+obj:round bullet
+o1:A sling bullet.
+obj:oval bullet
+o1:A sling bullet.
+obj:small stone
+o1:A sling stone.
+obj:medium stone
+o1:A sling stone.
+obj:large stone
+o1:A sling stone.
+obj:round stone
+o1:A sling stone.
+obj:oval stone
+o1:A sling stone.
+obj:pebble
+o1:A sling stone.
+obj:blue quarrel
+o2:A light crossbow quarrel.
+obj:red quarrel
+o2:A light crossbow quarrel.
+obj:green quarrel
+o2:A light crossbow quarrel.
+obj:yellow quarrel
+o2:A light crossbow quarrel.
+obj:white quarrel
+o2:A light crossbow quarrel.
+obj:black quarrel
+o2:A light crossbow quarrel.
+obj:brown quarrel
+o3:A heavy crossbow quarrel.
+obj:purple quarrel
+o3:A heavy crossbow quarrel.
+obj:orange quarrel
+o3:A heavy crossbow quarrel.
+obj:seagreen quarrel
+o3:A heavy crossbow quarrel.
+obj:ochre quarrel
+o3:A heavy crossbow quarrel.
+obj:flight arrow
+o4:A flight arrow, for use with a short bow.
+obj:small flight arrow
+o4:A flight arrow, for use with a short bow.
+obj:medium flight arrow
+o4:A flight arrow, for use with a short bow.
+obj:large flight arrow
+o4:A flight arrow, for use with a short bow.
+obj:heavy flight arrow
+o4:A flight arrow, for use with a short bow.
+obj:sheaf arrow
+o5:A sheaf arrow, for use with a longbow.
+obj:small sheaf arrow
+o5:A sheaf arrow, for use with a longbow.
+obj:medium sheaf arrow
+o5:A sheaf arrow, for use with a longbow.
+obj:large sheaf arrow
+o5:A sheaf arrow, for use with a longbow.
+obj:light sheaf arrow
+o5:A sheaf arrow, for use with a longbow.
+'
+}
+
+d_theme_default_obj3() {
+	echo '
+# magical rings
+obj:wooden ring
+v0:A wooden ring,
+r4:carved in the liking of twigs.
+obj:ceramic ring
+v0:A ceramic ring,
+r1:painted like a cloudy sky.
+obj:feather ring
+v0:A feather ring,
+r5:made from fine dove feathers.
+obj:rainbow ring
+v0:A rainbow
+r3:ring.
+obj:shell ring
+v1:A shell ring,
+r7:which has been carved out of a large shell.
+obj:iron ring
+v1:A plain
+r5:iron ring.
+obj:silver ring
+v3:A plain
+r6:silver ring.
+obj:golden ring
+v4:A plain
+r2:golden ring.
+obj:platinum ring
+v5:A plain
+r6:platinum ring.
+obj:aquamarine ring
+v3:A silver ring,
+ri:inlaid with
+te:several small aquamarines.
+obj:opal ring
+v3:A silver ring,
+r6:inlaid with five small opals.
+obj:quartz ring
+v3:An electrum ring,
+r5:inlaid with three small pieces of quartz.
+obj:ruby ring
+v4:A golden ring,
+r9:inlaid with rubies.
+obj:amethyst ring
+v4:A golden ring,
+r3:inlaid with an amethyst.
+obj:emerald ring
+v4:A golden ring,
+r2:inlaid with a big emerald.
+obj:diamond ring
+v5:A platinum ring,
+r7:inlaid with a big diamond.
+obj:nickel ring
+v2:A finely crafted
+r6:nickel ring.
+obj:cobalt ring
+v2:An artistically shaped
+r3:cobalt ring.
+obj:tungsten ring
+v2:A tungsten ring,
+r1:shaped like an eye.
+obj:brass ring
+v3:A delicately crafted
+r9:brass ring.
+obj:titanium ring
+v3:A titanium ring,
+r8:shaped like two twisted arms.
+
+# armor
+obj:metal helmet
+a1:This is a strong, but yet light metal helmet,
+c1:in the colors of the duke of Forstinea.
+obj:helmet
+a1:It is a helmet of an unknown,
+c1:but light and strong material.
+obj:pair of gauntlets
+a1:These are black gauntlets,
+c6:wrought of hard iron.
+obj:small shield
+a1:This is a small round shield,
+c7:in the colors of the duke of Forstinea.
+obj:studded leather
+a2:Studded leather
+c4:armor.
+obj:padded leather
+a2:Padded leather
+c4:armor.
+obj:large shield
+a2:A large wooden
+c7:shield.
+obj:scale mail
+a3:Scale mail
+c4:armor.
+obj:hide armor
+a3:This is strong and thick
+c4:hide armor.
+obj:ring mail
+a3:Ring mail
+c4:armor.
+obj:chain mail
+a4:Chain mail
+c4:armor.
+obj:banded mail
+a5:Banded mail
+c4:armor.
+obj:field plate armor
+a5:Worn-out
+c4:field plate armor.
+obj:full plate armor
+a6:This full plate armor is slightly rusty, and bears an emblem of
+c4:a badger under a tree.
+'
+}
+
+d_theme_default_obj4() {
+	echo '
+# melee weapons
+obj:dagger
+w1:The dagger is made of polished steel and has a dark red leather hilt.
+obj:club
+w1:A club.
+obj:knife
+w1:A knife.
+obj:quarterstaff
+w2:A quarterstaff.
+obj:mace
+w2:A mace.
+obj:short sword
+w2:A short sword.
+obj:khopesh
+w2:A khopesh.
+obj:spear
+w2:A spear.
+obj:sword
+w3:The sword is engraved with elvish script reading Orc-slayer.
+obj:battle axe
+w3:A battle axe.
+obj:morning star
+w3:A morning star.
+obj:scimitar
+w3:A scimitar.
+obj:long sword
+w4:A long sword.
+obj:glaive
+w4:A glaive.
+obj:halberd
+w5:A halberd.
+obj:two-handed sword
+w5:A two-handed sword.
+
+# potions
+obj:amber potion
+p1:An amber potion.
+obj:yellow potion
+p1:A yellow potion.
+obj:ecru potion
+p2:An ecru potion.
+obj:green potion
+p2:A green potion.
+obj:silver potion
+p3:A silver potion.
+obj:lavender potion
+p3:A lavender potion.
+obj:azure potion
+p4:An azure potion.
+obj:pink potion
+p4:An pink potion.
+
+# rods/staves/wands
+obj:staff
+S1:The staff has
+C4:an iron knob at its end.
+obj:turtle wand
+W1:This is an electrum wand
+C6:with {chargecount} green turtle symbols on the shaft.
+obj:snake wand
+W2:A snake leather wand
+C7:with three emeralds on the shaft.
+obj:tungsten wand
+W3:This is a tungsten wand
+C3:with {chargecount} rubies inlaid in the shaft.
+
+# valuables
+obj:amber ring
+v1:The ring is made
+ri:of deep yellow amber.
+obj:bracelet
+v1:A bracelet.
+obj:beaker
+v2:A silver beaker.
+obj:lantern
+v2:A lantern.
+obj:lorgnette
+v2:A lorgnette.
+obj:hourglass
+v2:An hourglass.
+obj:brooch
+v3:A brooch.
+obj:vase
+v3:A vase.
+obj:diamond
+v3:A big diamond worth about 250 {pcurrency}.
+obj:ruby
+v3:This ruby must be worth at least 200 {pcurrency}.
+obj:chandelier
+v4:A chandelier.
+obj:painting
+v4:The painting depicts a forest scenery. Nymphs are bathing near a forest pool.
+obj:uncut amethyst
+v4:An uncut amethyst, which just might be worth quite a lot.
+obj:necklace
+v5:An electrum necklace with a crystal pendant in the shape of a sparrow.
+'
+}
+
+d_theme_default_npc() {
+	echo '
+# npcs
+#npc:tweedle "Tweedledum and Tweedledee" / p 2 7 2
+npc:troll "hideous night troll" /opt mo 17 3 6
+npc:anson "Anson the hobbit" /home m 6 9 8
+Anson is a sturdy fellow with an appetite for meat sandwiches.
+npc:lizard "lizard man" /usr/local/man mo 12 3 5
+npc:dragon "green dragon" /proc no 50 0 1
+npc:witches "three witches Anastasia, Annabella and Amelia" /dev p 4 4 4
+Anastasia, Annabella and Amelia are sisters, and joined the order
+of witches together, now forty years ago.
+npc:rosie "Rosie Larkbottle" /var/spool f 3 7 6
+npc:orc orc /usr/lib m 10 2 6 # no monster status, this is a talking orc
+npc:edrion "Edrion the illusionist" /usr m 5 5 6
+Edrion is dressed in black and yellow.
+'
+}
+
+############################################################################
+# main
+
+d_welcome
+d_initplay
+d_play "$@"
+
+return 0
+
+############################################################################
+# documentation
+
+# the : trick requires that care must be taken
+# with single quotes in the pod text
+
+: '
+=pod
+
+=head1 NAME
+
+C<nadvsh> - New adventure shell
+
+=head1 SYNOPSIS
+
+C<. nadvsh [ -noplay ] [ -safe | -nosafe ]>
+
+C<         [ -strict | -semistrict | -nostrict ]>
+
+=head1 DESCRIPTION
+
+C<nadvsh> is the new adventure shell. It is a shell extension that makes
+your shell environment act like a text adventure game. It features objects
+which you may take with you in your backpack, and which you may use;
+interaction with other users; and non-player characters (NPC`s), which
+may either be helpful or a nuisance. Theme files may be loaded in order
+to set up a specific environment with matching objects and NPC`s.
+
+=head1 OPTIONS
+
+The C<-strict>, C<-semistrict> and C<-nosafe> options make the shell
+behave as if a corresponding B<play [semi]strict> or B<play nosafe>
+command had been given. B<nostrict> and B<safe> are the defaults (see
+below under B<COMMANDS>).
+
+The C<-noplay> option causes the shell to read all the required
+definitions, but to not engage in playing yet.
+
+=head1 COMMANDS
+
+=head2 Movement and location-related commands
+
+In the following commands, I<location> denotes a valid directory.
+
+The commands B<north>, B<down> etc. are intended for dedicated adventure
+directory hierarchies.
+
+=over 4
+
+=item B<cd> I<location>
+
+B<cd> is aliased to a function when the user has engaged in the adventure.
+
+=item B<close> I<location>
+
+See B<open>.
+
+=item B<desc[ribe]>
+
+Redescribes the current location.
+
+=item B<down>, B<d>
+
+Go down, if there is a subdirectory with that name.
+
+=item B<east>, B<e>
+
+Go east, if there is a subdirectory with that name.
+
+=item B<enter> I<location>
+
+Identical to B<cd>.
+
+=item B<go> I<location>
+
+Identical to B<cd>; additionally, B<go back> is identical to B<cd ..>
+
+=item B<leave>
+
+Identical to B<cd ..>
+
+=item B<lock> I<location>
+
+See B<open>.
+
+=item B<lo[ok] [ hard | [in]to> I<location> B<]>
+
+Look around in the current location, or in another location.
+
+=item B<open> I<location>
+
+B<open, close, lock> and B<unlock> set permissions to restrictive or
+permissive. In filesystem terms, this means:
+
+    open:	go+rwX
+    unlock:	go+rX
+    close:	go-w
+    lock:	go-rwx
+
+where X is a conditional x.  Like in real life, lock implies close, open
+implies unlock, and a location may be unlocked and closed at the same time.
+
+=item B<north>, B<n>
+
+Go north, if there is a subdirectory with that name.
+
+=item B<northeast>, B<ne>
+
+Go northeast, if there is a subdirectory with that name.
+
+=item B<northwest>, B<nw>
+
+Go northwest, if there is a subdirectory with that name.
+
+=item B<south>, B<s>
+
+Go south, if there is a subdirectory with that name.
+
+=item B<southeast>, B<se>
+
+Go southeast, if there is a subdirectory with that name.
+
+=item B<southwest>, B<sw>
+
+Go southwest, if there is a subdirectory with that name.
+
+
+Identical to B<southwest>.
+
+=item B<unlock> I<location>
+
+See B<open>.
+
+=item B<up>, B<u>
+
+Go up, if there is a subdirectory with that name.
+
+=item B<west>, B<w>
+
+Go west, if there is a subdirectory with that name.
+
+=back
+
+=head2 Object-related commands
+
+Note that if an object name is required, and the object name contains
+spaces, the spaces (or the entire object name) should be quoted.
+
+=over 4
+
+=item B<buy> I<object_class> B<[ as> I<object_name> B< ] [ for> I<amount> B<]>
+
+Buy an object (probably equipment) from the specified object class. You may
+buy an object and specify a distinct name for it at the same time using
+B<as>. Your bid (specified using B<for>) determines which quality you will get.
+
+Allowed object classes are: B<weapon>, B<'missile weapon'>, B<missile>,
+B<armor>, B<helmet>, B<shield>, B<clothing>, B<backpack>, B<food>,
+B<drink>, or B<object> for an ordinary item (for which the name should be
+specified). For user-friendliness, the object class name B<sword> is also
+supported, as well as the use of a miscellaneous object name instead of
+B<object>. The use of B<sword> is discouraged.
+
+Examples using object class:
+
+    buy 'missile weapon'
+    buy armor for 60
+    buy food as 'emmenthaler cheese'
+    buy drink as 'some milk' for 2
+    buy weapon as 'orc slayer' for 40
+    buy object as 'handpainted teapot'
+
+Examples using object names:
+
+    buy sword as 'dragon killer' for 30
+    buy 'handpainted teapot'
+
+=item B<destroy> I<object>
+
+Destroy an object that you are carrying.
+
+=item B<don> I<object>
+
+Identical to B<wear>.
+
+=item B<drink> I<object>
+
+Drink something. This will usually strengthen you.
+
+=item B<drop> I<object> B<[ as> I<object_name> B<] |> I<amount> I<currency>
+
+Take an object or money out of your backpack and drop it. An object may be
+given a new name at the same time. File permissions must allow the action.
+Money that is dropped changes into a I<money object>. Picking it
+up will retransform it into real money (should this fail, then use the
+B<sell> command to cash in the money object).
+
+Note the difference between:
+
+    drop '10 florins'
+
+which will drop an object (probably a money object), and:
+
+    drop 10 florins
+
+which will drop some of your money in the form of a money object.
+
+=item B<eat> I<object>
+
+Eat something. This will usually strengthen you.
+
+=item B<exam[ine]> I<object>
+
+Displays the specified file. Files representing objects should contain their
+description. See B<FILES> below.
+
+=item B<inv[entory]>
+
+Displays the contents of your backpack, the items you are wearing and wielding,
+and your current amount of money.
+
+=item B<get> I<object> B<[ as> I<object_name> B<]>
+
+Identical to B<take>.
+
+=item B<lo[ok] at> I<object>
+
+Identical to B<examine>.
+
+=item B<put [ away ]> I<object>
+
+Identical to B<stow away>.
+
+=item B<put on> I<object>
+
+Identical to B<wear>.
+
+=item B<quaff> I<object>
+
+Drink a potion. Effects may be beneficial or harmful. (Not implemented)
+
+=item B<rename> I<object> B<to> I<object>
+
+Give an object a new name. You must be carrying it.
+
+=item B<sell> I<object>
+
+Sell an object of your inventory (probably something valuable). You may
+accept or reject the amount offered.
+
+Also, if you somehow get stuck with a money object in your inventory,
+you may cash it in with the B<sell> command.
+
+=item B<stow [ away ]> I<object>
+
+Put an object which you are using in your backpack. Opposite of B<wear>
+and B<wield>.
+
+=item B<take> I<object> B<[ as> I<object_name> B<]>
+
+Pick up a portable object and put it in your backpack. The object may be
+renamed at the same time, e.g. if you are already carrying another object
+of the same type. File permissions must allow the action. If the object
+is a valid I<money object>, it will not be picked up; instead, the amount
+will be added to your money.
+
+=item B<take off> I<object>
+
+Identical to B<stow away>.
+
+=item B<unwear> I<object>
+
+Take off clothing. Identical to B<stow away>.
+
+=item B<unwield> I<object>
+
+Identical to B<stow away>.
+
+=item B<use> I<object>
+
+Fire a wand or read a scroll. (Not implemented)
+
+=item B<wear> I<object>
+
+Wear clothing, armor or ring. Opposite of B<stow away>. You may only
+combine items of clothing if they belong to different clothing types
+(see B<Object classes> below). You may wear at most two rings at any time
+(one on every hand).
+
+=item B<wield> I<object>
+
+Select your preferred weapon, or use a lightsource. Opposite of B<stow away>.
+You may wield at most two weapons at any time (one in each hand).
+
+=back
+
+=head2 Person-related commands
+
+=over 4
+
+=item B<emote> I<sentence>
+
+Describe an action you are performing to the players in the same location
+(i.e. users that share the same current working directory). The sentence
+should be formulated without a subject, and in the third person.
+
+Example:
+
+The command:
+
+    emote smiles.
+
+produces on the terminals of the users who are present in the same
+location:
+
+    <Your username> smiles.
+
+=item B<exam[ine]> I<person>
+
+Examine a person (user or NPC).
+
+=item B<fight> I<NPC> B<[ with> I<object> B<]>
+
+Identical to B<kill>.
+
+=item B<give> I<person> I<object>
+
+=item B<give> I<object> B<to> I<person>
+
+Put an item in another person`s backpack, if allowed.
+
+=item B<inv[entory]> I<person>
+
+Displays the contents of I<person>`s backpack. If the person is a user,
+also displays the items the user is wearing and wielding.
+
+=item B<kill> I<NPC> B<[ with> I<object> B<] |> I<pid>
+
+Fight an NPC, or kill a process. You may specify any weapon in your
+possession, even if you are not wielding it. By default, you will attack
+with the best weapon you are wielding. Killing other users has not
+(yet?) been implemented.
+
+=item B<lo[ok] at> I<person>
+
+Identical to B<examine>.
+
+=item B<say to> I<person> I<sentence>
+
+=item B<say> I<'sentence'> B<to> I<person>
+
+Identical to B<tell>.
+
+=item B<shout> I<'sentence'>
+
+Shout (using wall(1)) a message to all users currently logged in.
+
+=item B<steal> I<object> B<from> I<person>
+
+=item B<steal> B<from> I<person> I<object>
+
+Try to take an item from another person`s backpack, if allowed.
+
+=item B<talk [to]> I<person> B<[> I<ttyname> B<]>
+
+Simple wrapper for talk(1).
+
+=item B<tell> I<'sentence'> B<to> I<person>
+
+=item B<tell to> I<person> I<'sentence'>
+
+write(1) a message to another user.
+
+=item B<where [> I<person> B<]>
+
+Tells the whereabouts of the non-player characters.
+
+=back
+
+=head2 Miscellaneous commands
+
+=over 4
+
+=item B<cal>
+
+If invoked with no arguments, displays J.R.R. Tolkien`s Shire calendar.
+See also B<date>.
+
+=item B<colors [ nocolor | . |> I<colorname> B<|> I<escape_codes> B<]>
+B<[ nocolor | . |> I<colorname> B<|> I<escape_codes> B<]>
+
+Select colors to be used in the prompt string (B<PS1>) and in location
+descriptions. You may specify B<.> which leaves the color unchanged,
+B<nocolor> to suppress the use of color, a I<colorname> from the set
+B<black, blue, red, magenta, green, cyan, yellow> or B<white>, or an
+escape sequence, e.g.:
+
+	colors . `tput smul`
+
+Note that in the Korn shell, escape codes in the prompt string would mess
+up the command line being edited; therefore, prompt coloring is never used
+in ksh.
+
+=item B<currency [> I<currency_unit_plur> B<[> I<currency_unit_sing> B<] ]>
+
+=item B<currency [> I<currency_unit_plur>B</>I<currency_unit_sing> B<]>
+
+If the currency of the land has changed, you may specify the name of the
+new currency, e.g. 'gold pieces', 'cubits' or even 'patiwani shells'.
+
+If the singular form of the currency is not identical to the plural form
+with the final 's' removed, the singular form may be specified as an
+optional second argument. Example: B<currency markoi marko>
+
+It is also allowed to specify the plural and singular forms in one
+argument, separated by a slash. Example: B<currency markoi/marko>
+
+Without arguments, the command will print the current currency unit. See
+also B<ENVIRONMENT> below.
+
+=item B<date>
+
+B<date> will print the Shire date, if perl(1) and Date::Tolkien::Shire have
+been installed (available on CPAN). See also B<cal>.
+
+=item B<debug> I<command> B<[> I<args ...> B<]>
+
+Run I<command> in `set -x` mode.  Primarily used for debugging, as you
+might have guessed.
+
+=item B<help>
+
+Provides concise help on valid commands.
+
+=item B<nocolors>
+
+Turns all color use off.
+
+=item B<noplay>
+
+Disengage from playing.
+
+=item B<play [ [semi|no]strict ] [ [no]safe ]>
+
+Engage in playing. Variables are not reinitialized.
+
+The B<semistrict> option will disallow any B<cd> to a directory with a
+slash B</> in the name. The B<strict> option will additionally disallow
+any B<cd> to the parent directory. In this way, a pre-setup directory
+tree can be turned into a closed world. Symbolic links to directories
+may be used to create exits from locations with no subdirectories.
+Additionally, B<strict> will prevent the current working directory from
+being shown in the prompt string (B<PS1>), when there is a description
+present. B<nostrict> will impose none of these restrictions.
+
+The B<nosafe> option will allow evaluation of commands specified in a
+local F<.nadvsh> file (see below under B<FILES>). This could be a
+security problem, therefore, the default is B<safe>.
+
+=item B<quit>
+
+Prints your score, then exits the adventure, cleaning up all variables,
+functions and aliases. Your Unix shell will not exit.
+
+=item B<replay [ [semi|no]strict ] [ [no]safe ]>
+
+Restart playing (reinitialize variables). B<replay> will require C<nadvsh>
+to be in the user`s B<PATH>. See also B<play> for the use of the B<strict>
+options.
+
+=item B<score>
+
+Displays the user`s score, strength and money. Experience points are received
+for visiting locations, fighting monsters and collecting (valuable) objects.
+
+=item B<theme [ default | new> I<file> B<| [add]> I<file> B<| write> I<file> B<]>
+
+Read in the theme file specified. B<default> is used to specify the
+built-in theme. The B<new> option may be used to discard all existing
+location descriptions. With the B<add> option (default) the new
+descriptions will be added to those already in memory. The B<write> option
+will write out a new theme file (not implemented).
+
+When C<nadvsh> starts up, a default (builtin) theme is loaded. This
+theme may be overruled by a theme file indicated by the environment
+variable B<NADVSH_THEME>.
+
+=item B<sleep>
+
+Sleep in order to regain strength. NPC`s may move while you are sleeping.
+
+=item B<wait [> I<jobid> B<]>
+
+Allows other users and non-player characters to make a move.  If a jobid
+is specified, then it also wait(2)s for the child process to end.
+
+=back
+
+=head1 INDEPENDENT ACTION
+
+Non-player characters may act in ways that are not dependent on your actions.
+They will, however, I<not> drop objects when you are not around, to prevent
+filesystem pollution; and they will I<not> take objects from directories,
+to prevent non-object files being picked up by mistake.
+
+=head1 ENVIRONMENT
+
+=over 4
+
+=item B<PAGER>
+
+Identifies the pager with which to view text files. Defaults to less(1)
+for Linux systems or more(1) for Unix systems.
+
+=item B<NADVSH_CURRENCY>
+
+The name of your favorite currency, in plural, optionally followed by
+a slash and the singular form. See also the B<currency> command.
+
+=item B<NADVSH_DESCCOLOR>
+
+Specifies whether color should be used for the location descriptions,
+and which one. Normally C<nadvsh> tries to figure out if color is
+supported. You may override this check and force or suppress the use
+of color.
+
+Valid values are: B<nocolor> to suppress color, or a I<colorname> or
+escape sequence as specified under the B<colors> command (see above).
+
+=item B<NADVSH_PS1COLOR>
+
+As B<NADVSH_DESCCOLOR>, but used for color in the prompt string (B<PS1>).
+
+=item B<NADVSH_THEME>
+
+Specifies which theme file should be loaded at startup instead of the
+default (builtin) theme.
+
+=back
+
+=head1 FILES
+
+=head2 Backpack files
+
+The directory F<$HOME/.nadvbackpack/> is the implementation of your
+backpack.  You may choose to set the mode to very permissive, in order to
+allow other users to put things in your backpack or steal from you. This
+is, however, not recommended if you plan to take non-adventure files in
+your backpack.
+
+The directory F<$HOME/.nadvwield/> is the implementation of the
+collection of weapons you are wielding, armor, clothes and rings you are
+wearing, and the wands and lightsource you are wielding.
+
+Non-player characters have their home in F</var/tmp/nadvsh> (or
+F</var/nadvsh>, if set up by the super-user). Their backpacks are found
+in subdirectories below there, e.g. F</var/tmp/nadvsh/edrion/.nadvbackpack>.
+
+=head2 Location description files
+
+In any directory, a file F<.nadvsh> may be created with a description of
+the location. These files are parsed line-by-line. There are several line
+types, each of which starts with a specific marker:
+
+=over 4
+
+=item B<d:>
+
+Lines starting with B<d:> are supposed to contain the long location
+description. All B<d:> descriptions are printed, with no newlines
+between them.
+
+=item B<f:>
+
+Optional B<f:> lines contain location flags, separated by colons.
+Flags in multiple B<f:> lines are cumulative. The following flags are
+supported (only those marked with a B<+> have been implemented):
+
+  + underwater        + dark
+    surfacedeep       + darkbynight (e.g. outdoors)
+    surfaceshallow    + obscured (e.g. misty or raining)
+    nogravity           hot
+  + noair               cold
+    foulair           + radiation
+
+Restriction: flags that concern vision, like B<dark>, B<darkbynight> and
+B<obscured> should be placed I<before> the description of the location,
+because the description is displayed while the file is parsed.
+
+=item B<p:>
+
+Lines starting with B<p:> contain the short description (to be used in
+the prompt, and in the description given in response to the B<look into>
+command). The short description should fit on one line and should not
+end with a full stop. Multiple B<p:> lines are concatenated with spaces
+between them.
+
+=item B<h:>
+
+If the short location description requires a different intro than
+'You are in', you may specify a custom intro with the B<h:> (head)
+option. Multiple B<h:> lines are concatenated with spaces between them.
+
+=item B<e:>
+
+Optionally, B<e:> lines may be included. These may be eval()-ed by
+the shell.  This gives the writer an opportunity to interact with the
+adventure variables and functions. A description file may contain multiple
+B<e:> lines, and these may be intermixed with e.g. B<d:> lines.
+
+B<e:> lines may be a security problem. Therefore, they are evaluated only
+if the following criteria are met:
+
+=over 4
+
+=item *
+
+Both the F<.nadvsh> file and the current directory are owned by either
+the current user or root, and are only writable by the owner.
+
+=item *
+
+The script runs in B<nosafe> mode (default: B<safe>), this can be changed
+with the command B<play [no]safe>
+
+=item *
+
+The current working directory matches the regular expression specified
+by the B<d_mode_safe_dirs> variable (default value: C<^$HOME($|/)> )
+
+=back
+
+If the file and directory permissions and ownership are correct, but
+the script is running in B<safe> mode or the directory is not included
+in B<d_mode_safe_dirs>, the string B<(..)> will be appended to the location
+description, to indicate that additional information was available.
+
+=item B<r:>
+
+I<Repetitive eval()> lines are not evaluated when the location is being
+described, but instead before every prompt. The restrictions applicable
+for B<e:> lines also hold for B<r:> lines. Multiple B<r:> lines are
+allowed, and will be executed in the order specified.
+
+=back
+
+In the following examples, the text in the B<e:> and B<r:> lines is
+supposed to occupy only one line.
+
+B<Example 1>
+
+    d:You are in a laboratory with many erlenmeyer flasks,
+    d:round-bottom flasks and a destillation apparatus.
+    p:a laboratory
+    e:test $(($RANDOM % 2)) -eq 0 && d_wrap_noeol "A whisp of
+	smoke rises from a nearby beaker."
+
+B<Example 2>
+
+    d:You are on the bridge. There is a large holographic
+    d:projection screen on one wall, depicting the asteroid
+    d:belt outside.
+    e:test -z "$d_captain_awake" &&
+	d_wrap_noeol "The captain has fallen asleep near
+	the communications panel and snores quietly."
+    h:You are on
+    p:the bridge
+    f:nogravity
+    r:if [ -z "$d_captain_awake" -a $(($RANDOM % 4)) -eq 0 ];
+	then d_captain_awake=1; d_wrap "The captain wakes up."; fi
+
+=head2 Object files
+
+Object files are plain text files containing a description of the object.
+They also must be I<marked> as being an object, which means they should
+contain at least one line starting with an I<object class marker>. These
+markers consist of an alphabetic character, an alphanumeric character,
+and a colon.
+
+The description that follows the colon MUST immediately start with an
+alphanumeric character. This restriction was imposed to minimize the
+chance of finding a 'false positive' when checking a file (e.g. a tar file)
+on its object status. For the same reason, and for performance reasons,
+there is a maximum size to an object file, currently 2000 bytes.
+
+In any description, the character sequence C<{pcurrency}> may be used instead
+of a specific currency name. This I<currency marker> will be replaced by
+the favorite currency of the player, when he/she examines it. Likewise,
+C<{scurrency}> will be replaced by the singular form of the currency.
+
+Furthermore, objects that are charged (wands a.o.) may contain the character
+sequence C<{chargecount}> in the description, which will be replaced with
+the chargecount (in English).
+
+B<Example 3>
+
+    fo:It is a crust of bread, and it looks quite wholesome.
+
+The crust is of class B<fo> (food). The marker makes the object edible
+for the 'eat' command.
+
+B<Example 4>
+
+    w1:The dagger is made of polished steel and
+    has a dark leather hilt.
+
+The dagger is a class B<w1> object, in this case, a weapon with attack
+value +1. The example also shows a line which does not begin with a
+marker.
+
+B<Example 5>
+
+    a1:This is a strong, but yet light metal helmet,
+    c1:in the colors of the duke of Forstinea.
+
+This item is armor which has +1 defensive value (B<a1> = class 'armor/+1')
+and which should be worn as a helmet (B<c0> = class 'clothing/helmet').
+All armor objects should have an armor marker and a clothing marker. See
+the clothing types in the table below.
+
+B<Example 6>
+
+    mo:12 {pcurrency}.
+
+This is a money object, representing 12 currency units. This example
+demonstrates the use of C<{pcurrency}>.
+
+B<Example (wrong)>
+
+    ri:An aquamarine ring radiating a soft bluish light.
+    li:
+
+The problem with this object is that the class marker B<li> (light source)
+is not followed with an alphanumeric character. Therefore, it does not count
+as a class marker. The solution is to break up the existing description
+across the two lines.
+
+=head2 Object classes
+
+  class description
+  -----	-----------
+  w1	melee weapon (+1 strength) (dagger, knife, club)
+  w2	melee weapon (+2 strength) (quarterstaff, mace,
+                                    short sword, spear)
+  w3	melee weapon (+3 strength) (battle axe, scimitar)
+  w4	melee weapon (+4 strength) (polearms, long sword)
+  w5	melee weapon (+5 strength) (halberd, two-handed sword)
+  --	--
+  m0	firing weapon (rifle, arquebus, (laser) gun) (Not implemented)
+  m1	missile weapon (o1 type missile) (sling)
+  m2	missile weapon (o2 type missile) (light crossbow)
+  m3	missile weapon (o3 type missile) (heavy crossbow)
+  m4	missile weapon (o4 type missile) (short bow)
+  m5	missile weapon (o5 type missile) (long bow)
+  --	--
+  o0	missile weapon (+1 strength) (dart, knife)
+  o1	missile (+1 strength) (bullet)
+  o2	missile (+2 strength) (light quarrel)
+  o3	missile (+3 strength) (heavy quarrel)
+  o4	missile (+4 strength) (flight arrow)
+  o5	missile (+5 strength) (sheaf arrow)
+
+  class description
+  -----	-----------
+  a1	armor (+1 defense) (helmet, gauntlets, small shield)
+  a2	armor (+2 defense) (padded or studded leather, large shield)
+  a3	armor (+3 defense) (scale mail, ring mail)
+  a4	armor (+4 defense) (chain mail)
+  a5	armor (+5 defense) (banded mail)
+  a6	armor (+6 defense) (field plate armor)
+
+  class description
+  -----	-----------
+  c1	clothing or armor worn on head (hat, cap, helmet)
+  c2	clothing          worn on face (mask, glasses, goggles)
+  c3	clothing          worn on upper body (jacket, vest, tunic)
+  c4	            armor worn over upper body (chain mail,
+  						bullet-proof vest)
+  c5	clothing          worn over entire body (mantle, cape, robe)
+  c6	clothing or armor worn on hands (gloves, gauntlets)
+  c7	            armor held in hands (shield)
+  c8	clothing          worn on lower body (skirt, pants, trousers)
+  c9	clothing          worn on feet (shoes, boots)
+
+  class description
+  -----	-----------
+  v0	valuable object (     0-    10 gp)
+  v1	valuable object (    10-    30 gp) (10 xp)
+  v2	valuable object (    30-   100 gp) (20 xp)
+  v3	valuable object (   100-   300 gp) (30 xp)
+  v4	valuable object (   300-  1000 gp) (40 xp)
+  v5	valuable object (  1000-  3000 gp) (50 xp)
+  v6	valuable object (  3000- 10000 gp) (60 xp)
+  v7	valuable object ( 10000- 30000 gp) (70 xp)
+  v8	valuable object ( 30000-100000 gp) (80 xp)
+  v9	valuable object (100000+       gp) (90 xp)
+  --	--
+  C#	charge count (# = nr. of charges, in range 0-9)
+  D#	device       (# = type, in range 0-9)
+  R#	rod          (# = type, in range 0-9)
+  S#	staff        (# = type, in range 0-9)
+  W#	wand         (# = type, in range 0-9)
+  p#	potion       (# = type, in range 0-9)
+  r#	magical ring (# = type, in range 0-9)
+  s#	scroll       (# = type, in range 0-9)
+
+  class description
+  -----	-----------
+  ba	backpack
+  dr	drink
+  fo	food
+  li	light source
+  mo	money
+  mu	musical instrument
+  ri	non-magical ring
+  sc	scuba gear
+  te	teleporter
+  --	--
+  ob	ordinary portable object
+  nh	ordinary non-portable object (too heavy to carry)
+  nf	ordinary non-portable object (fixed to wall, floor, ...)
+
+Other object classes are under development.
+
+=head2 Theme files
+
+Theme files may contain descriptions of locations, objects and non-player
+characters. Theme files do not contain information about the whereabouts
+of objects. For specifications of object and location descriptions,
+see the descriptions under the respective headings in this man page.
+Theme files are read in by the B<theme> command.
+
+Records in a theme file may (and usually will) occupy multiple lines, and
+start with a line indicating the record type. There is no record separator:
+records start at a line beginning with the record marker. The following
+types of records exist:
+
+=over 4
+
+=item B<loc:>
+
+A line beginning with B<loc:> specifies (as an anchored regular expression
+after the colon) a location (directory) which is described in the
+following lines. The description may span multiple lines.
+
+Also, when a location description file (F<.nadvsh>) is read in as a
+theme file, an B<loc:> line is implicitly created, and the file is read
+in as if it were part of a theme file.
+
+=item B<obj:>
+
+This kind of record specifies an object. The B<obj:> line should contain the
+item name, and the lines following should contain the object description
+(together with the object class markers). The description may span
+multiple lines.
+
+=item B<npc:>
+
+Specifies a non-player character. After the B<npc:> marker, the line must
+contain space-separated fields with data about the character. The fields
+may be quoted when they contain spaces.
+
+=over 4
+
+=item *
+
+short name
+
+=item *
+
+long name
+
+=item *
+
+starting directory
+
+=item *
+
+gender 
+
+Indicated by a single lowercase letter: B<m>ale, B<f>emale, B<n>euter,
+B<p>lural, or B<s>ingular (if the gender is unknown; not recommended). The
+gender specification may also be used to indicate whether the NPC
+is considered a 'monster', by adding an B<o> to the gender string,
+e.g. B<mo> for an orc or B<fo> for a harpy. Monsters do not talk and
+they don`t have backpacks.
+
+=item *
+
+strength
+
+Normally in the range 1-10, except for extreme monsters such as dragons a.o.
+
+=item *
+
+charm
+
+Charm determines how inclined the NPC is to obey your requests. Normally
+in the range 1-10. (Not implemented)
+
+=item *
+
+dexterity
+
+This determines a.o. how apt the NPC is at stealing. Normally in
+the range 1-10.
+
+=back
+
+Following the B<npc:> data line, there may be (multiple) lines containing
+a description of the character.
+
+=back
+
+B<Example 7>
+
+    loc:/home/rene/newadventure/curve
+    f:darkbynight
+    d:The road curves to the east here.
+    d:Cows graze calmly as you walk by.
+    h:You have come to
+    p:a curve in the road
+    e:if [ $d_pc_strength -lt 5 ]; then d_wrap_noeol "The mere
+	sight of the cows brings comfort to your heart.";
+	let d_pc_strength+=1; fi
+    obj:tungsten wand
+    W3:This is a tungsten wand
+    h3:with {chargecount} rubies
+    inlaid in the shaft.
+    npc:bobo 'Bobo Rockbiter' /home/rene/bobo m 6 8 10
+    Bobo is quite tall, even for a Fallohide, and has red curly hair.
+    npc:droid droid /usr/lib n 20 0 0
+    The droid does not react to your presence at all, and
+    continues performing system checks.
+
+=head1 BUGS and WARNINGS
+
+Portability is probably not optimal. Not all Un*xes have been tested.
+
+Two C<nadvsh> shells run by the same user are I<not> independent. In
+particular, they share the backpack directories for the user and NPC`s.
+
+Two C<nadvsh> shells run by different users are not independent either:
+they share the NPC`s backpack directories.
+
+The script makes a number of "sanity assumptions", and therefore it does
+not try to modify e.g. B<PATH>, B<HOME>, or the current B<nounset> mode
+(B<set -u>).
+
+There are plenty opportunities for cheating. This, however, cannot be
+avoided in an implementation such as this.
+
+The default theme does not provide a consistent adventure (the objects
+and location descriptions are from a different "setting" (medieval vs.
+contemporary)). This will be fixed later.
+
+=head1 PORTABILITY
+
+C<nadvsh> has been tested on:
+
+=over 4
+
+=item Linux 2.4.19-pre6 / pdksh-5.2.14-13
+
+=item Linux 2.4.19-pre6 / bash-2.05a-13
+
+=item Linux 2.4.19-pre6 / zsh-4.0.2-2
+
+=item AIX 4.3 / ksh
+
+=item AIX 4.3 / bash-2.01.0 (1)-release
+
+=item HP-UX 11.11 / ksh
+
+=item HP-UX 11.11 / bash-2.05b.0 (1)-release
+
+Note: C<bash-2.05.0 (2)-release> segfaults when sourcing the script.
+This seems to be caused by large multiline string constants.
+
+=item SunOS 5.6 / ksh
+
+=item SunOS 5.8 / ksh
+
+=back
+
+=head1 VERSION
+
+This manual pertains to C<nadvsh> version 1.85.3 .
+
+=head1 SEE ALSO
+
+The manual pages for ksh(1), bash(1) and zsh(1).
+
+=head1 AUTHOR and INSPIRATION
+
+Written by RenE<eacute> Uittenbogaard (feedback, comments, bug reports
+to: ruittenb@users.sourceforge.net).  Location descriptions were taken
+from the mud-shell (see below), with kind permission from the author,
+Dean Swift.
+
+C<nadvsh> was inspired by the following original 'adventure' shells:
+
+=over 4
+
+=item B<advshell>
+
+in Bourne Shell script, by Doug Gwyn (February 1984)
+http://www.ifarchive.org/if-archive/shells/
+
+=item B<advsh>
+
+in C, by John Coker (April 1984)
+http://www.ifarchive.org/if-archive/shells/
+
+=item B<mud-shell>
+
+in Perl, by Dean "Gandalf" Swift (March 2001)
+http://www.xirium.com/tech/mud-shell/
+
+=back
+
+=head1 COPYRIGHT
+
+This program is free software; you can redistribute it and/or modify it
+under the terms described by the GNU General Public License version 2.
+
+C<nadvsh> is distributed without any warranty, even without the implied
+warranties of merchantability or fitness for a particular purpose.
+
+=cut
+'
+
+# vim: set ai:
+

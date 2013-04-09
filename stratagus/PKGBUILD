@@ -1,0 +1,34 @@
+# Contributor: Angelo Theodorou <encelo@users.sourceforge.net>
+pkgname=stratagus
+pkgver=2.2.7
+pkgrel=2
+pkgdesc="A free cross-platform real-time strategy gaming engine"
+arch=('i686' 'x86_64')
+url="https://launchpad.net/stratagus"
+license=('GPL')
+depends=('gcc-libs' 'libgl' 'sdl' 'libpng' 'libmng' 'libvorbis' 'libtheora' 'libmikmod' 'lua51' 'sqlite')
+makedepends=('cmake' 'toluapp')
+changelog=stratagus.changelog
+source=(http://launchpad.net/stratagus/trunk/$pkgver/+download/stratagus_$pkgver.orig.tar.gz stratagus-lua52.patch)
+md5sums=('48181bf0234d0a2ee4b0e08ae1841477'
+         'de2f0a49b0b43c40c18f559e00cca5b2')
+
+
+build() {
+  cd $srcdir
+  mkdir -p build
+  cd build
+  cmake ../${pkgname}_$pkgver.orig \
+  -DCMAKE_BUILD_TYPE=Release \
+  -DCMAKE_INSTALL_PREFIX=/usr -DGAMEDIR=/usr/bin -DLUA_INCLUDE_DIR=/usr/include/lua5.1
+
+  make || return 1
+
+  mkdir -p ${pkgdir}/usr/include
+  cp ${srcdir}/${pkgname}_$pkgver.orig/gameheaders/stratagus-game-launcher.h ${pkgdir}/usr/include
+}
+
+package() {
+  cd "${srcdir}"/build
+  make DESTDIR="${pkgdir}" install
+}

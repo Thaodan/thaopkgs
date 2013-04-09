@@ -1,0 +1,2125 @@
+diff -Naur stratagus-2.2.4.orig/src/ai/ai.cpp stratagus-2.2.4/src/ai/ai.cpp
+--- stratagus-2.2.4.orig/src/ai/ai.cpp	2006-12-17 19:21:14.000000000 +0100
++++ stratagus-2.2.4/src/ai/ai.cpp	2012-05-02 14:36:13.012988663 +0200
+@@ -179,7 +179,11 @@
+ 
+ 	if (!pai->Script.empty()) {
+ 		lua_pushstring(Lua, "_ai_scripts_");
++#if LUA_VERSION_NUM > 501
++		lua_getglobal(Lua, "_ai_scripts_");
++#else
+ 		lua_gettable(Lua, LUA_GLOBALSINDEX);
++#endif
+ 		lua_pushstring(Lua, pai->Script.c_str());
+ 		lua_rawget(Lua, -2);
+ 		LuaCall(0, 1);
+diff -Naur stratagus-2.2.4.orig/src/ai/script_ai.cpp stratagus-2.2.4/src/ai/script_ai.cpp
+--- stratagus-2.2.4.orig/src/ai/script_ai.cpp	2007-01-08 03:28:27.000000000 +0100
++++ stratagus-2.2.4/src/ai/script_ai.cpp	2012-05-02 14:37:50.694767470 +0200
+@@ -264,7 +264,11 @@
+ 		if (!lua_istable(l, j + 1)) {
+ 			LuaError(l, "incorrect argument");
+ 		}
++#if LUA_VERSION_NUM > 501
++		subargs = lua_rawlen(l, j + 1);
++#else
+ 		subargs = luaL_getn(l, j + 1);
++#endif
+ 		k = 0;
+ 		lua_rawgeti(l, j + 1, k + 1);
+ 		value = LuaToString(l, -1);
+@@ -383,14 +387,26 @@
+ 	// AI Script
+ 	//
+ 	lua_pushstring(l, "_ai_scripts_");
++#if LUA_VERSION_NUM > 501
++	lua_getglobal(l, "_ai_scripts_");
++#else
+ 	lua_gettable(l, LUA_GLOBALSINDEX);
++#endif
+ 	if (lua_isnil(l, -1)) {
+ 		lua_pop(l, 1);
+ 		lua_pushstring(l, "_ai_scripts_");
+ 		lua_newtable(l);
++#if LUA_VERSION_NUM > 501
++		lua_setglobal(l, "_ai_scripts_");
++#else
+ 		lua_settable(l, LUA_GLOBALSINDEX);
++#endif
+ 		lua_pushstring(l, "_ai_scripts_");
++#if LUA_VERSION_NUM > 501
++		lua_getglobal(l, "_ai_scripts_");
++#else
+ 		lua_gettable(l, LUA_GLOBALSINDEX);
++#endif
+ 	}
+ 	aitype->Script = aitype->Name + aitype->Race + aitype->Class;
+ 	lua_pushstring(l, aitype->Script.c_str());
+@@ -710,7 +726,11 @@
+ 		LuaError(l, "Force out of range: %d" _C_ force);
+ 	}
+ 
++#if LUA_VERSION_NUM > 501
++	args = lua_rawlen(l, 2);
++#else
+ 	args = luaL_getn(l, 2);
++#endif
+ 	for (j = 0; j < args; ++j) {
+ 		lua_rawgeti(l, 2, j + 1);
+ 		type = CclGetUnitType(l);
+@@ -1144,7 +1164,11 @@
+ 			if (!lua_istable(l, j + 1)) {
+ 				LuaError(l, "incorrect argument");
+ 			}
++#if LUA_VERSION_NUM > 501
++			subargs = lua_rawlen(l, j + 1);
++#else
+ 			subargs = luaL_getn(l, j + 1);
++#endif
+ 			k = 0;
+ 			lua_rawgeti(l, j + 1, k + 1);
+ 			i = LuaToNumber(l, -1);
+@@ -1186,7 +1210,11 @@
+ 					if (!lua_istable(l, -1)) {
+ 						LuaError(l, "incorrect argument");
+ 					}
++#if LUA_VERSION_NUM > 501
++					subsubargs = lua_rawlen(l, -1);
++#else
+ 					subsubargs = luaL_getn(l, -1);
++#endif
+ 					for (subk = 0; subk < subsubargs; ++subk) {
+ 						int num;
+ 						const char *ident;
+@@ -1212,7 +1240,11 @@
+ 					if (!lua_istable(l, -1)) {
+ 						LuaError(l, "incorrect argument");
+ 					}
++#if LUA_VERSION_NUM > 501
++					subsubargs = lua_rawlen(l, -1);
++#else
+ 					subsubargs = luaL_getn(l, -1);
++#endif
+ 					for (subk = 0; subk < subsubargs; ++subk) {
+ 						int num;
+ 						const char *ident;
+@@ -1251,7 +1283,11 @@
+ 			if (!lua_istable(l, j + 1)) {
+ 				LuaError(l, "incorrect argument");
+ 			}
++#if LUA_VERSION_NUM > 501
++			subargs = lua_rawlen(l, j + 1);
++#else
+ 			subargs = luaL_getn(l, j + 1);
++#endif
+ 			for (k = 0; k < subargs; ++k) {
+ 				const char *type;
+ 				int num;
+@@ -1269,7 +1305,11 @@
+ 			if (!lua_istable(l, j + 1)) {
+ 				LuaError(l, "incorrect argument");
+ 			}
++#if LUA_VERSION_NUM > 501
++			subargs = lua_rawlen(l, j + 1);
++#else
+ 			subargs = luaL_getn(l, j + 1);
++#endif
+ 			for (k = 0; k < subargs; ++k) {
+ 				const char *type;
+ 				int num;
+@@ -1287,7 +1327,11 @@
+ 			if (!lua_istable(l, j + 1)) {
+ 				LuaError(l, "incorrect argument");
+ 			}
++#if LUA_VERSION_NUM > 501
++			subargs = lua_rawlen(l, j + 1);
++#else
+ 			subargs = luaL_getn(l, j + 1);
++#endif
+ 			for (k = 0; k < subargs; ++k) {
+ 				const char *type;
+ 				int num;
+@@ -1305,7 +1349,11 @@
+ 			if (!lua_istable(l, j + 1)) {
+ 				LuaError(l, "incorrect argument");
+ 			}
++#if LUA_VERSION_NUM > 501
++			subargs = lua_rawlen(l, j + 1);
++#else
+ 			subargs = luaL_getn(l, j + 1);
++#endif
+ 			for (k = 0; k < subargs; ++k) {
+ 				const char *type;
+ 				int num;
+@@ -1323,7 +1371,11 @@
+ 			if (!lua_istable(l, j + 1)) {
+ 				LuaError(l, "incorrect argument");
+ 			}
++#if LUA_VERSION_NUM > 501
++			subargs = lua_rawlen(l, j + 1);
++#else
+ 			subargs = luaL_getn(l, j + 1);
++#endif
+ 			for (k = 0; k < subargs; ++k) {
+ 				const char *type;
+ 
+@@ -1339,7 +1391,11 @@
+ 			if (!lua_istable(l, j + 1)) {
+ 				LuaError(l, "incorrect argument");
+ 			}
++#if LUA_VERSION_NUM > 501
++			subargs = lua_rawlen(l, j + 1);
++#else
+ 			subargs = luaL_getn(l, j + 1);
++#endif
+ 			for (k = 0; k < subargs; ++k) {
+ 				int x;
+ 				int y;
+@@ -1347,7 +1403,11 @@
+ 				AiExplorationRequest queue;
+ 
+ 				lua_rawgeti(l, j + 1, k + 1);
++#if LUA_VERSION_NUM > 501
++				if (!lua_istable(l, -1) || lua_rawlen(l, -1) != 3) {
++#else
+ 				if (!lua_istable(l, -1) || luaL_getn(l, -1) != 3) {
++#endif
+ 					LuaError(l, "incorrect argument");
+ 				}
+ 				lua_rawgeti(l, -1, 1);
+@@ -1371,13 +1431,21 @@
+ 			if (!lua_istable(l, j + 1)) {
+ 				LuaError(l, "incorrect argument");
+ 			}
++#if LUA_VERSION_NUM > 501
++			subargs = lua_rawlen(l, j + 1);
++#else
+ 			subargs = luaL_getn(l, j + 1);
++#endif
+ 			for (k = 0; k < subargs; ++k) {
+ 				int unit;
+ 				AiTransportRequest queue;
+ 
+ 				lua_rawgeti(l, j + 1, k + 1);
++#if LUA_VERSION_NUM > 501
++				if (!lua_istable(l, -1) || lua_rawlen(l, -1) != 2) {
++#else
+ 				if (!lua_istable(l, -1) || luaL_getn(l, -1) != 2) {
++#endif
+ 					LuaError(l, "incorrect argument");
+ 				}
+ 				lua_rawgeti(l, -1, 1);
+@@ -1396,7 +1464,11 @@
+ 			if (!lua_istable(l, j + 1)) {
+ 				LuaError(l, "incorrect argument");
+ 			}
++#if LUA_VERSION_NUM > 501
++			subargs = lua_rawlen(l, j + 1);
++#else
+ 			subargs = luaL_getn(l, j + 1);
++#endif
+ 			i = 0;
+ 			if (subargs) {
+ 				ai->UnitTypeRequests.resize(subargs / 2);
+@@ -1420,7 +1492,11 @@
+ 			if (!lua_istable(l, j + 1)) {
+ 				LuaError(l, "incorrect argument");
+ 			}
++#if LUA_VERSION_NUM > 501
++			subargs = lua_rawlen(l, j + 1);
++#else
+ 			subargs = luaL_getn(l, j + 1);
++#endif
+ 			for (k = 0; k < subargs; ++k) {
+ 				const char *ident;
+ 
+@@ -1433,7 +1509,11 @@
+ 			if (!lua_istable(l, j + 1)) {
+ 				LuaError(l, "incorrect argument");
+ 			}
++#if LUA_VERSION_NUM > 501
++			subargs = lua_rawlen(l, j + 1);
++#else
+ 			subargs = luaL_getn(l, j + 1);
++#endif
+ 			for (k = 0; k < subargs; ++k) {
+ 				const char *ident;
+ 
+@@ -1446,7 +1526,11 @@
+ 			if (!lua_istable(l, j + 1)) {
+ 				LuaError(l, "incorrect argument");
+ 			}
++#if LUA_VERSION_NUM > 501
++			subargs = lua_rawlen(l, j + 1);
++#else
+ 			subargs = luaL_getn(l, j + 1);
++#endif
+ 			for (k = 0; k < subargs; ++k) {
+ 				const char *ident;
+ 				int made;
+@@ -1475,7 +1559,11 @@
+ 			if (!lua_istable(l, j + 1)) {
+ 				LuaError(l, "incorrect argument");
+ 			}
++#if LUA_VERSION_NUM > 501
++			subargs = lua_rawlen(l, j + 1);
++#else
+ 			subargs = luaL_getn(l, j + 1);
++#endif
+ 			for (k = 0; k < subargs; ++k) {
+ 				int num;
+ 				int workers;
+diff -Naur stratagus-2.2.4.orig/src/game/savegame.cpp stratagus-2.2.4/src/game/savegame.cpp
+--- stratagus-2.2.4.orig/src/game/savegame.cpp	2007-02-22 00:43:50.000000000 +0100
++++ stratagus-2.2.4/src/game/savegame.cpp	2012-05-02 14:59:29.721527400 +0200
+@@ -99,7 +99,11 @@
+ 	res = NULL;
+ 	if (is_root) {
+ 		lua_pushstring(l, "_G");// global table in lua.
++#if LUA_VERSION_NUM > 501
++		lua_getglobal(l, "_G");
++#else
+ 		lua_gettable(l, LUA_GLOBALSINDEX);
++#endif
+ 	}
+ 	sep = is_root ? "" : ", ";
+ 	Assert(lua_istable(l, -1));
+diff -Naur stratagus-2.2.4.orig/src/game/trigger.cpp stratagus-2.2.4/src/game/trigger.cpp
+--- stratagus-2.2.4.orig/src/game/trigger.cpp	2007-03-04 17:53:16.000000000 +0100
++++ stratagus-2.2.4/src/game/trigger.cpp	2012-05-02 14:56:50.752514788 +0200
+@@ -207,7 +207,11 @@
+ 	lua_pushvalue(l, 2);
+ 	unittype = TriggerGetUnitType(l);
+ 	lua_pop(l, 1);
++#if LUA_VERSION_NUM > 501
++	if (!lua_istable(l, 3) || lua_rawlen(l, 3) != 2) {
++#else
+ 	if (!lua_istable(l, 3) || luaL_getn(l, 3) != 2) {
++#endif
+ 		LuaError(l, "incorrect argument");
+ 	}
+ 	lua_rawgeti(l, 3, 1);
+@@ -216,7 +220,11 @@
+ 	lua_rawgeti(l, 3, 2);
+ 	y1 = LuaToNumber(l, -1);
+ 	lua_pop(l, 1);
++#if LUA_VERSION_NUM > 501
++	if (!lua_istable(l, 4) || lua_rawlen(l, 4) != 2) {
++#else
+ 	if (!lua_istable(l, 4) || luaL_getn(l, 4) != 2) {
++#endif
+ 		LuaError(l, "incorrect argument");
+ 	}
+ 	lua_rawgeti(l, 4, 1);
+@@ -605,19 +613,35 @@
+ 	// A trigger is a pair of condition and action
+ 	//
+ 	lua_pushstring(l, "_triggers_");
++#if LUA_VERSION_NUM > 501
++	lua_getglobal(l, "_triggers_");
++#else
+ 	lua_gettable(l, LUA_GLOBALSINDEX);
++#endif
+ 
+ 	if (lua_isnil(l, -1)) {
+ 		puts("Trigger not set, defining trigger");
+ 		lua_pop(l, 1);
+ 		lua_pushstring(l, "_triggers_");
+ 		lua_newtable(l);
++#if LUA_VERSION_NUM > 501
++		lua_setglobal(l, "_triggers_");
++#else
+ 		lua_settable(l, LUA_GLOBALSINDEX);
++#endif
+ 		lua_pushstring(l, "_triggers_");
++#if LUA_VERSION_NUM > 501
++		lua_getglobal(l, "_triggers_");
++#else
+ 		lua_gettable(l, LUA_GLOBALSINDEX);
++#endif
+ 	}
+ 
++#if LUA_VERSION_NUM > 501
++	i = lua_rawlen(l, -1);
++#else
+ 	i = luaL_getn(l, -1);
++#endif
+ 	if (ActiveTriggers && !ActiveTriggers[i / 2]) {
+ 		lua_pushnil(l);
+ 		lua_rawseti(l, -2, i + 1);
+@@ -682,7 +706,11 @@
+ 	ret = 0;
+ 
+ 	lua_rawgeti(Lua, -1, script + 1);
++#if LUA_VERSION_NUM > 501
++	args = lua_rawlen(Lua, -1);
++#else
+ 	args = luaL_getn(Lua, -1);
++#endif
+ 	for (j = 0; j < args; ++j) {
+ 		lua_rawgeti(Lua, -1, j + 1);
+ 		LuaCall(0, 0);
+@@ -725,8 +753,13 @@
+ 	int base = lua_gettop(Lua);
+ 
+ 	lua_pushstring(Lua, "_triggers_");
++#if LUA_VERSION_NUM > 501
++	lua_getglobal(Lua, "_triggers_");
++	triggers = lua_rawlen(Lua, -1);
++#else
+ 	lua_gettable(Lua, LUA_GLOBALSINDEX);
+ 	triggers = luaL_getn(Lua, -1);
++#endif
+ 
+ 	if (Trigger >= triggers) {
+ 		Trigger = 0;
+@@ -811,8 +844,13 @@
+ 	int triggers;
+ 
+ 	lua_pushstring(Lua, "_triggers_");
++#if LUA_VERSION_NUM > 501
++	lua_getglobal(Lua, "_triggers_");
++	triggers = lua_rawlen(Lua, -1);
++#else
+ 	lua_gettable(Lua, LUA_GLOBALSINDEX);
+ 	triggers = luaL_getn(Lua, -1);
++#endif
+ 
+ 	file->printf("SetActiveTriggers(");
+ 	for (i = 0; i < triggers; i += 2) {
+@@ -853,10 +891,18 @@
+ 	// FIXME: choose the triggers for game type
+ 
+ 	lua_pushstring(Lua, "_triggers_");
++#if LUA_VERSION_NUM > 501
++	lua_getglobal(Lua, "_triggers_");
++#else
+ 	lua_gettable(Lua, LUA_GLOBALSINDEX);
++#endif
+ 	if (lua_isnil(Lua, -1)) {
+ 		lua_pushstring(Lua, "SinglePlayerTriggers");
++#if LUA_VERSION_NUM > 501
++		lua_getglobal(Lua, "SinglePlayerTriggers");
++#else
+ 		lua_gettable(Lua, LUA_GLOBALSINDEX);
++#endif
+ 		LuaCall(0, 1);
+ 	}
+ 	lua_pop(Lua, 1);
+@@ -869,7 +915,11 @@
+ {
+ 	lua_pushstring(Lua, "_triggers_");
+ 	lua_pushnil(Lua);
++#if LUA_VERSION_NUM > 501
++	lua_setglobal(Lua, "_triggers_");
++#else
+ 	lua_settable(Lua, LUA_GLOBALSINDEX);
++#endif
+ 
+ 	Trigger = 0;
+ 
+diff -Naur stratagus-2.2.4.orig/src/map/script_map.cpp stratagus-2.2.4/src/map/script_map.cpp
+--- stratagus-2.2.4.orig/src/map/script_map.cpp	2006-11-22 17:32:22.000000000 +0100
++++ stratagus-2.2.4/src/map/script_map.cpp	2012-05-02 15:10:15.963448267 +0200
+@@ -93,7 +93,11 @@
+ 			if (!lua_istable(l, j + 1)) {
+ 				LuaError(l, "incorrect argument");
+ 			}
++#if LUA_VERSION_NUM > 501
++			subargs = lua_rawlen(l, j + 1);
++#else
+ 			subargs = luaL_getn(l, j + 1);
++#endif
+ 			for (k = 0; k < subargs; ++k) {
+ 				lua_rawgeti(l, j + 1, k + 1);
+ 				value = LuaToString(l, -1);
+@@ -139,7 +143,11 @@
+ 						LuaError(l, "incorrect argument");
+ 					}
+ 
++#if LUA_VERSION_NUM > 501
++					subsubargs = lua_rawlen(l, -1);
++#else
+ 					subsubargs = luaL_getn(l, -1);
++#endif
+ 					if (subsubargs != Map.Info.MapWidth * Map.Info.MapHeight) {
+ 						fprintf(stderr, "Wrong tile table length: %d\n", subsubargs);
+ 					}
+@@ -152,7 +160,11 @@
+ 						if (!lua_istable(l, -1)) {
+ 							LuaError(l, "incorrect argument");
+ 						}
++#if LUA_VERSION_NUM > 501
++						args2 = lua_rawlen(l, -1);
++#else
+ 						args2 = luaL_getn(l, -1);
++#endif
+ 						j2 = 0;
+ 
+ 						lua_rawgeti(l, -1, j2 + 1);
+diff -Naur stratagus-2.2.4.orig/src/map/script_tileset.cpp stratagus-2.2.4/src/map/script_tileset.cpp
+--- stratagus-2.2.4.orig/src/map/script_tileset.cpp	2006-11-20 06:33:27.000000000 +0100
++++ stratagus-2.2.4/src/map/script_tileset.cpp	2012-05-02 15:06:07.368556130 +0200
+@@ -206,7 +206,11 @@
+ 	if (!lua_istable(l, -1)) {
+ 		LuaError(l, "incorrect argument");
+ 	}
++#if LUA_VERSION_NUM > 501
++	args = lua_rawlen(l, -1);
++#else
+ 	args = luaL_getn(l, -1);
++#endif
+ 
+ 	//
+ 	//  Parse the list: (still everything could be changed!)
+@@ -251,7 +255,11 @@
+ 			if (!lua_istable(l, -1)) {
+ 				LuaError(l, "incorrect argument");
+ 			}
++#if LUA_VERSION_NUM > 501
++			if (lua_rawlen(l, -1) != 2) {
++#else
+ 			if (luaL_getn(l, -1) != 2) {
++#endif
+ 				LuaError(l, "growing-tree: Wrong table length");
+ 			}
+ 			for (i = 0; i < 2; ++i) {
+@@ -328,7 +336,11 @@
+ 	if (!lua_istable(l, -1)) {
+ 		LuaError(l, "incorrect argument");
+ 	}
++#if LUA_VERSION_NUM > 501
++	len = lua_rawlen(l, -1);
++#else
+ 	len = luaL_getn(l, -1);
++#endif
+ 
+ 	// hack for sc tilesets, remove when fixed
+ 	if (len > 16) {
+@@ -383,7 +395,11 @@
+ 		LuaError(l, "incorrect argument");
+ 	}
+ 	j = 0;
++#if LUA_VERSION_NUM > 501
++	args = lua_rawlen(l, -1);
++#else
+ 	args = luaL_getn(l, -1);
++#endif
+ 	lua_rawgeti(l, -1, j + 1);
+ 	++j;
+ 	basic_name = TilesetParseName(l, tileset);
+@@ -403,7 +419,11 @@
+ 		//
+ 		//  Vector: the tiles.
+ 		//
++#if LUA_VERSION_NUM > 501
++		len = lua_rawlen(l, -1);
++#else
+ 		len = luaL_getn(l, -1);
++#endif
+ 		for (i = 0; i < len; ++i) {
+ 			lua_rawgeti(l, -1, i + 1);
+ 			tileset->Table[index + i] = LuaToNumber(l, -1);
+@@ -476,7 +496,11 @@
+ 	//
+ 	//  Parse the list: (still everything could be changed!)
+ 	//
++#if LUA_VERSION_NUM > 501
++	args = lua_rawlen(l, t);
++#else
+ 	args = luaL_getn(l, t);
++#endif
+ 	for (j = 0; j < args; ++j) {
+ 		lua_rawgeti(l, t, j + 1);
+ 		value = LuaToString(l, -1);
+diff -Naur stratagus-2.2.4.orig/src/network/commands.cpp stratagus-2.2.4/src/network/commands.cpp
+--- stratagus-2.2.4.orig/src/network/commands.cpp	2007-01-15 00:10:15.000000000 +0100
++++ stratagus-2.2.4/src/network/commands.cpp	2012-05-02 15:14:17.368430290 +0200
+@@ -616,7 +616,11 @@
+ 		} else if (!strcmp(value, "LocalPlayer")) {
+ 			replay->LocalPlayer = LuaToNumber(l, -1);
+ 		} else if (!strcmp(value, "Players")) {
++#if LUA_VERSION_NUM > 501
++			if (!lua_istable(l, -1) || lua_rawlen(l, -1) != PlayerMax) {
++#else
+ 			if (!lua_istable(l, -1) || luaL_getn(l, -1) != PlayerMax) {
++#endif
+ 				LuaError(l, "incorrect argument");
+ 			}
+ 			for (j = 0; j < PlayerMax; ++j) {
+@@ -662,7 +666,11 @@
+ 		} else if (!strcmp(value, "MapRichness")) {
+ 			replay->MapRichness = LuaToNumber(l, -1);
+ 		} else if (!strcmp(value, "Engine")) {
++#if LUA_VERSION_NUM > 501
++			if (!lua_istable(l, -1) || lua_rawlen(l, -1) != 3) {
++#else
+ 			if (!lua_istable(l, -1) || luaL_getn(l, -1) != 3) {
++#endif
+ 				LuaError(l, "incorrect argument");
+ 			}
+ 			lua_rawgeti(l, -1, 1);
+@@ -675,7 +683,11 @@
+ 			replay->Engine[2] = LuaToNumber(l, -1);
+ 			lua_pop(l, 1);
+ 		} else if (!strcmp(value, "Network")) {
++#if LUA_VERSION_NUM > 501
++			if (!lua_istable(l, -1) || lua_rawlen(l, -1) != 3) {
++#else
+ 			if (!lua_istable(l, -1) || luaL_getn(l, -1) != 3) {
++#endif
+ 				LuaError(l, "incorrect argument");
+ 			}
+ 			lua_rawgeti(l, -1, 1);
+diff -Naur stratagus-2.2.4.orig/src/sound/music.cpp stratagus-2.2.4/src/sound/music.cpp
+--- stratagus-2.2.4.orig/src/sound/music.cpp	2006-10-13 04:49:35.000000000 +0200
++++ stratagus-2.2.4/src/sound/music.cpp	2012-05-02 15:16:58.809411999 +0200
+@@ -95,7 +95,11 @@
+ 
+ 	if ((proceed || force) && SoundEnabled() && IsMusicEnabled() && CallbackMusic) {
+ 		lua_pushstring(Lua, "MusicStopped");
++#if LUA_VERSION_NUM > 501
++		lua_getglobal(Lua, "MusicStopped");
++#else
+ 		lua_gettable(Lua, LUA_GLOBALSINDEX);
++#endif
+ 		if (!lua_isfunction(Lua, -1)) {
+ 			fprintf(stderr, "No MusicStopped function in Lua\n");
+ 			StopMusic();
+diff -Naur stratagus-2.2.4.orig/src/sound/script_sound.cpp stratagus-2.2.4/src/sound/script_sound.cpp
+--- stratagus-2.2.4.orig/src/sound/script_sound.cpp	2006-11-20 04:28:08.000000000 +0100
++++ stratagus-2.2.4/src/sound/script_sound.cpp	2012-05-02 15:20:47.641551204 +0200
+@@ -135,7 +135,11 @@
+ 		id = MakeSound(c_name, &c_file, 1);
+ 	} else if (lua_istable(l, 2)) {
+ 		// several files
++#if LUA_VERSION_NUM > 501
++		args = lua_rawlen(l, 2);
++#else
+ 		args = luaL_getn(l, 2);
++#endif
+ 		c_files = new char *[args];
+ 		for (j = 0; j < args; ++j) {
+ 			lua_rawgeti(l, 2, j + 1);
+@@ -265,7 +269,11 @@
+ 			}
+ 			GameSounds.PlacementSuccess.Sound = (CSound *)data->Data;
+ 		} else if (!strcmp(value, "work-complete")) {
++#if LUA_VERSION_NUM > 501
++			if (!lua_istable(l, j + 1) || lua_rawlen(l, j + 1) != 2) {
++#else
+ 			if (!lua_istable(l, j + 1) || luaL_getn(l, j + 1) != 2) {
++#endif
+ 				LuaError(l, "incorrect argument");
+ 			}
+ 			lua_rawgeti(l, j + 1, 1);
+@@ -287,7 +295,11 @@
+ 			lua_pop(l, 1);
+ 			GameSounds.WorkComplete[i].Sound = (CSound *)data->Data;
+ 		} else if (!strcmp(value, "rescue")) {
++#if LUA_VERSION_NUM > 501
++			if (!lua_istable(l, j + 1) || lua_rawlen(l, j + 1) != 2) {
++#else
+ 			if (!lua_istable(l, j + 1) || luaL_getn(l, j + 1) != 2) {
++#endif
+ 				LuaError(l, "incorrect argument");
+ 			}
+ 			lua_rawgeti(l, j + 1, 1);
+diff -Naur stratagus-2.2.4.orig/src/stratagus/construct.cpp stratagus-2.2.4/src/stratagus/construct.cpp
+--- stratagus-2.2.4.orig/src/stratagus/construct.cpp	2006-11-19 06:50:22.000000000 +0100
++++ stratagus-2.2.4/src/stratagus/construct.cpp	2012-05-02 16:12:50.585509031 +0200
+@@ -218,7 +218,11 @@
+ 				if (!strcmp(value, "File")) {
+ 					file = new_strdup(LuaToString(l, -1));
+ 				} else if (!strcmp(value, "Size")) {
++#if LUA_VERSION_NUM > 501
++					if (!lua_istable(l, -1) || lua_rawlen(l, -1) != 2) {
++#else
+ 					if (!lua_istable(l, -1) || luaL_getn(l, -1) != 2) {
++#endif
+ 						LuaError(l, "incorrect argument");
+ 					}
+ 					lua_rawgeti(l, -1, 1);
+@@ -242,7 +246,11 @@
+ 				construction->ShadowFile.Height = h;
+ 			}
+ 		} else if (!strcmp(value, "Constructions")) {
++#if LUA_VERSION_NUM > 501
++			subargs = lua_rawlen(l, -1);
++#else
+ 			subargs = luaL_getn(l, -1);
++#endif
+ 			for (k = 0; k < subargs; ++k) {
+ 				int percent;
+ 				ConstructionFileType file;
+diff -Naur stratagus-2.2.4.orig/src/stratagus/groups.cpp stratagus-2.2.4/src/stratagus/groups.cpp
+--- stratagus-2.2.4.orig/src/stratagus/groups.cpp	2006-11-24 04:28:39.000000000 +0100
++++ stratagus-2.2.4/src/stratagus/groups.cpp	2012-05-02 16:09:24.041091190 +0200
+@@ -253,7 +253,11 @@
+ 	grp = &Groups[(int)LuaToNumber(l, 1)];
+ 	grp->NumUnits = LuaToNumber(l, 2);
+ 	i = 0;
++#if LUA_VERSION_NUM > 501
++	args = lua_rawlen(l, 3);
++#else
+ 	args = luaL_getn(l, 3);
++#endif
+ 	for (j = 0; j < args; ++j) {
+ 		const char *str;
+ 
+diff -Naur stratagus-2.2.4.orig/src/stratagus/script.cpp stratagus-2.2.4/src/stratagus/script.cpp
+--- stratagus-2.2.4.orig/src/stratagus/script.cpp	2007-02-26 20:32:18.000000000 +0100
++++ stratagus-2.2.4/src/stratagus/script.cpp	2012-05-02 15:56:16.866932222 +0200
+@@ -172,7 +172,11 @@
+ static int luatraceback(lua_State *L) 
+ {
+ 	lua_pushliteral(L, "debug");
++#if LUA_VERSION_NUM > 501
++	lua_getglobal(L, "debug");
++#else
+ 	lua_gettable(L, LUA_GLOBALSINDEX);
++#endif
+ 	if (!lua_istable(L, -1)) {
+ 		lua_pop(L, 1);
+ 		return 1;
+@@ -502,7 +506,11 @@
+ 	Assert(l);
+ 	Assert(binop);
+ 	Assert(lua_istable(l, -1));
++#if LUA_VERSION_NUM > 501
++	Assert(lua_rawlen(l, -1) == 2);
++#else
+ 	Assert(luaL_getn(l, -1) == 2);
++#endif
+ 
+ 	lua_rawgeti(l, -1, 1); // left
+ 	binop->Left = CclParseNumberDesc(l);
+@@ -576,14 +584,26 @@
+ static int ParseLuaFunction(lua_State *l, const char *tablename, int *counter)
+ {
+ 	lua_pushstring(l, tablename);
++#if LUA_VERSION_NUM > 501
++	lua_getglobal(l, tablename);
++#else
+ 	lua_gettable(l, LUA_GLOBALSINDEX);
++#endif
+ 	if (lua_isnil(l, -1)) {
+ 		lua_pop(l, 1);
+ 		lua_pushstring(l, tablename);
+ 		lua_newtable(l);
++#if LUA_VERSION_NUM > 501
++		lua_setglobal(l, tablename);
++#else
+ 		lua_settable(l, LUA_GLOBALSINDEX);
++#endif
+ 		lua_pushstring(l, tablename);
++#if LUA_VERSION_NUM > 501
++		lua_getglobal(l, tablename);
++#else
+ 		lua_gettable(l, LUA_GLOBALSINDEX);
++#endif
+ 	}
+ 	lua_pushvalue(l, -2);
+ 	lua_rawseti(l, -2, *counter);
+@@ -605,7 +625,11 @@
+ 
+ 	narg = lua_gettop(Lua);
+ 	lua_pushstring(Lua, "_numberfunction_");
++#if LUA_VERSION_NUM > 501
++	lua_getglobal(Lua, "_numberfunction_");
++#else
+ 	lua_gettable(Lua, LUA_GLOBALSINDEX);
++#endif
+ 	lua_rawgeti(Lua, -1, handler);
+ 	LuaCall(0, 0);
+ 	if (lua_gettop(Lua) - narg != 2) {
+@@ -630,7 +654,11 @@
+ 
+ 	narg = lua_gettop(Lua);
+ 	lua_pushstring(Lua, "_stringfunction_");
++#if LUA_VERSION_NUM > 501
++	lua_getglobal(Lua, "_stringfunction_");
++#else
+ 	lua_gettable(Lua, LUA_GLOBALSINDEX);
++#endif
+ 	lua_rawgeti(Lua, -1, handler);
+ 	LuaCall(0, 0);
+ 	if (lua_gettop(Lua) - narg != 2) {
+@@ -662,7 +690,11 @@
+ 		res->e = ENumber_Lua;
+ 		res->D.Index = ParseLuaFunction(l, "_numberfunction_", &NumberCounter);
+ 	} else if (lua_istable(l, -1)) {
++#if LUA_VERSION_NUM > 501
++		nargs = lua_rawlen(l, -1);
++#else
+ 		nargs = luaL_getn(l, -1);
++#endif
+ 		if (nargs != 2) {
+ 			LuaError(l, "Bad number of args in parse Number table\n");
+ 		}
+@@ -757,7 +789,11 @@
+ 		} else if (!strcmp(key, "StringFind")) {
+ 			Assert(lua_istable(l, -1));
+ 			res->e = ENumber_StringFind;
++#if LUA_VERSION_NUM > 501
++			if (lua_rawlen(l, -1) != 2) {
++#else
+ 			if (luaL_getn(l, -1) != 2) {
++#endif
+ 				LuaError(l, "Bad param for StringFind");
+ 			}
+ 			lua_rawgeti(l, -1, 1); // left
+@@ -820,7 +856,11 @@
+ 		res->e = EString_Lua;
+ 		res->D.Index = ParseLuaFunction(l, "_stringfunction_", &StringCounter);
+ 	} else if (lua_istable(l, -1)) {
++#if LUA_VERSION_NUM > 501
++		nargs = lua_rawlen(l, -1);
++#else
+ 		nargs = luaL_getn(l, -1);
++#endif
+ 		if (nargs != 2) {
+ 			LuaError(l, "Bad number of args in parse String table\n");
+ 		}
+@@ -832,7 +872,11 @@
+ 			int i; // iterator.
+ 
+ 			res->e = EString_Concat;
++#if LUA_VERSION_NUM > 501
++			res->D.Concat.n = lua_rawlen(l, -1);
++#else
+ 			res->D.Concat.n = luaL_getn(l, -1);
++#endif
+ 			if (res->D.Concat.n < 1) {
+ 				LuaError(l, "Bad number of args in Concat\n");
+ 			}
+@@ -853,47 +897,75 @@
+ 			res->D.Unit = CclParseUnitDesc(l);
+ 		} else if (!strcmp(key, "If")) {
+ 			res->e = EString_If;
++#if LUA_VERSION_NUM > 501
++			if (lua_rawlen(l, -1) != 2 && lua_rawlen(l, -1) != 3) {
++#else
+ 			if (luaL_getn(l, -1) != 2 && luaL_getn(l, -1) != 3) {
++#endif
+ 				LuaError(l, "Bad number of args in If\n");
+ 			}
+ 			lua_rawgeti(l, -1, 1); // Condition.
+ 			res->D.If.Cond = CclParseNumberDesc(l);
+ 			lua_rawgeti(l, -1, 2); // Then.
+ 			res->D.If.True = CclParseStringDesc(l);
++#if LUA_VERSION_NUM > 501
++			if (lua_rawlen(l, -1) == 3) {
++#else
+ 			if (luaL_getn(l, -1) == 3) {
++#endif
+ 				lua_rawgeti(l, -1, 3); // Else.
+ 				res->D.If.False = CclParseStringDesc(l);
+ 			}
+ 			lua_pop(l, 1); // table.
+ 		} else if (!strcmp(key, "SubString")) {
+ 			res->e = EString_SubString;
++#if LUA_VERSION_NUM > 501
++			if (lua_rawlen(l, -1) != 2 && lua_rawlen(l, -1) != 3) {
++#else
+ 			if (luaL_getn(l, -1) != 2 && luaL_getn(l, -1) != 3) {
++#endif
+ 				LuaError(l, "Bad number of args in SubString\n");
+ 			}
+ 			lua_rawgeti(l, -1, 1); // String.
+ 			res->D.SubString.String = CclParseStringDesc(l);
+ 			lua_rawgeti(l, -1, 2); // Begin.
+ 			res->D.SubString.Begin = CclParseNumberDesc(l);
++#if LUA_VERSION_NUM > 501
++			if (lua_rawlen(l, -1) == 3) {
++#else
+ 			if (luaL_getn(l, -1) == 3) {
++#endif
+ 				lua_rawgeti(l, -1, 3); // End.
+ 				res->D.SubString.End = CclParseNumberDesc(l);
+ 			}
+ 			lua_pop(l, 1); // table.
+ 		} else if (!strcmp(key, "Line")) {
+ 			res->e = EString_Line;
++#if LUA_VERSION_NUM > 501
++			if (lua_rawlen(l, -1) < 2 || lua_rawlen(l, -1) > 4) {
++#else
+ 			if (luaL_getn(l, -1) < 2 || luaL_getn(l, -1) > 4) {
++#endif
+ 				LuaError(l, "Bad number of args in Line\n");
+ 			}
+ 			lua_rawgeti(l, -1, 1); // Line.
+ 			res->D.Line.Line = CclParseNumberDesc(l);
+ 			lua_rawgeti(l, -1, 2); // String.
+ 			res->D.Line.String = CclParseStringDesc(l);
++#if LUA_VERSION_NUM > 501
++			if (lua_rawlen(l, -1) >= 3) {
++#else
+ 			if (luaL_getn(l, -1) >= 3) {
++#endif
+ 				lua_rawgeti(l, -1, 3); // Lenght.
+ 				res->D.Line.MaxLen = CclParseNumberDesc(l);
+ 			}
+ 			res->D.Line.Font = NULL;
++#if LUA_VERSION_NUM > 501
++			if (lua_rawlen(l, -1) >= 4) {
++#else
+ 			if (luaL_getn(l, -1) >= 4) {
++#endif
+ 				lua_rawgeti(l, -1, 4); // Font.
+ 				res->D.Line.Font = CFont::Get(LuaToString(l, -1));
+ 				if (!res->D.Line.Font) {
+@@ -2427,7 +2499,11 @@
+ */
+ void InitCcl(void)
+ {
++#if LUA_VERSION_NUM > 501
++	Lua = luaL_newstate();
++#else
+ 	Lua = lua_open();
++#endif
+ 	luaopen_base(Lua);
+ 	luaopen_table(Lua);
+ 	luaopen_string(Lua);
+@@ -2513,7 +2589,11 @@
+ 	char buf[PATH_MAX];
+ 
+ 	lua_pushstring(Lua, "preferences");
++#if LUA_VERSION_NUM > 501
++	lua_getglobal(Lua, "preferences");
++#else
+ 	lua_gettable(Lua, LUA_GLOBALSINDEX);
++#endif
+ 	if (lua_type(Lua, -1) == LUA_TTABLE) {
+ #ifdef USE_WIN32
+ 		strcpy_s(buf, sizeof(buf), GameName.c_str());
+diff -Naur stratagus-2.2.4.orig/src/stratagus/script_missile.cpp stratagus-2.2.4/src/stratagus/script_missile.cpp
+--- stratagus-2.2.4.orig/src/stratagus/script_missile.cpp	2006-11-20 04:28:11.000000000 +0100
++++ stratagus-2.2.4/src/stratagus/script_missile.cpp	2012-05-02 15:25:18.718162279 +0200
+@@ -118,7 +118,11 @@
+ 		if (!strcmp(value, "File")) {
+ 			file = LuaToString(l, -1);
+ 		} else if (!strcmp(value, "Size")) {
++#if LUA_VERSION_NUM > 501
++			if (!lua_istable(l, -1) || lua_rawlen(l, -1) != 2) {
++#else
+ 			if (!lua_istable(l, -1) || luaL_getn(l, -1) != 2) {
++#endif
+ 				LuaError(l, "incorrect argument");
+ 			}
+ 			lua_rawgeti(l, -1, 1);
+@@ -217,7 +221,11 @@
+ 		if (!strcmp(value, "type")) {
+ 			type = MissileTypeByIdent(LuaToString(l, j + 1));
+ 		} else if (!strcmp(value, "pos")) {
++#if LUA_VERSION_NUM > 501
++			if (!lua_istable(l, j + 1) || lua_rawlen(l, j + 1) != 2) {
++#else
+ 			if (!lua_istable(l, j + 1) || luaL_getn(l, j + 1) != 2) {
++#endif
+ 				LuaError(l, "incorrect argument");
+ 			}
+ 			lua_rawgeti(l, j + 1, 1);
+@@ -227,7 +235,11 @@
+ 			y = LuaToNumber(l, -1);
+ 			lua_pop(l, 1);
+ 		} else if (!strcmp(value, "origin-pos")) {
++#if LUA_VERSION_NUM > 501
++			if (!lua_istable(l, j + 1) || lua_rawlen(l, j + 1) != 2) {
++#else
+ 			if (!lua_istable(l, j + 1) || luaL_getn(l, j + 1) != 2) {
++#endif
+ 				LuaError(l, "incorrect argument");
+ 			}
+ 			lua_rawgeti(l, j + 1, 1);
+@@ -237,7 +249,11 @@
+ 			sy = LuaToNumber(l, -1);
+ 			lua_pop(l, 1);
+ 		} else if (!strcmp(value, "goal")) {
++#if LUA_VERSION_NUM > 501
++			if (!lua_istable(l, j + 1) || lua_rawlen(l, j + 1) != 2) {
++#else
+ 			if (!lua_istable(l, j + 1) || luaL_getn(l, j + 1) != 2) {
++#endif
+ 				LuaError(l, "incorrect argument");
+ 			}
+ 			lua_rawgeti(l, j + 1, 1);
+@@ -299,7 +315,11 @@
+ 			--j;
+ 		} else if (!strcmp(value, "step")) {
+ 			Assert(missile);
++#if LUA_VERSION_NUM > 501
++			if (!lua_istable(l, j + 1) || lua_rawlen(l, j + 1) != 2) {
++#else
+ 			if (!lua_istable(l, j + 1) || luaL_getn(l, j + 1) != 2) {
++#endif
+ 				LuaError(l, "incorrect argument");
+ 			}
+ 			lua_rawgeti(l, j + 1, 1);
+@@ -350,7 +370,11 @@
+ 		}
+ 
+ 		ptr = new BurningBuildingFrame;
++#if LUA_VERSION_NUM > 501
++		subargs = lua_rawlen(l, j + 1);
++#else
+ 		subargs = luaL_getn(l, j + 1);
++#endif
+ 		for (k = 0; k < subargs; ++k) {
+ 			lua_rawgeti(l, j + 1, k + 1);
+ 			value = LuaToString(l, -1);
+diff -Naur stratagus-2.2.4.orig/src/stratagus/script_player.cpp stratagus-2.2.4/src/stratagus/script_player.cpp
+--- stratagus-2.2.4.orig/src/stratagus/script_player.cpp	2006-11-19 05:02:49.000000000 +0100
++++ stratagus-2.2.4/src/stratagus/script_player.cpp	2012-05-02 16:06:59.236901483 +0200
+@@ -162,7 +162,11 @@
+ 				}
+ 			}
+ 		} else if (!strcmp(value, "start")) {
++#if LUA_VERSION_NUM > 501
++			if (!lua_istable(l, j + 1) || lua_rawlen(l, j + 1) != 2) {
++#else
+ 			if (!lua_istable(l, j + 1) || luaL_getn(l, j + 1) != 2) {
++#endif
+ 				LuaError(l, "incorrect argument");
+ 			}
+ 			lua_rawgeti(l, j + 1, 1);
+@@ -175,7 +179,11 @@
+ 			if (!lua_istable(l, j + 1)) {
+ 				LuaError(l, "incorrect argument");
+ 			}
++#if LUA_VERSION_NUM > 501
++			subargs = lua_rawlen(l, j + 1);
++#else
+ 			subargs = luaL_getn(l, j + 1);
++#endif
+ 			for (k = 0; k < subargs; ++k) {
+ 				lua_rawgeti(l, j + 1, k + 1);
+ 				value = LuaToString(l, -1);
+@@ -198,7 +206,11 @@
+ 			if (!lua_istable(l, j + 1)) {
+ 				LuaError(l, "incorrect argument");
+ 			}
++#if LUA_VERSION_NUM > 501
++			subargs = lua_rawlen(l, j + 1);
++#else
+ 			subargs = luaL_getn(l, j + 1);
++#endif
+ 			for (k = 0; k < subargs; ++k) {
+ 				lua_rawgeti(l, j + 1, k + 1);
+ 				value = LuaToString(l, -1);
+@@ -221,7 +233,11 @@
+ 			if (!lua_istable(l, j + 1)) {
+ 				LuaError(l, "incorrect argument");
+ 			}
++#if LUA_VERSION_NUM > 501
++			subargs = lua_rawlen(l, j + 1);
++#else
+ 			subargs = luaL_getn(l, j + 1);
++#endif
+ 			for (k = 0; k < subargs; ++k) {
+ 				lua_rawgeti(l, j + 1, k + 1);
+ 				value = LuaToString(l, -1);
+@@ -244,7 +260,11 @@
+ 			if (!lua_istable(l, j + 1)) {
+ 				LuaError(l, "incorrect argument");
+ 			}
++#if LUA_VERSION_NUM > 501
++			subargs = lua_rawlen(l, j + 1);
++#else
+ 			subargs = luaL_getn(l, j + 1);
++#endif
+ 			for (k = 0; k < subargs; ++k) {
+ 				lua_rawgeti(l, j + 1, k + 1);
+ 				value = LuaToString(l, -1);
+@@ -293,7 +313,11 @@
+ 			if (!lua_istable(l, j + 1)) {
+ 				LuaError(l, "incorrect argument");
+ 			}
++#if LUA_VERSION_NUM > 501
++			subargs = lua_rawlen(l, j + 1);
++#else
+ 			subargs = luaL_getn(l, j + 1);
++#endif
+ 			if (subargs != MaxCosts) {
+ 				LuaError(l, "Wrong number of total-resources: %d" _C_ i);
+ 			}
+@@ -307,7 +331,11 @@
+ 			int g;
+ 			int b;
+ 
++#if LUA_VERSION_NUM > 501
++			if (!lua_istable(l, j + 1) || lua_rawlen(l, j + 1) != 3) {
++#else
+ 			if (!lua_istable(l, j + 1) || luaL_getn(l, j + 1) != 3) {
++#endif
+ 				LuaError(l, "incorrect argument");
+ 			}
+ 			lua_rawgeti(l, j + 1, 1);
+@@ -324,7 +352,11 @@
+ 			if (!lua_istable(l, j + 1)) {
+ 				LuaError(l, "incorrect argument");
+ 			}
++#if LUA_VERSION_NUM > 501
++			subargs = lua_rawlen(l, j + 1);
++#else
+ 			subargs = luaL_getn(l, j + 1);
++#endif
+ 			if (subargs != UpgradeMax) {
+ 				LuaError(l, "Wrong upgrade timer length: %d" _C_ i);
+ 			}
+@@ -361,7 +393,11 @@
+ 	if (!lua_istable(l, 1) || !lua_istable(l, 2)) {
+ 		LuaError(l, "incorrect argument");
+ 	}
++#if LUA_VERSION_NUM > 501
++	if (lua_rawlen(l, 1) != 2) {
++#else
+ 	if (luaL_getn(l, 1) != 2) {
++#endif
+ 		LuaError(l, "incorrect argument");
+ 	}
+ 	lua_rawgeti(l, 1, 1);
+@@ -371,7 +407,11 @@
+ 	y1 = LuaToNumber(l, -1);
+ 	lua_pop(l, 1);
+ 
++#if LUA_VERSION_NUM > 501
++	if (lua_rawlen(l, 2) != 2) {
++#else
+ 	if (luaL_getn(l, 2) != 2) {
++#endif
+ 		LuaError(l, "incorrect argument");
+ 	}
+ 	lua_rawgeti(l, 2, 1);
+@@ -597,7 +637,11 @@
+ 			if (!lua_istable(l, j + 1)) {
+ 				LuaError(l, "incorrect argument");
+ 			}
++#if LUA_VERSION_NUM > 501
++			subargs = lua_rawlen(l, j + 1);
++#else
+ 			subargs = luaL_getn(l, j + 1);
++#endif
+ 			i = PlayerRaces.Count++;
+ 			PlayerRaces.Name[i] = NULL;
+ 			PlayerRaces.Display[i] = NULL;
+@@ -647,7 +691,11 @@
+ 		LuaError(l, "incorrect argument");
+ 	}
+ 
++#if LUA_VERSION_NUM > 501
++	args = lua_rawlen(l, 1);
++#else
+ 	args = luaL_getn(l, 1);
++#endif
+ 	for (i = 0; i < args; ++i) {
+ 		lua_rawgeti(l, 1, i + 1);
+ 		delete[] PlayerColorNames[i / 2];
+@@ -658,13 +706,21 @@
+ 		if (!lua_istable(l, -1)) {
+ 			LuaError(l, "incorrect argument");
+ 		}
++#if LUA_VERSION_NUM > 501
++		numcolors = lua_rawlen(l, -1);
++#else
+ 		numcolors = luaL_getn(l, -1);
++#endif
+ 		if (numcolors != PlayerColorIndexCount) {
+ 			LuaError(l, "You should use %d colors (See DefinePlayerColorIndex())" _C_ PlayerColorIndexCount);
+ 		}
+ 		for (j = 0; j < numcolors; ++j) {
+ 			lua_rawgeti(l, -1, j + 1);
++#if LUA_VERSION_NUM > 501
++			if (!lua_istable(l, -1) || lua_rawlen(l, -1) != 3) {
++#else
+ 			if (!lua_istable(l, -1) || luaL_getn(l, -1) != 3) {
++#endif
+ 				LuaError(l, "incorrect argument");
+ 			}
+ 			lua_rawgeti(l, -1, 1);
+diff -Naur stratagus-2.2.4.orig/src/stratagus/script_spell.cpp stratagus-2.2.4/src/stratagus/script_spell.cpp
+--- stratagus-2.2.4.orig/src/stratagus/script_spell.cpp	2006-11-20 04:28:11.000000000 +0100
++++ stratagus-2.2.4/src/stratagus/script_spell.cpp	2012-05-02 15:29:15.676199898 +0200
+@@ -71,7 +71,11 @@
+ 	if (!lua_istable(l, -1)) {
+ 		LuaError(l, "incorrect argument");
+ 	}
++#if LUA_VERSION_NUM > 501
++	args = lua_rawlen(l, -1);
++#else
+ 	args = luaL_getn(l, -1);
++#endif
+ 	j = 0;
+ 
+ 	for (j = 0; j < args; ++j) {
+@@ -126,7 +130,11 @@
+ 	if (!lua_istable(l, -1)) {
+ 		LuaError(l, "incorrect argument");
+ 	}
++#if LUA_VERSION_NUM > 501
++	args = lua_rawlen(l, -1);
++#else
+ 	args = luaL_getn(l, -1);
++#endif
+ 	j = 0;
+ 
+ 	lua_rawgeti(l, -1, j + 1);
+@@ -528,7 +536,11 @@
+ 	if (!lua_istable(l, -1)) {
+ 		LuaError(l, "incorrect argument");
+ 	}
++#if LUA_VERSION_NUM > 501
++	args = lua_rawlen(l, -1);
++#else
+ 	args = luaL_getn(l, -1);
++#endif
+ 	for (j = 0; j < args; ++j) {
+ 		lua_rawgeti(l, -1, j + 1);
+ 		value = LuaToString(l, -1);
+@@ -611,7 +623,11 @@
+ 	if (!lua_istable(l, -1)) {
+ 		LuaError(l, "incorrect argument");
+ 	}
++#if LUA_VERSION_NUM > 501
++	args = lua_rawlen(l, -1);
++#else
+ 	args = luaL_getn(l, -1);
++#endif
+ 	for (j = 0; j < args; ++j) {
+ 		lua_rawgeti(l, -1, j + 1);
+ 		value = LuaToString(l, -1);
+@@ -715,7 +731,11 @@
+ 			if (!lua_istable(l, i + 1)) {
+ 				LuaError(l, "incorrect argument");
+ 			}
++#if LUA_VERSION_NUM > 501
++			subargs = lua_rawlen(l, i + 1);
++#else
+ 			subargs = luaL_getn(l, i + 1);
++#endif
+ 			for (k = 0; k < subargs; ++k) {
+ 				lua_rawgeti(l, i + 1, k + 1);
+ 				spell->Action.push_back(CclSpellAction(l));
+diff -Naur stratagus-2.2.4.orig/src/stratagus/selection.cpp stratagus-2.2.4/src/stratagus/selection.cpp
+--- stratagus-2.2.4.orig/src/stratagus/selection.cpp	2006-11-24 04:28:39.000000000 +0100
++++ stratagus-2.2.4/src/stratagus/selection.cpp	2012-05-02 15:58:45.135078615 +0200
+@@ -1202,7 +1202,11 @@
+ 	InitSelections();
+ 	NumSelected = LuaToNumber(l, 1);
+ 	i = 0;
++#if LUA_VERSION_NUM > 501
++	args = lua_rawlen(l, 2);
++#else
+ 	args = luaL_getn(l, 2);
++#endif
+ 	for (j = 0; j < args; ++j) {
+ 		const char *str;
+ 
+diff -Naur stratagus-2.2.4.orig/src/tolua/tolua_event.cpp stratagus-2.2.4/src/tolua/tolua_event.cpp
+--- stratagus-2.2.4.orig/src/tolua/tolua_event.cpp	2007-02-27 20:59:25.000000000 +0100
++++ stratagus-2.2.4/src/tolua/tolua_event.cpp	2012-05-02 17:09:40.835875034 +0200
+@@ -23,12 +23,20 @@
+ static void storeatubox (lua_State* L, int lo)
+ {
+ 	#ifdef LUA_VERSION_NUM
++#if LUA_VERSION_NUM > 501
++		lua_getuservalue(L, lo);
++#else
+ 		lua_getfenv(L, lo);
++#endif
+ 		if (lua_rawequal(L, -1, TOLUA_NOPEER)) {
+ 			lua_pop(L, 1);
+ 			lua_newtable(L);
+ 			lua_pushvalue(L, -1);
++#if LUA_VERSION_NUM > 501
++			lua_setuservalue(L, lo);	/* stack: k,v,table  */
++#else
+ 			lua_setfenv(L, lo);	/* stack: k,v,table  */
++#endif
+ 		};
+ 		lua_insert(L, -3);
+ 		lua_settable(L, -3); /* on lua 5.1, we trade the "tolua_peers" lookup for a settable call */
+@@ -141,7 +149,11 @@
+ 	{
+ 		/* Access alternative table */
+ 		#ifdef LUA_VERSION_NUM /* new macro on version 5.1 */
++#if LUA_VERSION_NUM > 501
++		lua_getuservalue(L,1);
++#else
+ 		lua_getfenv(L,1);
++#endif
+ 		if (!lua_rawequal(L, -1, TOLUA_NOPEER)) {
+ 			lua_pushvalue(L, 2); /* key */
+ 			lua_gettable(L, -2); /* on lua 5.1, we trade the "tolua_peers" lookup for a gettable call */
+diff -Naur stratagus-2.2.4.orig/src/tolua/tolua_map.cpp stratagus-2.2.4/src/tolua/tolua_map.cpp
+--- stratagus-2.2.4.orig/src/tolua/tolua_map.cpp	2007-02-27 20:59:25.000000000 +0100
++++ stratagus-2.2.4/src/tolua/tolua_map.cpp	2012-05-02 17:25:48.817773597 +0200
+@@ -263,7 +263,11 @@
+ 		lua_pop(L, 1);
+ 		lua_pushvalue(L, TOLUA_NOPEER);
+ 	};
++#if LUA_VERSION_NUM > 501
++	lua_setuservalue(L, -2);
++#else
+ 	lua_setfenv(L, -2);
++#endif
+ 
+ 	return 0;
+ };
+@@ -271,7 +275,11 @@
+ static int tolua_bnd_getpeer(lua_State* L) {
+ 
+ 	/* stack: userdata */
++#if LUA_VERSION_NUM > 501
++	lua_getuservalue(L, -1);
++#else
+ 	lua_getfenv(L, -1);
++#endif
+ 	if (lua_rawequal(L, -1, TOLUA_NOPEER)) {
+ 		lua_pop(L, 1);
+ 		lua_pushnil(L);
+@@ -411,7 +419,11 @@
+ 		lua_rawget(L,-2);
+ 	}
+ 	else
++#if LUA_VERSION_NUM > 501
++	 lua_pushglobaltable(L);
++#else
+ 	 lua_pushvalue(L,LUA_GLOBALSINDEX);
++#endif
+ }
+ 
+ /* End module
+@@ -445,7 +457,11 @@
+ 	else
+ 	{
+ 		/* global table */
++#if LUA_VERSION_NUM > 501
++		lua_pushglobaltable(L);
++#else
+ 		lua_pushvalue(L,LUA_GLOBALSINDEX);
++#endif
+ 	}
+ 	if (hasvar)
+ 	{
+@@ -473,7 +489,11 @@
+ 	else
+ 	{
+ 		/* global table */
++#if LUA_VERSION_NUM > 501
++		lua_pushglobaltable(L);
++#else
+ 		lua_pushvalue(L,LUA_GLOBALSINDEX);
++#endif
+ 	}
+ 	if (hasvar)
+ 	{
+diff -Naur stratagus-2.2.4.orig/src/tolua/tolua_push.cpp stratagus-2.2.4/src/tolua/tolua_push.cpp
+--- stratagus-2.2.4.orig/src/tolua/tolua_push.cpp	2007-02-27 20:59:25.000000000 +0100
++++ stratagus-2.2.4/src/tolua/tolua_push.cpp	2012-05-02 17:13:43.206844982 +0200
+@@ -79,7 +79,11 @@
+ 
+    #ifdef LUA_VERSION_NUM
+    lua_pushvalue(L, TOLUA_NOPEER);
++#if LUA_VERSION_NUM > 501
++   lua_setuservalue(L, -2);
++#else
+    lua_setfenv(L, -2);
++#endif
+    #endif
+   }
+   else
+diff -Naur stratagus-2.2.4.orig/src/ui/interface.cpp stratagus-2.2.4/src/ui/interface.cpp
+--- stratagus-2.2.4.orig/src/ui/interface.cpp	2006-11-26 22:27:03.000000000 +0100
++++ stratagus-2.2.4/src/ui/interface.cpp	2012-05-02 16:34:29.648268513 +0200
+@@ -460,7 +460,11 @@
+ 	int base = lua_gettop(Lua);
+ 
+ 	lua_pushstring(Lua, "HandleCommandKey");
++#if LUA_VERSION_NUM > 501
++	lua_getglobal(Lua, "HandleCommandKey");
++#else
+ 	lua_gettable(Lua, LUA_GLOBALSINDEX);
++#endif
+ 	if (!lua_isfunction(Lua, -1)) {
+ 		DebugPrint("No HandleCommandKey function in lua.\n");
+ 		return false;
+@@ -698,7 +702,11 @@
+ #endif
+ 	int base = lua_gettop(Lua);
+ 	lua_pushstring(Lua, "HandleCheats");
++#if LUA_VERSION_NUM > 501
++	lua_getglobal(Lua, "HandleCheats");
++#else
+ 	lua_gettable(Lua, LUA_GLOBALSINDEX);
++#endif
+ 	if (!lua_isfunction(Lua, -1)) {
+ 		DebugPrint("No HandleCheats function in lua.\n");
+ 		return 0;
+diff -Naur stratagus-2.2.4.orig/src/ui/script_ui.cpp stratagus-2.2.4/src/ui/script_ui.cpp
+--- stratagus-2.2.4.orig/src/ui/script_ui.cpp	2006-12-09 06:15:21.000000000 +0100
++++ stratagus-2.2.4/src/ui/script_ui.cpp	2012-05-02 16:27:15.390697482 +0200
+@@ -248,7 +248,11 @@
+ 				if (!lua_istable(l, -1)) {
+ 					LuaError(l, "incorrect argument");
+ 				}
++#if LUA_VERSION_NUM > 501
++				subargs = lua_rawlen(l, -1);
++#else
+ 				subargs = luaL_getn(l, -1);
++#endif
+ 				TitleScreens[j]->Labels = new TitleScreenLabel *[subargs + 1];
+ 				memset(TitleScreens[j]->Labels, 0, (subargs + 1) * sizeof(TitleScreenLabel *));
+ 				for (k = 0; k < subargs; ++k) {
+@@ -265,7 +269,11 @@
+ 						} else if (!strcmp(value, "Font")) {
+ 							TitleScreens[j]->Labels[k]->Font = CFont::Get(LuaToString(l, -1));
+ 						} else if (!strcmp(value, "Pos")) {
++#if LUA_VERSION_NUM > 501
++							if (!lua_istable(l, -1) || lua_rawlen(l, -1) != 2) {
++#else
+ 							if (!lua_istable(l, -1) || luaL_getn(l, -1) != 2) {
++#endif
+ 								LuaError(l, "incorrect argument");
+ 							}
+ 							lua_rawgeti(l, -1, 1);
+@@ -281,7 +289,11 @@
+ 							if (!lua_istable(l, -1)) {
+ 								LuaError(l, "incorrect argument");
+ 							}
++#if LUA_VERSION_NUM > 501
++							subsubargs = lua_rawlen(l, -1);
++#else
+ 							subsubargs = luaL_getn(l, -1);
++#endif
+ 							for (subk = 0; subk < subsubargs; ++subk) {
+ 								lua_rawgeti(l, -1, subk + 1);
+ 								value = LuaToString(l, -1);
+@@ -343,7 +355,11 @@
+ 		} else if (!strcmp(value, "File")) {
+ 			file = LuaToString(l, -1);
+ 		} else if (!strcmp(value, "HotSpot")) {
++#if LUA_VERSION_NUM > 501
++			if (!lua_istable(l, -1) || lua_rawlen(l, -1) != 2) {
++#else
+ 			if (!lua_istable(l, -1) || luaL_getn(l, -1) != 2) {
++#endif
+ 				LuaError(l, "incorrect argument");
+ 			}
+ 			lua_rawgeti(l, -1, 1);
+@@ -353,7 +369,11 @@
+ 			hoty = LuaToNumber(l, -1);
+ 			lua_pop(l, 1);
+ 		} else if (!strcmp(value, "Size")) {
++#if LUA_VERSION_NUM > 501
++			if (!lua_istable(l, -1) || lua_rawlen(l, -1) != 2) {
++#else
+ 			if (!lua_istable(l, -1) || luaL_getn(l, -1) != 2) {
++#endif
+ 				LuaError(l, "incorrect argument");
+ 			}
+ 			lua_rawgeti(l, -1, 1);
+@@ -792,7 +812,11 @@
+ 				infopanel->Condition = ParseConditionPanel(l);
+ 			} else if (!strcmp(key, "Contents")) {
+ 				Assert(lua_istable(l, -1));
++#if LUA_VERSION_NUM > 501
++				for (j = 0; j < lua_rawlen(l, -1); j++, lua_pop(l, 1)) {
++#else
+ 				for (j = 0; j < luaL_getn(l, -1); j++, lua_pop(l, 1)) {
++#endif
+ 					lua_rawgeti(l, -1, j + 1);
+ 					infopanel->Contents.push_back(CclParseContent(l));
+ 				}
+@@ -840,7 +864,11 @@
+ 		if (!strcmp(value, "mode")) {
+ 			UI.ViewportMode = (ViewportModeType)(int)LuaToNumber(l, j + 1);
+ 		} else if (!strcmp(value, "viewport")) {
++#if LUA_VERSION_NUM > 501
++			if (!lua_istable(l, j + 1) && lua_rawlen(l, j + 1) != 3) {
++#else
+ 			if (!lua_istable(l, j + 1) && luaL_getn(l, j + 1) != 3) {
++#endif
+ 				LuaError(l, "incorrect argument");
+ 			}
+ 			lua_rawgeti(l, j + 1, 1);
+@@ -926,7 +954,11 @@
+ 		if (!strcmp(value, "File")) {
+ 			file = LuaToString(l, -1);
+ 		} else if (!strcmp(value, "Size")) {
++#if LUA_VERSION_NUM > 501
++			if (!lua_istable(l, -1) || lua_rawlen(l, -1) != 2) {
++#else
+ 			if (!lua_istable(l, -1) || luaL_getn(l, -1) != 2) {
++#endif
+ 				LuaError(l, "incorrect argument");
+ 			}
+ 			lua_rawgeti(l, -1, 1);
+@@ -945,7 +977,11 @@
+ 			while (lua_next(l, -2)) {
+ 				value = LuaToString(l, -2);
+ 				if (!strcmp(value, "Color")) {
++#if LUA_VERSION_NUM > 501
++					if (!lua_istable(l, -1) || lua_rawlen(l, -1) != 3) {
++#else
+ 					if (!lua_istable(l, -1) || luaL_getn(l, -1) != 3) {
++#endif
+ 						LuaError(l, "incorrect argument");
+ 					}
+ 					lua_rawgeti(l, -1, 1);
+@@ -965,7 +1001,11 @@
+ 				lua_pop(l, 1);
+ 			}
+ 		} else if (!strcmp(value, "TextPos")) {
++#if LUA_VERSION_NUM > 501
++			if (!lua_istable(l, -1) || lua_rawlen(l, -1) != 2) {
++#else
+ 			if (!lua_istable(l, -1) || luaL_getn(l, -1) != 2) {
++#endif
+ 				LuaError(l, "incorrect argument");
+ 			}
+ 			lua_rawgeti(l, -1, 1);
+@@ -1028,7 +1068,11 @@
+ 	while (lua_next(l, 2)) {
+ 		value = LuaToString(l, -2);
+ 		if (!strcmp(value, "Size")) {
++#if LUA_VERSION_NUM > 501
++			if (!lua_istable(l, -1) || lua_rawlen(l, -1) != 2) {
++#else
+ 			if (!lua_istable(l, -1) || luaL_getn(l, -1) != 2) {
++#endif
+ 				LuaError(l, "incorrect argument");
+ 			}
+ 			lua_rawgeti(l, -1, 1);
+@@ -1044,7 +1088,11 @@
+ 		} else if (!strcmp(value, "TextReverseColor")) {
+ 			b->TextReverseColor = LuaToString(l, -1);
+ 		} else if (!strcmp(value, "TextPos")) {
++#if LUA_VERSION_NUM > 501
++			if (!lua_istable(l, -1) || lua_rawlen(l, -1) != 2) {
++#else
+ 			if (!lua_istable(l, -1) || luaL_getn(l, -1) != 2) {
++#endif
+ 				LuaError(l, "incorrect argument");
+ 			}
+ 			lua_rawgeti(l, -1, 1);
+@@ -1109,14 +1157,26 @@
+ int AddHandler(lua_State *l)
+ {
+ 	lua_pushstring(l, "_handlers_");
++#if LUA_VERSION_NUM > 501
++	lua_getglobal(l, "_handlers_");
++#else
+ 	lua_gettable(l, LUA_GLOBALSINDEX);
++#endif
+ 	if (lua_isnil(l, -1)) {
+ 		lua_pop(l, 1);
+ 		lua_pushstring(l, "_handlers_");
+ 		lua_newtable(l);
++#if LUA_VERSION_NUM > 501
++		lua_setglobal(l, "_handlers_");
++#else
+ 		lua_settable(l, LUA_GLOBALSINDEX);
++#endif
+ 		lua_pushstring(l, "_handlers_");
++#if LUA_VERSION_NUM > 501
++		lua_getglobal(l, "_handlers_");
++#else
+ 		lua_gettable(l, LUA_GLOBALSINDEX);
++#endif
+ 	}
+ 	lua_pushvalue(l, -2);
+ 	lua_rawseti(l, -2, HandleCount);
+@@ -1131,7 +1191,11 @@
+ void CallHandler(unsigned int handle, int value)
+ {
+ 	lua_pushstring(Lua, "_handlers_");
++#if LUA_VERSION_NUM > 501
++	lua_getglobal(Lua, "_handlers_");
++#else
+ 	lua_gettable(Lua, LUA_GLOBALSINDEX);
++#endif
+ 	lua_rawgeti(Lua, -1, handle);
+ 	lua_pushnumber(Lua, value);
+ 	LuaCall(1, 1);
+@@ -1263,7 +1327,11 @@
+ 				LuaError(l, "incorrect argument");
+ 			}
+ 			s1 = new_strdup("");
++#if LUA_VERSION_NUM > 501
++			subargs = lua_rawlen(l, -1);
++#else
+ 			subargs = luaL_getn(l, -1);
++#endif
+ 			for (k = 0; k < subargs; ++k) {
+ 				lua_rawgeti(l, -1, k + 1);
+ 				s2 = LuaToString(l, -1);
+@@ -1293,7 +1361,11 @@
+ 			}
+ 			// FIXME: ba.UnitMask shouldn't be a string
+ 			s1 = new_strdup(",");
++#if LUA_VERSION_NUM > 501
++			subargs = lua_rawlen(l, -1);
++#else
+ 			subargs = luaL_getn(l, -1);
++#endif
+ 			for (k = 0; k < subargs; ++k) {
+ 				lua_rawgeti(l, -1, k + 1);
+ 				s2 = LuaToString(l, -1);
+diff -Naur stratagus-2.2.4.orig/src/ui/widgets.cpp stratagus-2.2.4/src/ui/widgets.cpp
+--- stratagus-2.2.4.orig/src/ui/widgets.cpp	2007-01-07 01:27:29.000000000 +0100
++++ stratagus-2.2.4/src/ui/widgets.cpp	2012-05-02 16:29:42.678856121 +0200
+@@ -1212,7 +1212,11 @@
+ 
+ 	list.clear();
+ 
++#if LUA_VERSION_NUM > 501
++	args = lua_rawlen(lua, *lo);
++#else
+ 	args = luaL_getn(lua, *lo);
++#endif
+ 	for (j = 0; j < args; ++j) {
+ 		lua_rawgeti(lua, *lo, j + 1);
+ 		list.push_back(std::string(LuaToString(lua, -1)));
+diff -Naur stratagus-2.2.4.orig/src/unit/depend.cpp stratagus-2.2.4/src/unit/depend.cpp
+--- stratagus-2.2.4.orig/src/unit/depend.cpp	2006-11-19 07:39:57.000000000 +0100
++++ stratagus-2.2.4/src/unit/depend.cpp	2012-05-02 16:36:54.969451748 +0200
+@@ -350,7 +350,11 @@
+ 		if (!lua_istable(l, j + 1)) {
+ 			LuaError(l, "incorrect argument");
+ 		}
++#if LUA_VERSION_NUM > 501
++		subargs = lua_rawlen(l, j + 1);
++#else
+ 		subargs = luaL_getn(l, j + 1);
++#endif
+ 
+ 		for (k = 0; k < subargs; ++k) {
+ 			lua_rawgeti(l, j + 1, k + 1);
+diff -Naur stratagus-2.2.4.orig/src/unit/script_unit.cpp stratagus-2.2.4/src/unit/script_unit.cpp
+--- stratagus-2.2.4.orig/src/unit/script_unit.cpp	2006-12-22 19:18:21.000000000 +0100
++++ stratagus-2.2.4/src/unit/script_unit.cpp	2012-05-02 16:48:52.422482349 +0200
+@@ -145,7 +145,11 @@
+ 	//
+ 	// Parse the list: (still everything could be changed!)
+ 	//
++#if LUA_VERSION_NUM > 501
++	args = lua_rawlen(l, -1);
++#else
+ 	args = luaL_getn(l, -1);
++#endif
+ 	for (j = 0; j < args; ++j) {
+ 		lua_rawgeti(l, -1, j + 1);
+ 		value = LuaToString(l, -1);
+@@ -230,7 +234,11 @@
+ 		} else if (!strcmp(value, "tile")) {
+ 			++j;
+ 			lua_rawgeti(l, -1, j + 1);
++#if LUA_VERSION_NUM > 501
++			if (!lua_istable(l, -1) || lua_rawlen(l, -1) != 2) {
++#else
+ 			if (!lua_istable(l, -1) || luaL_getn(l, -1) != 2) {
++#endif
+ 				LuaError(l, "incorrect argument");
+ 			}
+ 			lua_rawgeti(l, -1, 1);
+@@ -250,7 +258,11 @@
+ 		} else if (!strcmp(value, "patrol")) {
+ 			++j;
+ 			lua_rawgeti(l, -1, j + 1);
++#if LUA_VERSION_NUM > 501
++			if (!lua_istable(l, -1) || lua_rawlen(l, -1) != 2) {
++#else
+ 			if (!lua_istable(l, -1) || luaL_getn(l, -1) != 2) {
++#endif
+ 				LuaError(l, "incorrect argument");
+ 			}
+ 			lua_rawgeti(l, -1, 1);
+@@ -323,7 +335,11 @@
+ 	if (!lua_istable(l, -1)) {
+ 		LuaError(l, "incorrect argument");
+ 	}
++#if LUA_VERSION_NUM > 501
++	args = lua_rawlen(l, -1);
++#else
+ 	args = luaL_getn(l, -1);
++#endif
+ 	for (j = 0; j < args; ++j) {
+ 		lua_rawgeti(l, -1, j + 1);
+ 		value = LuaToString(l, -1);
+@@ -377,7 +393,11 @@
+ 	if (!lua_istable(l, -1)) {
+ 		LuaError(l, "incorrect argument");
+ 	}
++#if LUA_VERSION_NUM > 501
++	args = lua_rawlen(l, -1);
++#else
+ 	args = luaL_getn(l, -1);
++#endif
+ 	for (j = 0; j < args; ++j) {
+ 		lua_rawgeti(l, -1, j + 1);
+ 		value = LuaToString(l, -1);
+@@ -409,7 +429,11 @@
+ 	if (!lua_istable(l, -1)) {
+ 		LuaError(l, "incorrect argument");
+ 	}
++#if LUA_VERSION_NUM > 501
++	args = lua_rawlen(l, -1);
++#else
+ 	args = luaL_getn(l, -1);
++#endif
+ 	for (j = 0; j < args; ++j) {
+ 		lua_rawgeti(l, -1, j + 1);
+ 		value = LuaToString(l, -1);
+@@ -439,7 +463,11 @@
+ 	if (!lua_istable(l, -1)) {
+ 		LuaError(l, "incorrect argument");
+ 	}
++#if LUA_VERSION_NUM > 501
++	args = lua_rawlen(l, -1);
++#else
+ 	args = luaL_getn(l, -1);
++#endif
+ 	for (j = 0; j < args; ++j) {
+ 		lua_rawgeti(l, -1, j + 1);
+ 		value = LuaToString(l, -1);
+@@ -468,7 +496,11 @@
+ 	if (!lua_istable(l, -1)) {
+ 		LuaError(l, "incorrect argument");
+ 	}
++#if LUA_VERSION_NUM > 501
++	args = lua_rawlen(l, -1);
++#else
+ 	args = luaL_getn(l, -1);
++#endif
+ 	for (j = 0; j < args; ++j) {
+ 		lua_rawgeti(l, -1, j + 1);
+ 		value = LuaToString(l, -1);
+@@ -497,7 +529,11 @@
+ 	if (!lua_istable(l, -1)) {
+ 		LuaError(l, "incorrect argument");
+ 	}
++#if LUA_VERSION_NUM > 501
++	args = lua_rawlen(l, -1);
++#else
+ 	args = luaL_getn(l, -1);
++#endif
+ 	for (j = 0; j < args; ++j) {
+ 		lua_rawgeti(l, -1, j + 1);
+ 		value = LuaToString(l, -1);
+@@ -514,7 +550,11 @@
+ 			if (!lua_istable(l, -1)) {
+ 				LuaError(l, "incorrect argument");
+ 			}
++#if LUA_VERSION_NUM > 501
++			subargs = lua_rawlen(l, -1);
++#else
+ 			subargs = luaL_getn(l, -1);
++#endif
+ 			for (k = 0; k < subargs; ++k) {
+ 				lua_rawgeti(l, -1, k + 1);
+ 				unit->Data.Move.Path[k] = LuaToNumber(l, -1);
+@@ -602,7 +642,11 @@
+ 			int w;
+ 			int h;
+ 
++#if LUA_VERSION_NUM > 501
++			if (!lua_istable(l, j + 1) || lua_rawlen(l, j + 1) != 4) {
++#else
+ 			if (!lua_istable(l, j + 1) || luaL_getn(l, j + 1) != 4) {
++#endif
+ 				LuaError(l, "incorrect argument");
+ 			}
+ 			lua_rawgeti(l, j + 1, 1);
+@@ -625,7 +669,11 @@
+ 			// Radar(Jammer) not.
+ 
+ 		} else if (!strcmp(value, "tile")) {
++#if LUA_VERSION_NUM > 501
++			if (!lua_istable(l, j + 1) || lua_rawlen(l, j + 1) != 2) {
++#else
+ 			if (!lua_istable(l, j + 1) || luaL_getn(l, j + 1) != 2) {
++#endif
+ 				LuaError(l, "incorrect argument");
+ 			}
+ 			lua_rawgeti(l, j + 1, 1);
+@@ -637,7 +685,11 @@
+ 		} else if (!strcmp(value, "stats")) {
+ 			unit->Stats = &type->Stats[(int)LuaToNumber(l, j + 1)];
+ 		} else if (!strcmp(value, "pixel")) {
++#if LUA_VERSION_NUM > 501
++			if (!lua_istable(l, j + 1) || lua_rawlen(l, j + 1) != 2) {
++#else
+ 			if (!lua_istable(l, j + 1) || luaL_getn(l, j + 1) != 2) {
++#endif
+ 				LuaError(l, "incorrect argument");
+ 			}
+ 			lua_rawgeti(l, j + 1, 1);
+@@ -647,7 +699,11 @@
+ 			unit->IY = LuaToNumber(l, -1);
+ 			lua_pop(l, 1);
+ 		} else if (!strcmp(value, "seen-pixel")) {
++#if LUA_VERSION_NUM > 501
++			if (!lua_istable(l, j + 1) || lua_rawlen(l, j + 1) != 2) {
++#else
+ 			if (!lua_istable(l, j + 1) || luaL_getn(l, j + 1) != 2) {
++#endif
+ 				LuaError(l, "incorrect argument");
+ 			}
+ 			lua_rawgeti(l, j + 1, 1);
+@@ -766,7 +822,11 @@
+ 			if (!lua_istable(l, j + 1)) {
+ 				LuaError(l, "incorrect argument");
+ 			}
++#if LUA_VERSION_NUM > 501
++			subargs = lua_rawlen(l, j + 1);
++#else
+ 			subargs = luaL_getn(l, j + 1);
++#endif
+ 			for (k = 0; k < subargs; ++k) {
+ 				lua_rawgeti(l, j + 1, k + 1);
+ 				value = LuaToString(l, -1);
+@@ -932,7 +992,11 @@
+ 	lua_pushvalue(l, 1);
+ 	unittype = CclGetUnitType(l);
+ 	lua_pop(l, 1);
++#if LUA_VERSION_NUM > 501
++	if (!lua_istable(l, 3) || lua_rawlen(l, 3) != 2) {
++#else
+ 	if (!lua_istable(l, 3) || luaL_getn(l, 3) != 2) {
++#endif
+ 		LuaError(l, "incorrect argument !!");
+ 	}
+ 	lua_rawgeti(l, 3, 1);
+@@ -1043,7 +1107,11 @@
+ 	lua_rawgeti(l, 3, 2);
+ 	y1 = LuaToNumber(l, -1);
+ 	lua_pop(l, 1);
++#if LUA_VERSION_NUM > 501
++	if (lua_rawlen(l, 3) == 4) {
++#else
+ 	if (luaL_getn(l, 3) == 4) {
++#endif
+ 		lua_rawgeti(l, 3, 3);
+ 		x2 = LuaToNumber(l, -1);
+ 		lua_pop(l, 1);
+@@ -1063,7 +1131,11 @@
+ 	lua_rawgeti(l, 4, 2);
+ 	dy1 = LuaToNumber(l, -1);
+ 	lua_pop(l, 1);
++#if LUA_VERSION_NUM > 501
++	if (lua_rawlen(l, 4) == 4) {
++#else
+ 	if (luaL_getn(l, 4) == 4) {
++#endif
+ 		lua_rawgeti(l, 4, 3);
+ 		dx2 = LuaToNumber(l, -1);
+ 		lua_pop(l, 1);
+diff -Naur stratagus-2.2.4.orig/src/unit/script_unittype.cpp stratagus-2.2.4/src/unit/script_unittype.cpp
+--- stratagus-2.2.4.orig/src/unit/script_unittype.cpp	2007-01-15 00:10:15.000000000 +0100
++++ stratagus-2.2.4/src/unit/script_unittype.cpp	2012-05-02 16:59:21.856613341 +0200
+@@ -120,7 +120,11 @@
+ 	int args;
+ 	int i;
+ 	CBuildRestrictionAnd &andlist = *new CBuildRestrictionAnd();
++#if LUA_VERSION_NUM > 501
++	args = lua_rawlen(l, -1);
++#else
+ 	args = luaL_getn(l, -1);
++#endif
+ 	Assert(!(args & 1)); // must be even
+ 
+ 	for (i = 0; i < args; ++i) {
+@@ -252,7 +256,11 @@
+ 			if (!lua_istable(l, -1)) {
+ 				LuaError(l, "incorrect argument");
+ 			}
++#if LUA_VERSION_NUM > 501
++			subargs = lua_rawlen(l, -1);
++#else
+ 			subargs = luaL_getn(l, -1);
++#endif
+ 			for (k = 0; k < subargs; ++k) {
+ 				lua_rawgeti(l, -1, k + 1);
+ 				value = LuaToString(l, -1);
+@@ -287,7 +295,11 @@
+ 			if (!lua_istable(l, -1)) {
+ 				LuaError(l, "incorrect argument");
+ 			}
++#if LUA_VERSION_NUM > 501
++			subargs = lua_rawlen(l, -1);
++#else
+ 			subargs = luaL_getn(l, -1);
++#endif
+ 			for (k = 0; k < subargs; ++k) {
+ 				lua_rawgeti(l, -1, k + 1);
+ 				value = LuaToString(l, -1);
+@@ -331,7 +343,11 @@
+ 				type->ShadowSprite = NULL;
+ 			}
+ 		} else if (!strcmp(value, "Offset")) {
++#if LUA_VERSION_NUM > 501
++			if (!lua_istable(l, -1) || lua_rawlen(l, -1) != 2) {
++#else
+ 			if (!lua_istable(l, -1) || luaL_getn(l, -1) != 2) {
++#endif
+ 				LuaError(l, "incorrect argument");
+ 			}
+ 			lua_rawgeti(l, -1, 1);
+@@ -355,7 +371,11 @@
+ 			if (!lua_istable(l, -1)) {
+ 				LuaError(l, "incorrect argument");
+ 			}
++#if LUA_VERSION_NUM > 501
++			subargs = lua_rawlen(l, -1);
++#else
+ 			subargs = luaL_getn(l, -1);
++#endif
+ 			type->Portrait.Num = subargs;
+ 			type->Portrait.Files = new char *[type->Portrait.Num * sizeof(char *)];
+ 			type->Portrait.Mngs = new Mng *[type->Portrait.Num];
+@@ -370,7 +390,11 @@
+ 			if (!lua_istable(l, -1)) {
+ 				LuaError(l, "incorrect argument");
+ 			}
++#if LUA_VERSION_NUM > 501
++			subargs = lua_rawlen(l, -1);
++#else
+ 			subargs = luaL_getn(l, -1);
++#endif
+ 			for (k = 0; k < subargs; ++k) {
+ 				int res;
+ 
+@@ -386,7 +410,11 @@
+ 			if (!lua_istable(l, -1)) {
+ 				LuaError(l, "incorrect argument");
+ 			}
++#if LUA_VERSION_NUM > 501
++			subargs = lua_rawlen(l, -1);
++#else
+ 			subargs = luaL_getn(l, -1);
++#endif
+ 			for (k = 0; k < subargs; ++k) {
+ 				int res;
+ 
+@@ -419,7 +447,11 @@
+ 			type->Variable[MANA_INDEX].Increase = 1;
+ 			type->Variable[MANA_INDEX].Enable = 1;
+ 		} else if (!strcmp(value, "TileSize")) {
++#if LUA_VERSION_NUM > 501
++			if (!lua_istable(l, -1) || lua_rawlen(l, -1) != 2) {
++#else
+ 			if (!lua_istable(l, -1) || luaL_getn(l, -1) != 2) {
++#endif
+ 				LuaError(l, "incorrect argument");
+ 			}
+ 			lua_rawgeti(l, -1, 1);
+@@ -431,7 +463,11 @@
+ 		} else if (!strcmp(value, "Decoration")) {
+ 			type->Decoration = LuaToBoolean(l, -1);
+ 		} else if (!strcmp(value, "NeutralMinimapColor")) {
++#if LUA_VERSION_NUM > 501
++			if (!lua_istable(l, -1) || lua_rawlen(l, -1) != 3) {
++#else
+ 			if (!lua_istable(l, -1) || luaL_getn(l, -1) != 3) {
++#endif
+ 				LuaError(l, "incorrect argument");
+ 			}
+ 			lua_rawgeti(l, -1, 1);
+@@ -444,7 +480,11 @@
+ 			type->NeutralMinimapColorRGB.b = LuaToNumber(l, -1);
+ 			lua_pop(l, 1);
+ 		} else if (!strcmp(value, "BoxSize")) {
++#if LUA_VERSION_NUM > 501
++			if (!lua_istable(l, -1) || lua_rawlen(l, -1) != 2) {
++#else
+ 			if (!lua_istable(l, -1) || luaL_getn(l, -1) != 2) {
++#endif
+ 				LuaError(l, "incorrect argument");
+ 			}
+ 			lua_rawgeti(l, -1, 1);
+@@ -533,7 +573,11 @@
+ 			if (!lua_istable(l, -1)) {
+ 				LuaError(l, "incorrect argument");
+ 			}
++#if LUA_VERSION_NUM > 501
++			subargs = lua_rawlen(l, -1);
++#else
+ 			subargs = luaL_getn(l, -1);
++#endif
+ 			for (k = 0; k < subargs; ++k) {
+ 				int res;
+ 
+@@ -572,7 +616,11 @@
+ 			if (!lua_istable(l, -1)) {
+ 				LuaError(l, "incorrect argument");
+ 			}
++#if LUA_VERSION_NUM > 501
++			subargs = lua_rawlen(l, -1);
++#else
+ 			subargs = luaL_getn(l, -1);
++#endif
+ 			// Free any old restrictions if they are redefined
+ 			for (std::vector<CBuildRestriction *>::iterator b = type->BuildingRules.begin();
+ 				b != type->BuildingRules.end(); ++b) {
+@@ -625,7 +673,11 @@
+ 				memset(type->CanTransport, 0, UnitTypeVar.NumberBoolFlag * sizeof(char));
+ 			}
+ 			// FIXME : add flag for kill/unload units inside.
++#if LUA_VERSION_NUM > 501
++			subargs = lua_rawlen(l, -1);
++#else
+ 			subargs = luaL_getn(l, -1);
++#endif
+ 			for (k = 0; k < subargs; ++k) {
+ 				lua_rawgeti(l, -1, k + 1);
+ 				value = LuaToString(l, -1);
+@@ -653,14 +705,22 @@
+ 			int args;
+ 			int j;
+ 
++#if LUA_VERSION_NUM > 501
++			args = lua_rawlen(l, -1);
++#else
+ 			args = luaL_getn(l, -1);
++#endif
+ 			for (j = 0; j < args; ++j) {
+ 				lua_rawgeti(l, -1, j + 1);
+ 				res = new ResourceInfo;
+ 				if (!lua_istable(l, -1)) {
+ 					LuaError(l, "incorrect argument");
+ 				}
++#if LUA_VERSION_NUM > 501
++				subargs = lua_rawlen(l, -1);
++#else
+ 				subargs = luaL_getn(l, -1);
++#endif
+ 				for (k = 0; k < subargs; ++k) {
+ 					lua_rawgeti(l, -1, k + 1);
+ 					value = LuaToString(l, -1);
+@@ -730,7 +790,11 @@
+ 			if (!lua_istable(l, -1)) {
+ 				LuaError(l, "incorrect argument");
+ 			}
++#if LUA_VERSION_NUM > 501
++			subargs = lua_rawlen(l, -1);
++#else
+ 			subargs = luaL_getn(l, -1);
++#endif
+ 			for (k = 0; k < subargs; ++k) {
+ 				lua_rawgeti(l, -1, k + 1);
+ 				type->CanStore[CclGetResourceByName(l)] = 1;
+@@ -750,7 +814,11 @@
+ 				type->CanCastSpell = new char[SpellTypeTable.size()];
+ 				memset(type->CanCastSpell, 0, SpellTypeTable.size() * sizeof(char));
+ 			}
++#if LUA_VERSION_NUM > 501
++			subargs = lua_rawlen(l, -1);
++#else
+ 			subargs = luaL_getn(l, -1);
++#endif
+ 			if (subargs == 0) {
+ 				delete[] type->CanCastSpell;
+ 				type->CanCastSpell = NULL;
+@@ -780,7 +848,11 @@
+ 				type->AutoCastActive = new char[SpellTypeTable.size()];
+ 				memset(type->AutoCastActive, 0, SpellTypeTable.size() * sizeof(char));
+ 			}
++#if LUA_VERSION_NUM > 501
++			subargs = lua_rawlen(l, -1);
++#else
+ 			subargs = luaL_getn(l, -1);
++#endif
+ 			if (subargs == 0) {
+ 				delete[] type->AutoCastActive;
+ 				type->AutoCastActive = NULL;
+@@ -809,7 +881,11 @@
+ 			if (!lua_istable(l, -1)) {
+ 				LuaError(l, "incorrect argument");
+ 			}
++#if LUA_VERSION_NUM > 501
++			subargs = lua_rawlen(l, -1);
++#else
+ 			subargs = luaL_getn(l, -1);
++#endif
+ 			for (k = 0; k < subargs; ++k) {
+ 				lua_rawgeti(l, -1, k + 1);
+ 				value = LuaToString(l, -1);
+@@ -839,7 +915,11 @@
+ 			if (!lua_istable(l, -1)) {
+ 				LuaError(l, "incorrect argument");
+ 			}
++#if LUA_VERSION_NUM > 501
++			subargs = lua_rawlen(l, -1);
++#else
+ 			subargs = luaL_getn(l, -1);
++#endif
+ 			for (k = 0; k < subargs; ++k) {
+ 				lua_rawgeti(l, -1, k + 1);
+ 				value = LuaToString(l, -1);
+@@ -983,7 +1063,11 @@
+ 			if (!lua_istable(l, j + 1)) {
+ 				LuaError(l, "incorrect argument");
+ 			}
++#if LUA_VERSION_NUM > 501
++			subargs = lua_rawlen(l, j + 1);
++#else
+ 			subargs = luaL_getn(l, j + 1);
++#endif
+ 			for (k = 0; k < subargs; ++k) {
+ 
+ 				lua_rawgeti(l, j + 1, k + 1);
+@@ -1335,7 +1419,11 @@
+ 	if (!lua_istable(l, idx)) {
+ 		LuaError(l, "incorrect argument");
+ 	}
++#if LUA_VERSION_NUM > 501
++	args = lua_rawlen(l, idx);
++#else
+ 	args = luaL_getn(l, idx);
++#endif
+ 	anim = new CAnimation[args + 1];
+ 	tail = NULL;
+ 	NumLabels = NumLabelsLater = 0;
+diff -Naur stratagus-2.2.4.orig/src/unit/unit_draw.cpp stratagus-2.2.4/src/unit/unit_draw.cpp
+--- stratagus-2.2.4.orig/src/unit/unit_draw.cpp	2006-11-20 04:28:06.000000000 +0100
++++ stratagus-2.2.4/src/unit/unit_draw.cpp	2012-05-02 17:02:27.952286813 +0200
+@@ -326,7 +326,11 @@
+ 			} else if (!strcmp(key, "File")) {
+ 				deco.File = LuaToString(l, -1);
+ 			} else if (!strcmp(key, "Offset")) {
++#if LUA_VERSION_NUM > 501
++				if (!lua_istable(l, -1) || lua_rawlen(l, -1) != 2) {
++#else
+ 				if (!lua_istable(l, -1) || luaL_getn(l, -1) != 2) {
++#endif
+ 					LuaError(l, "incorrect argument");
+ 				}
+ 				lua_rawgeti(l, -1, 1); // offsetX
+@@ -335,7 +339,11 @@
+ 				deco.HotY = LuaToNumber(l, -1);
+ 				lua_pop(l, 2); // Pop offsetX and Y
+ 			} else if (!strcmp(key, "Size")) {
++#if LUA_VERSION_NUM > 501
++				if (!lua_istable(l, -1) || lua_rawlen(l, -1) != 2) {
++#else
+ 				if (!lua_istable(l, -1) || luaL_getn(l, -1) != 2) {
++#endif
+ 					LuaError(l, "incorrect argument");
+ 				}
+ 				lua_rawgeti(l, -1, 1); // Width
+diff -Naur stratagus-2.2.4.orig/src/unit/upgrade.cpp stratagus-2.2.4/src/unit/upgrade.cpp
+--- stratagus-2.2.4.orig/src/unit/upgrade.cpp	2006-11-20 04:28:06.000000000 +0100
++++ stratagus-2.2.4/src/unit/upgrade.cpp	2012-05-02 16:39:19.111649721 +0200
+@@ -256,7 +256,11 @@
+ 		} else if (!strcmp(key, "cost")) {
+ 			int i;
+ 
++#if LUA_VERSION_NUM > 501
++			if (!lua_istable(l, j + 1) || lua_rawlen(l, j + 1) != 2) {
++#else
+ 			if (!lua_istable(l, j + 1) || luaL_getn(l, j + 1) != 2) {
++#endif
+ 				LuaError(l, "incorrect argument");
+ 			}
+ 			lua_rawgeti(l, j + 1, 1);

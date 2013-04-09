@@ -1,0 +1,136 @@
+### Begin GUI options ###
+item_db_source=local/bcpapi/wowhead/ptrhead
+iterations=1000
+default_world_lag=0.1
+default_aura_delay=0.5
+max_time=450
+vary_combat_length=0.2
+fight_style=Patchwerk
+target_level+=3
+target_race=humanoid
+default_skill=1.0
+optimal_raid=0
+override.attack_power_multiplier=1
+override.attack_haste=1
+override.spell_power_multiplier=1
+override.spell_haste=1
+override.critical_strike=1
+override.mastery=1
+override.stamina=1
+override.str_agi_int=1
+override.bloodlust=1
+override.skull_banner=1
+override.stormlash=1
+override.bleeding=1
+override.physical_vulnerability=1
+override.ranged_vulnerability=1
+override.magic_vulnerability=1
+override.weakened_armor=1
+override.weakened_blows=1
+threads=1
+scale_only=none
+dps_plot_stat=none
+dps_plot_points=20
+dps_plot_step=100
+reforge_plot_stat=none
+reforge_plot_amount=200
+reforge_plot_step=50
+reforge_plot_output_file=reforge_plot.csv
+statistics_level=1
+### End GUI options ###
+### Begin simulateText ###
+#!./simc 
+
+paladin="Àthor"
+origin="http://eu.battle.net/wow/en/character/Lordaeron/Àthor%0A%09%09%09%09%0A%09%09%09%09%09 /advanced"
+thumbnail="http://eu.battle.net/static-render/eu/lordaeron/107/57590635-avatar.jpg"
+level=90
+race=human
+role=hybrid
+position=back
+professions=enchanting=600/inscription=600
+talents=http://eu.battle.net/wow/en/tool/talent-calculator#bb!220212
+glyphs=double_jeopardy/templars_verdict/mass_exorcism/winged_vengeance/bladed_judgment/seal_of_blood
+spec=retribution
+
+# This default action priority list is automatically created based on your character.
+# It is a attempt to provide you with a action list that is both simple and practicable,
+# while resulting in a meaningful and good simulation. It may not result in the absolutely highest possible dps.
+# Feel free to edit, adapt and improve it to your own needs.
+# SimulationCraft is always looking for updates and improvements to the default action lists.
+
+# Executed before combat begins. Accepts non-harmful actions only.
+
+actions.precombat=flask,type=winters_bite
+actions.precombat+=/food,type=black_pepper_ribs_and_shrimp
+actions.precombat+=/blessing_of_kings,if=!aura.str_agi_int.up
+actions.precombat+=/blessing_of_might,if=!aura.mastery.up&!aura.str_agi_int.up
+actions.precombat+=/seal_of_truth
+actions.precombat+=/snapshot_stats
+actions.precombat+=/mogu_power_potion
+
+# Executed every time the actor is available.
+
+actions=rebuke
+actions+=/seal_of_truth,if=mana.pct>=90|seal.none
+actions+=/seal_of_insight,if=mana.pct<=30
+actions+=/mogu_power_potion,if=(buff.bloodlust.react|(buff.ancient_power.up&buff.avenging_wrath.up)|target.time_to_die<=40)
+actions+=/auto_attack
+actions+=/inquisition,if=(buff.inquisition.down|buff.inquisition.remains<=2)&(holy_power>=3)
+actions+=/avenging_wrath,if=buff.inquisition.up
+actions+=/guardian_of_ancient_kings,if=buff.avenging_wrath.up
+actions+=/execution_sentence,if=buff.inquisition.up
+actions+=/templars_verdict,if=holy_power=5
+actions+=/hammer_of_wrath
+actions+=/wait,sec=cooldown.hammer_of_wrath.remains,if=cooldown.hammer_of_wrath.remains>0&cooldown.hammer_of_wrath.remains<=0.2
+actions+=/exorcism
+actions+=/judgment,if=target.health.pct<=20|buff.avenging_wrath.up
+actions+=/crusader_strike
+actions+=/judgment
+actions+=/templars_verdict,if=holy_power>=3
+
+head=white_tiger_helmet,id=86681,gems=reverberating_primal_160haste_160hit_180str,reforge=hit_haste
+neck=shackle_of_eversparks,id=90522,reforge=hit_haste
+shoulders=white_tiger_pauldrons,id=85339,gems=160exp_160hit_60str,enchant=520str_100crit,reforge=hit_mastery
+back=spikeshard_greatcloak,id=95114,enchant=180hit
+chest=white_tiger_battleplate,id=85343,gems=320haste_320haste_120crit,enchant=80all,reforge=crit_mastery
+shirt=squires_shirt,id=45
+tabard=tabard_of_the_argent_dawn,id=22999
+wrists=frozen_warlords_bracers,id=94742,enchant=180str,reforge=exp_mastery
+hands=starcrusher_gauntlets,id=86135,gems=160exp_160hit_60haste,enchant=170str,reforge=hit_mastery
+waist=cloudbreaker_greatbelt,id=94726,gems=320haste_160haste_160hit_320haste
+legs=bloodlords_bloodsoaked_legplates,id=96023,gems=80str_160haste_160exp_160hit_120Str,enchant=285str_165crit
+feet=impaling_treads,id=86852,gems=320haste_60hit,enchant=175haste,reforge=hit_mastery
+finger1=band_of_the_shadopan_assault,id=95140,enchant=160str,reforge=crit_mastery
+finger2=circle_of_the_shieldwall,id=93246,enchant=160str,reforge=crit_mastery
+trinket1=brutal_talisman_of_the_shadopan_assault,id=94508
+trinket2=darkmist_vortex,id=86336
+main_hand=shinka_execution_of_dominion,id=86386,gems=500str,enchant=dancing_steel,reforge=crit_haste
+
+# Gear Summary
+# gear_strength=15817
+# gear_agility=80
+# gear_stamina=19451
+# gear_intellect=80
+# gear_spirit=80
+# gear_expertise_rating=2666
+# gear_hit_rating=2663
+# gear_crit_rating=1885
+# gear_haste_rating=9241
+# gear_mastery_rating=5189
+# gear_armor=33497
+# meta_gem=reverberating_primal
+# tier14_2pc_melee=1
+# main_hand=shinka_execution_of_dominion,weapon=axe2h_3.60speed_12868min_19302max,enchant=dancing_steel
+
+### End simulateText ###
+### Begin overrides ###
+# User-specified persistent global and player parms will set here.
+
+### End overrides ###
+### Begin command line ###
+
+### End command line ###
+### Begin final options ###
+### End final options ###
+### END ###

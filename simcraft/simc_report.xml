@@ -1,0 +1,878 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<simulationcraft major_version="520" minor_version="2" wow_version="5.2.0" ptr="false" wow_build="16650">
+  <config>
+    <style>not-specified</style>
+    <has_scale_factors>false</has_scale_factors>
+    <report_pets_separately>false</report_pets_separately>
+    <report_details>true</report_details>
+    <report_targets>true</report_targets>
+    <report_raw_abilities>true</report_raw_abilities>
+    <normalize_scale_factors>false</normalize_scale_factors>
+  </config>
+  <summary>
+    <timestamp>Mon Apr  8 13:11:31 2013
+</timestamp>
+    <iterations>1000</iterations>
+    <threads>1</threads>
+    <confidence>95</confidence>
+    <simulation_length mean="450" min="419" max="480" total="449742"/>
+    <events processed="9412861" max_remaining="29"/>
+    <fight_style>Patchwerk</fight_style>
+    <elapsed_cpu_sec>1.970</elapsed_cpu_sec>
+    <lag type="world" value="0" stddev="0"/>
+    <lag type="queue" value="37" stddev="9"/>
+    <charts max_players_per_chart="20">
+      <chart type="dps" img_src="http://2.chart.apis.google.com/chart?chs=525x40&amp;cht=bhg&amp;chf=bg,s,333333&amp;chbh=15&amp;chd=t:110717&amp;chds=0,276793&amp;chco=F58CBA&amp;chm=t++110717++%C3%80thor,F58CBA,0,0,15&amp;chtt=DPS Ranking&amp;chts=dddddd,18"/>
+      <chart type="gear" img_src="http://4.chart.apis.google.com/chart?chs=525x120&amp;cht=bhs&amp;chf=bg,s,333333&amp;chbh=15&amp;chd=t:15817|80|80|80|0|0|2666|2663|1885|9241|5189&amp;chds=0,37701&amp;chco=C79C6E,ABD473,69CCF0,8A8A8A,9482C9,FFF569,C5DDD4,C41F3B,F58CBA,0070DE,FFF569&amp;chxt=y&amp;chxl=0:|%C3%80thor&amp;chxs=0,dddddd,14&amp;chdl=Str|Agi|Int|Spi|SP|AP|Exp|Hit|Crit|Haste|Mastery&amp;chdlp=t&amp;chdls=dddddd,12&amp;chtt=Gear Overview&amp;chts=dddddd,18&amp;"/>
+      <chart type="dpet" img_src="http://3.chart.apis.google.com/chart?chs=500x125&amp;cht=bhg&amp;chf=bg,s,333333&amp;chbh=10&amp;chd=t:256371|87136|77816|60164|49524|28434|12654&amp;chds=0,640927&amp;chco=FFE57F,FFE57F,C79C6E,FFE57F,FFE57F,C79C6E,C79C6E&amp;chm=t++256371++execution_sentence+(%C3%80thor),F58CBA,0,0,10|t++87136++hammer_of_wrath+(%C3%80thor),F58CBA,1,0,10|t++77816++templars_verdict+(%C3%80thor),F58CBA,2,0,10|t++60164++exorcism+(%C3%80thor),F58CBA,3,0,10|t++49524++judgment+(%C3%80thor),F58CBA,4,0,10|t++28434++crusader_strike+(%C3%80thor),F58CBA,5,0,10|t++12654++melee+(%C3%80thor),F58CBA,6,0,10&amp;chtt=Raid Damage Per Execute Time&amp;chts=dddddd,18"/>
+    </charts>
+    <dmg total="49826534" dps="110717"/>
+    <heal total="0" hps="0"/>
+    <player_by_dps>
+      <player name="Àthor" index="0" dps="110717.215"/>
+    </player_by_dps>
+    <player_by_hps>
+      <player name="Àthor" index="0" hps="0"/>
+    </player_by_hps>
+  </summary>
+  <players>
+    <player name="Àthor">
+      <type>Player</type>
+      <level>90</level>
+      <race>human</race>
+      <class type="paladin"/>
+      <specialization>retribution</specialization>
+      <primary_role>hybrid</primary_role>
+      <position>back</position>
+      <dps value="110717.215" effective="110717.215" error="128.684" range="7524.480" convergence="0.665"/>
+      <dpr value="82.338" rps_loss="1286.934" rps_gain="1282.635" resource="mana"/>
+      <waiting_time pct="6.077"/>
+      <active_time pct="100"/>
+      <apm>47.826</apm>
+      <origin>http://eu.battle.net/wow/en/character/Lordaeron/Àthor%0A%09%09%09%09%0A%09%09%09%09%09 /advanced</origin>
+      <talents_url>http://eu.battle.net/wow/en/tool/talent-calculator#bb!220212</talents_url>
+      <attribute name="strength" base="16793" gear="15817" buffed="19066"/>
+      <attribute name="agility" base="185" gear="80" buffed="194"/>
+      <attribute name="stamina" base="19620" gear="19451" buffed="21582"/>
+      <attribute name="intellect" base="194" gear="80" buffed="204"/>
+      <attribute name="spirit" base="208" gear="80" buffed="208"/>
+      <attribute name="mastery" base="17" gear="5189" buffed="22"/>
+      <attribute name="spellpower" base="16918" gear="0" buffed="21110"/>
+      <attribute name="spellhit" base="16" gear="2663" buffed="16"/>
+      <attribute name="spellcrit" base="7" gear="1885" buffed="12"/>
+      <attribute name="spellhaste" base="22" gear="9241" buffed="28"/>
+      <attribute name="manareg_per_second" base="300" gear="0" buffed="300"/>
+      <attribute name="attackpower" base="33836" gear="0" buffed="42220"/>
+      <attribute name="attackhit" base="8" gear="2663" buffed="8"/>
+      <attribute name="attackcrit" base="8" gear="1885" buffed="13"/>
+      <attribute name="expertise" base="8" gear="2666" buffed="8"/>
+      <attribute name="expertise_oh" base="8" gear="2666" buffed="8"/>
+      <attribute name="attackhaste" base="22" gear="9241" buffed="22"/>
+      <attribute name="attackspeed" base="22" gear="9241" buffed="34"/>
+      <attribute name="armor" base="33497" gear="33497" buffed="33497"/>
+      <attribute name="miss" base="0" gear="0" buffed="0"/>
+      <attribute name="dodge" base="5" gear="0" buffed="5"/>
+      <attribute name="parry" base="21" gear="0" buffed="24"/>
+      <attribute name="block" base="3" gear="0" buffed="3"/>
+      <attribute name="tank_crit" base="0" gear="0" buffed="0"/>
+      <resource name="health" base="421083" buffed="19066"/>
+      <resource name="mana" base="60000" buffed="60000"/>
+      <glyphs>
+        <glyph name="double_jeopardy"/>
+        <glyph name="templars_verdict"/>
+        <glyph name="mass_exorcism"/>
+        <glyph name="winged_vengeance"/>
+        <glyph name="bladed_judgment"/>
+        <glyph name="seal_of_blood"/>
+      </glyphs>
+      <priorities>
+        <action index="0" list="precombat" value="flask,type=winters_bite"/>
+        <action index="1" list="precombat" value="food,type=black_pepper_ribs_and_shrimp"/>
+        <action index="2" list="precombat" value="blessing_of_kings,if=!aura.str_agi_int.up"/>
+        <action index="3" list="precombat" value="blessing_of_might,if=!aura.mastery.up&amp;!aura.str_agi_int.up"/>
+        <action index="4" list="precombat" value="seal_of_truth"/>
+        <action index="5" list="precombat" value="snapshot_stats"/>
+        <action index="6" list="precombat" value="mogu_power_potion"/>
+        <action index="7" value="rebuke"/>
+        <action index="8" value="seal_of_truth,if=mana.pct&gt;=90|seal.none"/>
+        <action index="9" value="seal_of_insight,if=mana.pct&lt;=30"/>
+        <action index="10" value="mogu_power_potion,if=(buff.bloodlust.react|(buff.ancient_power.up&amp;buff.avenging_wrath.up)|target.time_to_die&lt;=40)"/>
+        <action index="11" value="auto_attack"/>
+        <action index="12" value="inquisition,if=(buff.inquisition.down|buff.inquisition.remains&lt;=2)&amp;(holy_power&gt;=3)"/>
+        <action index="13" value="avenging_wrath,if=buff.inquisition.up"/>
+        <action index="14" value="guardian_of_ancient_kings,if=buff.avenging_wrath.up"/>
+        <action index="15" value="execution_sentence,if=buff.inquisition.up"/>
+        <action index="16" value="templars_verdict,if=holy_power=5"/>
+        <action index="17" value="hammer_of_wrath"/>
+        <action index="18" value="wait,sec=cooldown.hammer_of_wrath.remains,if=cooldown.hammer_of_wrath.remains&gt;0&amp;cooldown.hammer_of_wrath.remains&lt;=0.2"/>
+        <action index="19" value="exorcism"/>
+        <action index="20" value="judgment,if=target.health.pct&lt;=20|buff.avenging_wrath.up"/>
+        <action index="21" value="crusader_strike"/>
+        <action index="22" value="judgment"/>
+        <action index="23" value="templars_verdict,if=holy_power&gt;=3"/>
+      </priorities>
+      <actions>
+        <action id="86704" name="ancient_fury" count="2" frequency="362.885" dpe="106801" dpe_pct="0.429" dpet="0" apr="0" pdps="474.788">
+          <chart type="timeline_aps" href="http://6.chart.apis.google.com/chart?chs=525x200&amp;amp;cht=lc&amp;amp;chxs=0,ffffff|1,ffffff&amp;amp;chf=bg,s,333333&amp;amp;chg=20,20&amp;amp;chd=s:AAAAAAAAAAAAAAAAAAAAAAAA222222222222222222222AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAIYmv14677788888888887zjVMGDBAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA&amp;amp;chco=FDD017&amp;amp;chds=0,60&amp;amp;chm=h,FF0000,0,0,0893,0.4&amp;amp;chxt=x,y&amp;amp;chxl=0:|0|sec=479|1:|0|avg=475|max=5314&amp;amp;chxp=1,1,9,100&amp;amp;chtt=ancient_fury DPS Timeline&amp;amp;chts=dddddd,18"/>
+          <etpe>0</etpe>
+          <ttpt>0</ttpt>
+          <actual_amount>213601.818</actual_amount>
+          <total_amount>213601.818</total_amount>
+          <overkill_pct>0</overkill_pct>
+          <aps>0</aps>
+          <apet>0</apet>
+          <direct_results count="2">
+            <result type="hit" count="1.645" pct="82.232" min="62528.088" max="125713.525" avg="89891.346" avg_min="0" avg_max="125713.525" actual="147842.495" total="147842.495" overkill_pct="0"/>
+            <result type="crit" count="0.355" pct="17.768" min="167450.221" max="258969.862" avg="185052.292" avg_min="0" avg_max="258969.862" actual="65759.323" total="65759.323" overkill_pct="0"/>
+          </direct_results>
+          <chart type="timeline_stat_aps" href="http://6.chart.apis.google.com/chart?chs=525x200&amp;cht=lc&amp;chxs=0,ffffff|1,ffffff&amp;chf=bg,s,333333&amp;chg=20,20&amp;chd=s:AAAAAAAAAAAAAAAAAAAAAAAA222222222222222222222AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAIYmv14677788888888887zjVMGDBAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA&amp;chco=FDD017&amp;chds=0,60&amp;chm=h,FF0000,0,0,0893,0.4&amp;chxt=x,y&amp;chxl=0:|0|sec=479|1:|0|avg=475|max=5314&amp;chxp=1,1,9,100&amp;chtt=ancient_fury DPS Timeline&amp;chts=dddddd,18"/>
+          <target>Fluffy_Pillow</target>
+        </action>
+        <action id="31884" name="avenging_wrath" count="4" frequency="120.962" dpe="0" dpe_pct="0" dpet="0" apr="0" pdps="0">
+          <chart type="timeline_aps" href="http://8.chart.apis.google.com/chart?chs=525x200&amp;amp;cht=lc&amp;amp;chxs=0,ffffff|1,ffffff&amp;amp;chf=bg,s,333333&amp;amp;chg=20,20&amp;amp;chd=s:AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA&amp;amp;chco=FDD017&amp;amp;chds=0,60&amp;amp;chxt=x,y&amp;amp;chxl=0:|0|sec=479|1:|0|&amp;amp;chxp=1,1,-nan,100&amp;amp;chtt=avenging_wrath DPS Timeline&amp;amp;chts=dddddd,18"/>
+          <etpe>0</etpe>
+          <ttpt>0</ttpt>
+          <actual_amount>0</actual_amount>
+          <total_amount>0</total_amount>
+          <overkill_pct>0</overkill_pct>
+          <aps>0</aps>
+          <apet>0</apet>
+          <direct_results count="4">
+            <result type="none" count="4" pct="100" min="0" max="0" avg="0" avg_min="0" avg_max="0" actual="0" total="0" overkill_pct="0"/>
+          </direct_results>
+          <chart type="timeline_stat_aps" href="http://8.chart.apis.google.com/chart?chs=525x200&amp;cht=lc&amp;chxs=0,ffffff|1,ffffff&amp;chf=bg,s,333333&amp;chg=20,20&amp;chd=s:AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA&amp;chco=FDD017&amp;chds=0,60&amp;chxt=x,y&amp;chxl=0:|0|sec=479|1:|0|&amp;chxp=1,1,-nan,100&amp;chtt=avenging_wrath DPS Timeline&amp;chts=dddddd,18"/>
+          <target>Fluffy_Pillow</target>
+        </action>
+        <action id="31803" name="censure" count="423.708" frequency="1.061" dpe="10325" dpe_pct="8.780" dpet="0" apr="0" pdps="9719.613">
+          <chart type="timeline_aps" href="http://1.chart.apis.google.com/chart?chs=525x200&amp;amp;cht=lc&amp;amp;chxs=0,ffffff|1,ffffff&amp;amp;chf=bg,s,333333&amp;amp;chg=20,20&amp;amp;chd=s:ehknqstuvvwy13364866522zyvtrpomljjhhfgdecbaYZWYWXWUWUWUWUTUUUUTUUUUUUUUUUUVVVWWWWXXXYYYYZZYZZZZZYXYYXXXXWWXWWVWVVWVWVWWWXWXXXYYYYYZYZZZZYaZaZZZYZYZYYYYYYYYXYYYYYYYYYYYYZYZZZZYYYYYYYXXXXXWWVWWVVVVVVVVVUVUUUUUUUUUUUUUUUUUUVUVVVVVWVWWXXXXYYYZZaabbbcbccdccdcddddcccccbbabaaZZZYYYXXWWWWWVVVVUUUUUUUUUUUUUUTUUUUUUUUUUVUVVVWWWWXXXYXYYYZYZYZZZZYZYZZYZYYYYYYXXXXXXWWXWXXYYYZZbbcccedffghhiijjjjijiiihhgggeedddccabZZZYYYYYYYYYXXXXXXXXXWWWWWWWWVWVVVVVVVVVVVVVVUVUVUUUUUUUUUUVVWVUUUTTUTUTUTUT&amp;amp;chco=FDD017&amp;amp;chds=0,60&amp;amp;chm=h,FF0000,0,0,4304,0.4&amp;amp;chxt=x,y&amp;amp;chxl=0:|0|sec=479|1:|0|avg=9720|max=22584&amp;amp;chxp=1,1,43,100&amp;amp;chtt=censure DPS Timeline&amp;amp;chts=dddddd,18"/>
+          <etpe>0</etpe>
+          <ttpt>2.226</ttpt>
+          <actual_amount>4374879.099</actual_amount>
+          <total_amount>4374879.099</total_amount>
+          <overkill_pct>0</overkill_pct>
+          <aps>9767.099</aps>
+          <apet>0</apet>
+          <direct_results count="423.708">
+            <result type="hit" count="423.708" pct="100" min="0" max="0" avg="0" avg_min="0" avg_max="0" actual="0" total="0" overkill_pct="0"/>
+          </direct_results>
+          <tick_results count="201.255" ticks="201.255">
+            <result type="hit" count="164.350" pct="81.663" min="5349.401" max="36547.022" avg="18050.219" avg_min="17371.955" avg_max="18747.162" actual="2966562.103" total="2966562.103" overkill_pct="0"/>
+            <result type="crit" count="36.905" pct="18.337" min="11019.767" max="90344.238" avg="38161.864" avg_min="33286.166" avg_max="45892.404" actual="1408316.996" total="1408316.996" overkill_pct="0"/>
+          </tick_results>
+          <chart type="timeline_stat_aps" href="http://1.chart.apis.google.com/chart?chs=525x200&amp;cht=lc&amp;chxs=0,ffffff|1,ffffff&amp;chf=bg,s,333333&amp;chg=20,20&amp;chd=s:ehknqstuvvwy13364866522zyvtrpomljjhhfgdecbaYZWYWXWUWUWUWUTUUUUTUUUUUUUUUUUVVVWWWWXXXYYYYZZYZZZZZYXYYXXXXWWXWWVWVVWVWVWWWXWXXXYYYYYZYZZZZYaZaZZZYZYZYYYYYYYYXYYYYYYYYYYYYZYZZZZYYYYYYYXXXXXWWVWWVVVVVVVVVUVUUUUUUUUUUUUUUUUUUVUVVVVVWVWWXXXXYYYZZaabbbcbccdccdcddddcccccbbabaaZZZYYYXXWWWWWVVVVUUUUUUUUUUUUUUTUUUUUUUUUUVUVVVWWWWXXXYXYYYZYZYZZZZYZYZZYZYYYYYYXXXXXXWWXWXXYYYZZbbcccedffghhiijjjjijiiihhgggeedddccabZZZYYYYYYYYYXXXXXXXXXWWWWWWWWVWVVVVVVVVVVVVVVUVUVUUUUUUUUUUVVWVUUUTTUTUTUTUT&amp;chco=FDD017&amp;chds=0,60&amp;chm=h,FF0000,0,0,4304,0.4&amp;chxt=x,y&amp;chxl=0:|0|sec=479|1:|0|avg=9720|max=22584&amp;chxp=1,1,43,100&amp;chtt=censure DPS Timeline&amp;chts=dddddd,18"/>
+          <target>Fluffy_Pillow</target>
+        </action>
+        <action id="35395" name="crusader_strike" count="74.687" frequency="6.029" dpe="34956" dpe_pct="5.240" dpet="28434.477" apr="19.420" pdps="5800.149">
+          <chart type="timeline_aps" href="http://2.chart.apis.google.com/chart?chs=525x200&amp;amp;cht=lc&amp;amp;chxs=0,ffffff|1,ffffff&amp;amp;chf=bg,s,333333&amp;amp;chg=20,20&amp;amp;chd=s:roligecbaYXXNNNNNNFEBAAAFIINRSUacdilnquwx14575584255100wwxxvwywvwyxwwxxxxyz03322342333333333333333322223232233333320ywtrpoljgebZWURPMKHFEEEEEDCCCEHJLNRTVYbdgilortwz145445544443211211111111000000000222121100zzzz0zzzzz000000011222334444432zxvsqomkhfdaXVSPNKIGFFFFEEEDDGHJLOQTVXacfhkmortvxzz001000zzyyxxxxxxxxxxyyyyyzz0012233444444444555555555555555655555443310ywtromkigebZXVSQNLJIHGFFFFFEDDDDEFGHIKLMOPRRTTVWXYZbbbbbbbaaZZYXXXXWXXXXXXXXXYYZZZaabbcccbbbbccbcccbbacaZlkjhgffffffggggh&amp;amp;chco=FDD017&amp;amp;chds=0,60&amp;amp;chm=h,FF0000,0,0,6335,0.4&amp;amp;chxt=x,y&amp;amp;chxl=0:|0|sec=479|1:|0|avg=5800|max=9155&amp;amp;chxp=1,1,63,100&amp;amp;chtt=crusader_strike DPS Timeline&amp;amp;chts=dddddd,18"/>
+          <etpe>1.229</etpe>
+          <ttpt>0</ttpt>
+          <actual_amount>2610768.393</actual_amount>
+          <total_amount>2610768.393</total_amount>
+          <overkill_pct>0</overkill_pct>
+          <aps>28434.477</aps>
+          <apet>28434.477</apet>
+          <direct_results count="74.687">
+            <result type="hit" count="59.766" pct="80.022" min="27078.119" max="46981.759" avg="28767.747" avg_min="28021.009" avg_max="29546.168" actual="1719315.295" total="1719315.295" overkill_pct="0"/>
+            <result type="crit" count="14.921" pct="19.978" min="55780.925" max="116138.907" avg="59746.500" avg_min="56175.723" avg_max="67798.741" actual="891453.098" total="891453.098" overkill_pct="0"/>
+          </direct_results>
+          <chart type="timeline_stat_aps" href="http://2.chart.apis.google.com/chart?chs=525x200&amp;cht=lc&amp;chxs=0,ffffff|1,ffffff&amp;chf=bg,s,333333&amp;chg=20,20&amp;chd=s:roligecbaYXXNNNNNNFEBAAAFIINRSUacdilnquwx14575584255100wwxxvwywvwyxwwxxxxyz03322342333333333333333322223232233333320ywtrpoljgebZWURPMKHFEEEEEDCCCEHJLNRTVYbdgilortwz145445544443211211111111000000000222121100zzzz0zzzzz000000011222334444432zxvsqomkhfdaXVSPNKIGFFFFEEEDDGHJLOQTVXacfhkmortvxzz001000zzyyxxxxxxxxxxyyyyyzz0012233444444444555555555555555655555443310ywtromkigebZXVSQNLJIHGFFFFFEDDDDEFGHIKLMOPRRTTVWXYZbbbbbbbaaZZYXXXXWXXXXXXXXXYYZZZaabbcccbbbbccbcccbbacaZlkjhgffffffggggh&amp;chco=FDD017&amp;chds=0,60&amp;chm=h,FF0000,0,0,6335,0.4&amp;chxt=x,y&amp;chxl=0:|0|sec=479|1:|0|avg=5800|max=9155&amp;chxp=1,1,63,100&amp;chtt=crusader_strike DPS Timeline&amp;chts=dddddd,18"/>
+          <target>Fluffy_Pillow</target>
+        </action>
+        <action id="114157" name="execution_sentence" count="7.992" frequency="60.832" dpe="301730" dpe_pct="4.840" dpet="256370.951" apr="0" pdps="5358.482">
+          <chart type="timeline_aps" href="http://3.chart.apis.google.com/chart?chs=525x200&amp;amp;cht=lc&amp;amp;chxs=0,ffffff|1,ffffff&amp;amp;chf=bg,s,333333&amp;amp;chg=20,20&amp;amp;chd=s:Zdgj740yvtqqqqqqpnligdaWTAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABCEFGIKNUWWWWWWWWWWWVUTSRPOMJCAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABCDFGIKMSXaabbbbbbbbbaZXWUSQOJDBAAAAAAAAAAAAAAAAAAAAAAAAAAAAABCDFGIKNRVXYYYYZZZZYYXWVUSQOLHDBAAAAAAAAAAAAAAAAAAAAAAAAAAAAABDEGILNSXcfghhhiiiihhgedbZWUPKFDBAAAAAAAAAAAAAAAAAAAAAAAAAAAABCDEGHKNQTUVWWWXXXWWWVUTSQPMJGDCBAAAAAAAAAAAAAAAAAAAAAAAAAAABCEGIKNRVadgijjjjkkjjihfdbZWSOJGDBAAAAAAAAAAAAAAAAAAAAAAAAAAABCDEGHKNQTVWXYYYYYYYXXWVTSQOLIFDBAAAAAAAAAAAAAAAAAAAAAAAAA&amp;amp;chco=FDD017&amp;amp;chds=0,60&amp;amp;chm=h,FF0000,0,0,1818,0.4&amp;amp;chxt=x,y&amp;amp;chxl=0:|0|sec=479|1:|0|avg=5358|max=29472&amp;amp;chxp=1,1,18,100&amp;amp;chtt=execution_sentence DPS Timeline&amp;amp;chts=dddddd,18"/>
+          <etpe>1.177</etpe>
+          <ttpt>1</ttpt>
+          <actual_amount>2411425.167</actual_amount>
+          <total_amount>2411425.167</total_amount>
+          <overkill_pct>0</overkill_pct>
+          <aps>27105.629</aps>
+          <apet>256370.951</apet>
+          <direct_results count="7.992">
+            <result type="hit" count="7.992" pct="100" min="0" max="0" avg="0" avg_min="0" avg_max="0" actual="0" total="0" overkill_pct="0"/>
+          </direct_results>
+          <tick_results count="79.558" ticks="79.558">
+            <result type="hit" count="64.674" pct="81.292" min="7769.436" max="208113.356" avg="24789.758" avg_min="18603.599" avg_max="30116.983" actual="1603364.593" total="1603364.593" overkill_pct="0"/>
+            <result type="crit" count="14.884" pct="18.708" min="16005.039" max="436909.658" avg="54323.891" avg_min="22924.234" avg_max="144224.563" actual="808060.574" total="808060.574" overkill_pct="0"/>
+          </tick_results>
+          <chart type="timeline_stat_aps" href="http://3.chart.apis.google.com/chart?chs=525x200&amp;cht=lc&amp;chxs=0,ffffff|1,ffffff&amp;chf=bg,s,333333&amp;chg=20,20&amp;chd=s:Zdgj740yvtqqqqqqpnligdaWTAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABCEFGIKNUWWWWWWWWWWWVUTSRPOMJCAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABCDFGIKMSXaabbbbbbbbbaZXWUSQOJDBAAAAAAAAAAAAAAAAAAAAAAAAAAAAABCDFGIKNRVXYYYYZZZZYYXWVUSQOLHDBAAAAAAAAAAAAAAAAAAAAAAAAAAAAABDEGILNSXcfghhhiiiihhgedbZWUPKFDBAAAAAAAAAAAAAAAAAAAAAAAAAAAABCDEGHKNQTUVWWWXXXWWWVUTSQPMJGDCBAAAAAAAAAAAAAAAAAAAAAAAAAAABCEGIKNRVadgijjjjkkjjihfdbZWSOJGDBAAAAAAAAAAAAAAAAAAAAAAAAAAABCDEGHKNQTVWXYYYYYYYXXWVTSQOLIFDBAAAAAAAAAAAAAAAAAAAAAAAAA&amp;chco=FDD017&amp;chds=0,60&amp;chm=h,FF0000,0,0,1818,0.4&amp;chxt=x,y&amp;chxl=0:|0|sec=479|1:|0|avg=5358|max=29472&amp;chxp=1,1,18,100&amp;chtt=execution_sentence DPS Timeline&amp;chts=dddddd,18"/>
+          <target>Fluffy_Pillow</target>
+        </action>
+        <action id="879" name="exorcism" count="56.364" frequency="8.027" dpe="70429" dpe_pct="7.967" dpet="60163.947" apr="29.345" pdps="8822.648">
+          <chart type="timeline_aps" href="http://4.chart.apis.google.com/chart?chs=525x200&amp;amp;cht=lc&amp;amp;chxs=0,ffffff|1,ffffff&amp;amp;chf=bg,s,333333&amp;amp;chg=20,20&amp;amp;chd=s:sqp33zx842zzzxx552x200z2utvwmopqklnpjklmiijligfeeeddddcabbbcbbbbbabacbcccdceffeeffffgghhiiiihighggggfffffeeddcddcdccaabbbccbbbcbbbbbbbabcddcbbaZZbcbcccdcdcdddeeffggiihhghghghghgggfgfgffeeedededddddddcdccccbbbbbbcbbbbbbbbcbccccdddeeeeffffeeeffgghhhgghggggffffghhgfedddddddddddcdcccccccccccbbabbbbababbbbbbbbbcbcccdcdcddeefffgfgggghhhhghghhhhhhggggfffffffffeedcbbcdefgghhhhhhhiijklmnnmlkjiihhhhhhhggfeedddddeddddcbbbbbbbbbaaaaaaaaaaaaaaaaaaZaabaaaaaaaZZZZaaaaaabbaYXWlkjiijklllmmop&amp;amp;chco=FDD017&amp;amp;chds=0,60&amp;amp;chm=h,FF0000,0,0,5281,0.4&amp;amp;chxt=x,y&amp;amp;chxl=0:|0|sec=479|1:|0|avg=8823|max=16707&amp;amp;chxp=1,1,53,100&amp;amp;chtt=exorcism DPS Timeline&amp;amp;chts=dddddd,18"/>
+          <etpe>1.171</etpe>
+          <ttpt>0</ttpt>
+          <actual_amount>3969677.396</actual_amount>
+          <total_amount>3969677.396</total_amount>
+          <overkill_pct>0</overkill_pct>
+          <aps>60163.947</aps>
+          <apet>60163.947</apet>
+          <direct_results count="56.364">
+            <result type="hit" count="45.933" pct="81.493" min="37320.087" max="114162.435" avg="58338.975" avg_min="54216.331" avg_max="62271.552" actual="2679677.676" total="2679677.676" overkill_pct="0"/>
+            <result type="crit" count="10.431" pct="18.507" min="76879.379" max="282209.538" avg="123657.601" avg_min="101032.084" avg_max="158961.757" actual="1289999.720" total="1289999.720" overkill_pct="0"/>
+          </direct_results>
+          <chart type="timeline_stat_aps" href="http://4.chart.apis.google.com/chart?chs=525x200&amp;cht=lc&amp;chxs=0,ffffff|1,ffffff&amp;chf=bg,s,333333&amp;chg=20,20&amp;chd=s:sqp33zx842zzzxx552x200z2utvwmopqklnpjklmiijligfeeeddddcabbbcbbbbbabacbcccdceffeeffffgghhiiiihighggggfffffeeddcddcdccaabbbccbbbcbbbbbbbabcddcbbaZZbcbcccdcdcdddeeffggiihhghghghghgggfgfgffeeedededddddddcdccccbbbbbbcbbbbbbbbcbccccdddeeeeffffeeeffgghhhgghggggffffghhgfedddddddddddcdcccccccccccbbabbbbababbbbbbbbbcbcccdcdcddeefffgfgggghhhhghghhhhhhggggfffffffffeedcbbcdefgghhhhhhhiijklmnnmlkjiihhhhhhhggfeedddddeddddcbbbbbbbbbaaaaaaaaaaaaaaaaaaZaabaaaaaaaZZZZaaaaaabbaYXWlkjiijklllmmop&amp;chco=FDD017&amp;chds=0,60&amp;chm=h,FF0000,0,0,5281,0.4&amp;chxt=x,y&amp;chxl=0:|0|sec=479|1:|0|avg=8823|max=16707&amp;chxp=1,1,53,100&amp;chtt=exorcism DPS Timeline&amp;chts=dddddd,18"/>
+          <target>Fluffy_Pillow</target>
+        </action>
+        <action id="86698" name="guardian_of_ancient_kings" count="2" frequency="362.885" dpe="0" dpe_pct="0" dpet="0" apr="0" pdps="0">
+          <chart type="timeline_aps" href="http://7.chart.apis.google.com/chart?chs=525x200&amp;amp;cht=lc&amp;amp;chxs=0,ffffff|1,ffffff&amp;amp;chf=bg,s,333333&amp;amp;chg=20,20&amp;amp;chd=s:AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA&amp;amp;chco=FDD017&amp;amp;chds=0,60&amp;amp;chxt=x,y&amp;amp;chxl=0:|0|sec=479|1:|0|&amp;amp;chxp=1,1,-nan,100&amp;amp;chtt=guardian_of_ancient_kings DPS Timeline&amp;amp;chts=dddddd,18"/>
+          <etpe>0</etpe>
+          <ttpt>0</ttpt>
+          <actual_amount>0</actual_amount>
+          <total_amount>0</total_amount>
+          <overkill_pct>0</overkill_pct>
+          <aps>0</aps>
+          <apet>0</apet>
+          <direct_results count="2">
+            <result type="hit" count="2" pct="100" min="0" max="0" avg="0" avg_min="0" avg_max="0" actual="0" total="0" overkill_pct="0"/>
+          </direct_results>
+          <chart type="timeline_stat_aps" href="http://7.chart.apis.google.com/chart?chs=525x200&amp;cht=lc&amp;chxs=0,ffffff|1,ffffff&amp;chf=bg,s,333333&amp;chg=20,20&amp;chd=s:AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA&amp;chco=FDD017&amp;chds=0,60&amp;chxt=x,y&amp;chxl=0:|0|sec=479|1:|0|&amp;chxp=1,1,-nan,100&amp;chtt=guardian_of_ancient_kings DPS Timeline&amp;chts=dddddd,18"/>
+          <target>Fluffy_Pillow</target>
+        </action>
+        <action id="24275" name="hammer_of_wrath" count="59.169" frequency="7.603" dpe="104421" dpe_pct="12.400" dpet="87136.416" apr="58.011" pdps="13732.303">
+          <chart type="timeline_aps" href="http://8.chart.apis.google.com/chart?chs=525x200&amp;amp;cht=lc&amp;amp;chxs=0,ffffff|1,ffffff&amp;amp;chf=bg,s,333333&amp;amp;chg=20,20&amp;amp;chd=s:ffllrourwtww11667584523zyssllffaaVVRRNMJIGECAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABCEFGIJLMNPQSTVWXZacddddddddddcbZYXVUSRQONLKJHGEDCBAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABCDEGHJLMOPRTUWXZbceffgggggggffedbaYXVTSQPNMKJHGFDCBAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABCEFHIKMOQRTVXZbdfhjklmnooooooonnmkjihfedbaZXWVUTRQQPOOOOOOOOONNNNNNNNNNMMMMMMMMMMMMMMMMMMMMMMMMMNMMMMNMMMMMPONPPPPPPPPQQQR&amp;amp;chco=FDD017&amp;amp;chds=0,60&amp;amp;chm=h,FF0000,0,0,2003,0.4&amp;amp;chxt=x,y&amp;amp;chxl=0:|0|sec=479|1:|0|avg=13732|max=68559&amp;amp;chxp=1,1,20,100&amp;amp;chtt=hammer_of_wrath DPS Timeline&amp;amp;chts=dddddd,18"/>
+          <etpe>1.198</etpe>
+          <ttpt>0</ttpt>
+          <actual_amount>6178494.686</actual_amount>
+          <total_amount>6178494.686</total_amount>
+          <overkill_pct>0</overkill_pct>
+          <aps>87136.416</aps>
+          <apet>87136.416</apet>
+          <direct_results count="59.166">
+            <result type="hit" count="47.304" pct="79.952" min="47152.054" max="143983.888" avg="85146.818" avg_min="78378.625" avg_max="92282.489" actual="4027722.301" total="4027722.301" overkill_pct="0"/>
+            <result type="crit" count="11.862" pct="20.048" min="106938.760" max="355928.172" avg="181303.968" avg_min="138917.645" avg_max="237676.477" actual="2150772.386" total="2150772.386" overkill_pct="0"/>
+          </direct_results>
+          <chart type="timeline_stat_aps" href="http://8.chart.apis.google.com/chart?chs=525x200&amp;cht=lc&amp;chxs=0,ffffff|1,ffffff&amp;chf=bg,s,333333&amp;chg=20,20&amp;chd=s:ffllrourwtww11667584523zyssllffaaVVRRNMJIGECAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABCEFGIJLMNPQSTVWXZacddddddddddcbZYXVUSRQONLKJHGEDCBAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABCDEGHJLMOPRTUWXZbceffgggggggffedbaYXVTSQPNMKJHGFDCBAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABCEFHIKMOQRTVXZbdfhjklmnooooooonnmkjihfedbaZXWVUTRQQPOOOOOOOOONNNNNNNNNNMMMMMMMMMMMMMMMMMMMMMMMMMNMMMMNMMMMMPONPPPPPPPPQQQR&amp;chco=FDD017&amp;chds=0,60&amp;chm=h,FF0000,0,0,2003,0.4&amp;chxt=x,y&amp;chxl=0:|0|sec=479|1:|0|avg=13732|max=68559&amp;chxp=1,1,20,100&amp;chtt=hammer_of_wrath DPS Timeline&amp;chts=dddddd,18"/>
+          <target>Fluffy_Pillow</target>
+        </action>
+        <action id="96172" name="hand_of_light" count="203.599" frequency="2.213" dpe="41331" dpe_pct="16.889" dpet="0" apr="0" pdps="18700.525">
+          <chart type="timeline_aps" href="http://9.chart.apis.google.com/chart?chs=525x200&amp;amp;cht=lc&amp;amp;chxs=0,ffffff|1,ffffff&amp;amp;chf=bg,s,333333&amp;amp;chg=20,20&amp;amp;chd=s:bgjimpsqsuvvx1445685520xxurnokifgecZaYVUTSSRQRQPPPPOONMLLLKKKLLKKKKLLKKKKLMMNNOOOONNNNMMLLMMMMMMMMMLLLLMMNNNOOOOONNNNOOPQQRSTUVWXYYZabcdeffgggggfedcbaaZYXWVVUTSRQQPPOOPPPPOOOONMMMLLLLLLLLLLLLLLLLMMNNNNONNNMMMLLLLLLLLLLLLLLLLMMMNNOOOOOOPPPPQQRSTUVWXYZabcdeffghhiiiiihgfeccbZYXXWVUTSRQPOONNNNONNNNNMMLLLKKKKKKKLKLLLLLLLMMNNOOOOOONNNNMMMMMMMMMMMMMMMNNNOOOOOOOOPPPQQRSTUWXYabcefgijklmnoppppoonmkjihgfedcbaaZYXWWWWWWWWWWWWVVUUTTSSSSSSSSSSSSSSSTTUUVVVVVVUUUUUUTTTTTTTTVWYXWXWWWXXXYYZZZ&amp;amp;chco=FDD017&amp;amp;chds=0,60&amp;amp;chm=h,FF0000,0,0,3405,0.4&amp;amp;chxt=x,y&amp;amp;chxl=0:|0|sec=479|1:|0|avg=18701|max=54924&amp;amp;chxp=1,1,34,100&amp;amp;chtt=hand_of_light DPS Timeline&amp;amp;chts=dddddd,18"/>
+          <etpe>0</etpe>
+          <ttpt>0</ttpt>
+          <actual_amount>8415000.877</actual_amount>
+          <total_amount>8415000.877</total_amount>
+          <overkill_pct>0</overkill_pct>
+          <aps>0</aps>
+          <apet>0</apet>
+          <direct_results count="203.599">
+            <result type="hit" count="203.599" pct="100" min="11387.858" max="194594.679" avg="41333.571" avg_min="37542.876" avg_max="45525.220" actual="8415000.877" total="8415000.877" overkill_pct="0"/>
+          </direct_results>
+          <chart type="timeline_stat_aps" href="http://9.chart.apis.google.com/chart?chs=525x200&amp;cht=lc&amp;chxs=0,ffffff|1,ffffff&amp;chf=bg,s,333333&amp;chg=20,20&amp;chd=s:bgjimpsqsuvvx1445685520xxurnokifgecZaYVUTSSRQRQPPPPOONMLLLKKKLLKKKKLLKKKKLMMNNOOOONNNNMMLLMMMMMMMMMLLLLMMNNNOOOOONNNNOOPQQRSTUVWXYYZabcdeffgggggfedcbaaZYXWVVUTSRQQPPOOPPPPOOOONMMMLLLLLLLLLLLLLLLLMMNNNNONNNMMMLLLLLLLLLLLLLLLLMMMNNOOOOOOPPPPQQRSTUVWXYZabcdeffghhiiiiihgfeccbZYXXWVUTSRQPOONNNNONNNNNMMLLLKKKKKKKLKLLLLLLLMMNNOOOOOONNNNMMMMMMMMMMMMMMMNNNOOOOOOOOPPPQQRSTUWXYabcefgijklmnoppppoonmkjihgfedcbaaZYXWWWWWWWWWWWWVVUUTTSSSSSSSSSSSSSSSTTUUVVVVVVUUUUUUTTTTTTTTVWYXWXWWWXXXYYZZZ&amp;chco=FDD017&amp;chds=0,60&amp;chm=h,FF0000,0,0,3405,0.4&amp;chxt=x,y&amp;chxl=0:|0|sec=479|1:|0|avg=18701|max=54924&amp;chxp=1,1,34,100&amp;chtt=hand_of_light DPS Timeline&amp;chts=dddddd,18"/>
+          <target>Fluffy_Pillow</target>
+        </action>
+        <action id="84963" name="inquisition" count="15.173" frequency="30.318" dpe="0" dpe_pct="0" dpet="0" apr="0" pdps="0">
+          <chart type="timeline_aps" href="http://0.chart.apis.google.com/chart?chs=525x200&amp;amp;cht=lc&amp;amp;chxs=0,ffffff|1,ffffff&amp;amp;chf=bg,s,333333&amp;amp;chg=20,20&amp;amp;chd=s:AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA&amp;amp;chco=FDD017&amp;amp;chds=0,60&amp;amp;chxt=x,y&amp;amp;chxl=0:|0|sec=479|1:|0|&amp;amp;chxp=1,1,-nan,100&amp;amp;chtt=inquisition DPS Timeline&amp;amp;chts=dddddd,18"/>
+          <etpe>1.173</etpe>
+          <ttpt>0</ttpt>
+          <actual_amount>0</actual_amount>
+          <total_amount>0</total_amount>
+          <overkill_pct>0</overkill_pct>
+          <aps>0</aps>
+          <apet>0</apet>
+          <direct_results count="15.173">
+            <result type="none" count="15.173" pct="100" min="0" max="0" avg="0" avg_min="0" avg_max="0" actual="0" total="0" overkill_pct="0"/>
+          </direct_results>
+          <chart type="timeline_stat_aps" href="http://0.chart.apis.google.com/chart?chs=525x200&amp;cht=lc&amp;chxs=0,ffffff|1,ffffff&amp;chf=bg,s,333333&amp;chg=20,20&amp;chd=s:AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA&amp;chco=FDD017&amp;chds=0,60&amp;chxt=x,y&amp;chxl=0:|0|sec=479|1:|0|&amp;chxp=1,1,-nan,100&amp;chtt=inquisition DPS Timeline&amp;chts=dddddd,18"/>
+          <target>Fluffy_Pillow</target>
+        </action>
+        <action id="20271" name="judgment" count="67.718" frequency="6.657" dpe="60617" dpe_pct="8.238" dpet="49523.871" apr="20.206" pdps="9118.901">
+          <chart type="timeline_aps" href="http://1.chart.apis.google.com/chart?chs=525x200&amp;amp;cht=lc&amp;amp;chxs=0,ffffff|1,ffffff&amp;amp;chf=bg,s,333333&amp;amp;chg=20,20&amp;amp;chd=s:1xz841x52zx55xx44yuyrrqqmlnqlmopknnpmoprlnprpmnpnmllmkihhfghhhfgghhhffgiihiilnnmlnopoopqrrrrqqrqqpoooonnnnnmlllllkkjihihhhggfeeddccbbaaabccbaaZYYYYYZaabcdeffgghjklmnprrrqrrrqponmmnmmlklllkjjjjjjjjjkkkkjijjiihhhhhiiiiijiijjjkklllmmnooooonmllllllkkjiihhfeeddddeeedccbaaaabbbbcccdddeeffgghijjjjjjjiiihhhgggggghghhiiiijkkllnoooopppqqqqqrrrqqrqqqqqqqqqpppooonnmmlkjjiiijjiiiiiihiiiijjkllllljiiiijjjkjkllllmmmmnnopqrrrqqqqpoonnmllllklkkkkjjjjjjjkklllllllkllllkllllllllnmkihfllllkkllklj&amp;amp;chco=FDD017&amp;amp;chds=0,60&amp;amp;chm=h,FF0000,0,0,6146,0.4&amp;amp;chxt=x,y&amp;amp;chxl=0:|0|sec=479|1:|0|avg=9119|max=14836&amp;amp;chxp=1,1,61,100&amp;amp;chtt=judgment DPS Timeline&amp;amp;chts=dddddd,18"/>
+          <etpe>1.224</etpe>
+          <ttpt>0</ttpt>
+          <actual_amount>4104835.535</actual_amount>
+          <total_amount>4104835.535</total_amount>
+          <overkill_pct>0</overkill_pct>
+          <aps>49523.871</aps>
+          <apet>49523.871</apet>
+          <direct_results count="67.718">
+            <result type="hit" count="54.242" pct="80.101" min="31391.643" max="106083.331" avg="49665.327" avg_min="46466.268" avg_max="54590.925" actual="2693897.500" total="2693897.500" overkill_pct="0"/>
+            <result type="crit" count="13.475" pct="19.899" min="64666.785" max="262237.994" avg="104703.175" avg_min="84926.223" avg_max="138256.415" actual="1410938.035" total="1410938.035" overkill_pct="0"/>
+          </direct_results>
+          <chart type="timeline_stat_aps" href="http://1.chart.apis.google.com/chart?chs=525x200&amp;cht=lc&amp;chxs=0,ffffff|1,ffffff&amp;chf=bg,s,333333&amp;chg=20,20&amp;chd=s:1xz841x52zx55xx44yuyrrqqmlnqlmopknnpmoprlnprpmnpnmllmkihhfghhhfgghhhffgiihiilnnmlnopoopqrrrrqqrqqpoooonnnnnmlllllkkjihihhhggfeeddccbbaaabccbaaZYYYYYZaabcdeffgghjklmnprrrqrrrqponmmnmmlklllkjjjjjjjjjkkkkjijjiihhhhhiiiiijiijjjkklllmmnooooonmllllllkkjiihhfeeddddeeedccbaaaabbbbcccdddeeffgghijjjjjjjiiihhhgggggghghhiiiijkkllnoooopppqqqqqrrrqqrqqqqqqqqqpppooonnmmlkjjiiijjiiiiiihiiiijjkllllljiiiijjjkjkllllmmmmnnopqrrrqqqqpoonnmllllklkkkkjjjjjjjkklllllllkllllkllllllllnmkihfllllkkllklj&amp;chco=FDD017&amp;chds=0,60&amp;chm=h,FF0000,0,0,6146,0.4&amp;chxt=x,y&amp;chxl=0:|0|sec=479|1:|0|avg=9119|max=14836&amp;chxp=1,1,61,100&amp;chtt=judgment DPS Timeline&amp;chts=dddddd,18"/>
+          <target>Fluffy_Pillow</target>
+        </action>
+        <action id="0" name="melee" count="211.558" frequency="2.123" dpe="26869" dpe_pct="11.408" dpet="12653.909" apr="0" pdps="12628.681">
+          <chart type="timeline_aps" href="http://2.chart.apis.google.com/chart?chs=525x200&amp;amp;cht=lc&amp;amp;chxs=0,ffffff|1,ffffff&amp;amp;chf=bg,s,333333&amp;amp;chg=20,20&amp;amp;chd=s:qruwwyzy00z3447574562310yyxtvrrsopnnnllkhjgiffecececccbcZaZcZcZbZZaZcZcZcZZaZdadadbcbbebebebdbbebebeadabcbdbcbcaccbdcecedfefgegfhfhghhfhgigigigfhfhehegdddcfcfcfcdbbebebebdbbebebebdbbcbebdadaacadadadaaaZcZcZcZZZZcZcZcZbZbcbcbcbdbdecececedfeefegehfighhgigjhjhjhgigjgjfiffgehdgdfcccbeadadZaZZcZcZcZaZZcZcZcZaZZbZcZcZcZabadadadbcccecececdcdfdfdfdeceecececdcdcccbdbedgeffeifjhkijjiljnkokmkjljmilikhhigjfiehdddcfbeadacbadadadacaadadacabZabacacacabbbcacacacbbcacacabbbcaecdcgeeeeffgfhgi&amp;amp;chco=FDD017&amp;amp;chds=0,60&amp;amp;chm=h,FF0000,0,0,5191,0.4&amp;amp;chxt=x,y&amp;amp;chxl=0:|0|sec=479|1:|0|avg=12629|max=24327&amp;amp;chxp=1,1,52,100&amp;amp;chtt=melee DPS Timeline&amp;amp;chts=dddddd,18"/>
+          <etpe>2.123</etpe>
+          <ttpt>0</ttpt>
+          <actual_amount>5684426.843</actual_amount>
+          <total_amount>5684426.843</total_amount>
+          <overkill_pct>0</overkill_pct>
+          <aps>12653.909</aps>
+          <apet>12653.909</apet>
+          <direct_results count="211.558">
+            <result type="hit" count="118.285" pct="55.912" min="20413.492" max="35032.930" avg="23212.878" avg_min="22478.980" avg_max="23915.810" actual="2745728.315" total="2745728.315" overkill_pct="0"/>
+            <result type="crit" count="42.143" pct="19.920" min="42051.794" max="86601.402" avg="48621.461" avg_min="45460.742" avg_max="53759.401" actual="2049140.704" total="2049140.704" overkill_pct="0"/>
+            <result type="glance" count="51.129" pct="24.168" min="15310.119" max="26274.697" avg="17398.667" avg_min="16500.532" avg_max="18711.527" actual="889557.824" total="889557.824" overkill_pct="0"/>
+          </direct_results>
+          <chart type="timeline_stat_aps" href="http://2.chart.apis.google.com/chart?chs=525x200&amp;cht=lc&amp;chxs=0,ffffff|1,ffffff&amp;chf=bg,s,333333&amp;chg=20,20&amp;chd=s:qruwwyzy00z3447574562310yyxtvrrsopnnnllkhjgiffecececccbcZaZcZcZbZZaZcZcZcZZaZdadadbcbbebebebdbbebebeadabcbdbcbcaccbdcecedfefgegfhfhghhfhgigigigfhfhehegdddcfcfcfcdbbebebebdbbebebebdbbcbebdadaacadadadaaaZcZcZcZZZZcZcZcZbZbcbcbcbdbdecececedfeefegehfighhgigjhjhjhgigjgjfiffgehdgdfcccbeadadZaZZcZcZcZaZZcZcZcZaZZbZcZcZcZabadadadbcccecececdcdfdfdfdeceecececdcdcccbdbedgeffeifjhkijjiljnkokmkjljmilikhhigjfiehdddcfbeadacbadadadacaadadacabZabacacacabbbcacacacbbcacacabbbcaecdcgeeeeffgfhgi&amp;chco=FDD017&amp;chds=0,60&amp;chm=h,FF0000,0,0,5191,0.4&amp;chxt=x,y&amp;chxl=0:|0|sec=479|1:|0|avg=12629|max=24327&amp;chxp=1,1,52,100&amp;chtt=melee DPS Timeline&amp;chts=dddddd,18"/>
+          <target>Fluffy_Pillow</target>
+        </action>
+        <action id="31801" name="seal_of_truth_proc" count="423.708" frequency="1.061" dpe="6447" dpe_pct="5.482" dpet="0" apr="0" pdps="6067.685">
+          <chart type="timeline_aps" href="http://8.chart.apis.google.com/chart?chs=525x200&amp;amp;cht=lc&amp;amp;chxs=0,ffffff|1,ffffff&amp;amp;chf=bg,s,333333&amp;amp;chg=20,20&amp;amp;chd=s:ruvxv0zzz1033466876722yyxywvwvtwuwtuvvturutwuttrtqsqpomljkjkiljkijkjkikjlkkmmpoqoqooonpnpnpnonnpnomomnlnnnpopopooonommllklkkkjkjjijiiigihjikjkihigihjhjiijjlkmknlnmnqorprqrppropnomnlmmlnlnlmlllkmlnlomnnmomnlmkkkklklkmkmklmmnmnnoopqprqrqrpponnmnlmlmllkjkijijijiikjljkikhiiikikikjjjjlkmkmlmmmomomnlmlkljljljkjjkjljlkmklmmonpoqppppqpqoqopopqpqpqpqpqqpqpqpqpqpppnomnlmkllkmkmkmklkkmlnlomonnomnlmkljjkjljliliiiikiljlklkkmkljlijhhihigighghhhihihjijkklklklkkkkljkjkkkjklkmkkiiiiiiiijhigh&amp;amp;chco=FDD017&amp;amp;chds=0,60&amp;amp;chm=h,FF0000,0,0,6530,0.4&amp;amp;chxt=x,y&amp;amp;chxl=0:|0|sec=479|1:|0|avg=6068|max=9291&amp;amp;chxp=1,1,65,100&amp;amp;chtt=seal_of_truth_proc DPS Timeline&amp;amp;chts=dddddd,18"/>
+          <etpe>0</etpe>
+          <ttpt>0</ttpt>
+          <actual_amount>2731498.331</actual_amount>
+          <total_amount>2731498.331</total_amount>
+          <overkill_pct>0</overkill_pct>
+          <aps>0</aps>
+          <apet>0</apet>
+          <direct_results count="423.708">
+            <result type="hit" count="338.643" pct="79.924" min="3641.648" max="8124.570" avg="5285.119" avg_min="5199.469" avg_max="5369.307" actual="1789758.486" total="1789758.486" overkill_pct="0"/>
+            <result type="crit" count="85.065" pct="20.076" min="7501.794" max="20083.938" avg="11070.832" avg_min="10523.569" avg_max="11758.314" actual="941739.845" total="941739.845" overkill_pct="0"/>
+          </direct_results>
+          <chart type="timeline_stat_aps" href="http://8.chart.apis.google.com/chart?chs=525x200&amp;cht=lc&amp;chxs=0,ffffff|1,ffffff&amp;chf=bg,s,333333&amp;chg=20,20&amp;chd=s:ruvxv0zzz1033466876722yyxywvwvtwuwtuvvturutwuttrtqsqpomljkjkiljkijkjkikjlkkmmpoqoqooonpnpnpnonnpnomomnlnnnpopopooonommllklkkkjkjjijiiigihjikjkihigihjhjiijjlkmknlnmnqorprqrppropnomnlmmlnlnlmlllkmlnlomnnmomnlmkkkklklkmkmklmmnmnnoopqprqrqrpponnmnlmlmllkjkijijijiikjljkikhiiikikikjjjjlkmkmlmmmomomnlmlkljljljkjjkjljlkmklmmonpoqppppqpqoqopopqpqpqpqpqqpqpqpqpqpppnomnlmkllkmkmkmklkkmlnlomonnomnlmkljjkjljliliiiikiljlklkkmkljlijhhihigighghhhihihjijkklklklkkkkljkjkkkjklkmkkiiiiiiiijhigh&amp;chco=FDD017&amp;chds=0,60&amp;chm=h,FF0000,0,0,6530,0.4&amp;chxt=x,y&amp;chxl=0:|0|sec=479|1:|0|avg=6068|max=9291&amp;chxp=1,1,65,100&amp;chtt=seal_of_truth_proc DPS Timeline&amp;chts=dddddd,18"/>
+          <target>Fluffy_Pillow</target>
+        </action>
+        <action id="120687" name="stormlash" count="23.674" frequency="13.622" dpe="16561" dpe_pct="0.787" dpet="0" apr="0" pdps="871.291">
+          <chart type="timeline_aps" href="http://2.chart.apis.google.com/chart?chs=525x200&amp;amp;cht=lc&amp;amp;chxs=0,ffffff|1,ffffff&amp;amp;chf=bg,s,333333&amp;amp;chg=20,20&amp;amp;chd=s:osx258620xvvvvvvvsokeZVQKGBAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABCDFGIJKMMMMMMMMMMMMMLKJHGEDBAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA&amp;amp;chco=FDD017&amp;amp;chds=0,60&amp;amp;chm=h,FF0000,0,0,0466,0.4&amp;amp;chxt=x,y&amp;amp;chxl=0:|0|sec=479|1:|0|avg=871|max=18716&amp;amp;chxp=1,1,5,100&amp;amp;chtt=stormlash DPS Timeline&amp;amp;chts=dddddd,18"/>
+          <etpe>0</etpe>
+          <ttpt>0</ttpt>
+          <actual_amount>392050.371</actual_amount>
+          <total_amount>392050.371</total_amount>
+          <overkill_pct>0</overkill_pct>
+          <aps>0</aps>
+          <apet>0</apet>
+          <direct_results count="23.674">
+            <result type="hit" count="19.299" pct="81.522" min="4091.850" max="23352.840" avg="13118.597" avg_min="8883.210" avg_max="16767.502" actual="253189.589" total="253189.589" overkill_pct="0"/>
+            <result type="crit" count="4.374" pct="18.478" min="8429.211" max="57728.220" avg="31749.567" avg_min="0" avg_max="57728.220" actual="138860.782" total="138860.782" overkill_pct="0"/>
+          </direct_results>
+          <chart type="timeline_stat_aps" href="http://2.chart.apis.google.com/chart?chs=525x200&amp;cht=lc&amp;chxs=0,ffffff|1,ffffff&amp;chf=bg,s,333333&amp;chg=20,20&amp;chd=s:osx258620xvvvvvvvsokeZVQKGBAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABCDFGIJKMMMMMMMMMMMMMLKJHGEDBAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA&amp;chco=FDD017&amp;chds=0,60&amp;chm=h,FF0000,0,0,0466,0.4&amp;chxt=x,y&amp;chxl=0:|0|sec=479|1:|0|avg=871|max=18716&amp;chxp=1,1,5,100&amp;chtt=stormlash DPS Timeline&amp;chts=dddddd,18"/>
+          <target>Fluffy_Pillow</target>
+        </action>
+        <action id="85256" name="templars_verdict" count="69.746" frequency="6.355" dpe="94875" dpe_pct="13.280" dpet="77815.904" apr="0" pdps="14704.957">
+          <chart type="timeline_aps" href="http://3.chart.apis.google.com/chart?chs=525x200&amp;amp;cht=lc&amp;amp;chxs=0,ffffff|1,ffffff&amp;amp;chf=bg,s,333333&amp;amp;chg=20,20&amp;amp;chd=s:JYWUUkigepnnnxxxx78863uuuwooosjkmpghjkcdffhjkmjgijhfecZXXVUTTUVVTTUVVTTTUWXYabdeeecbaZZXWWXXXWWWXXWVVVWXYabcdddddcbZYWVVVVVWXXYYYZaaabdfhikmnnnmkihggffeeeddddccbbbbcdefgggffdcbZYXWWWWWVWVVVVVVVVWXYabcdddcbaZYXWVVVVVVVWWWWWWXYYabcdefffeecbZYXXWWWXXYYYZZaabceghjlmnnmlkihggffeedddccbaaaZabbcddddcbbaYXWVVUUUUUUUUVVVVVWXYZbcddeedccbaZZYYYYYYYYYYYYYYZabcdddeddcbaZXWWVVWWXXYZaabcdfhikmopqrrqpnmlkihhggfedddccbbccdefghhhggfecbaZZYYYYYYYYYYYYZabcdeggggggfedccbbbaaZZYdghihfedeffghiiijj&amp;amp;chco=FDD017&amp;amp;chds=0,60&amp;amp;chm=h,FF0000,0,0,4741,0.4&amp;amp;chxt=x,y&amp;amp;chxl=0:|0|sec=479|1:|0|avg=14705|max=31016&amp;amp;chxp=1,1,47,100&amp;amp;chtt=templars_verdict DPS Timeline&amp;amp;chts=dddddd,18"/>
+          <etpe>1.219</etpe>
+          <ttpt>0</ttpt>
+          <actual_amount>6617153.194</actual_amount>
+          <total_amount>6617153.194</total_amount>
+          <overkill_pct>0</overkill_pct>
+          <aps>77815.904</aps>
+          <apet>77815.904</apet>
+          <direct_results count="69.746">
+            <result type="hit" count="55.655" pct="79.796" min="68494.798" max="118848.437" avg="77762.083" avg_min="75154.019" avg_max="80945.937" actual="4327749.223" total="4327749.223" overkill_pct="0"/>
+            <result type="crit" count="14.091" pct="20.204" min="141099.283" max="293793.336" avg="162461.622" avg_min="141553.301" avg_max="196985.153" actual="2289403.971" total="2289403.971" overkill_pct="0"/>
+          </direct_results>
+          <chart type="timeline_stat_aps" href="http://3.chart.apis.google.com/chart?chs=525x200&amp;cht=lc&amp;chxs=0,ffffff|1,ffffff&amp;chf=bg,s,333333&amp;chg=20,20&amp;chd=s:JYWUUkigepnnnxxxx78863uuuwooosjkmpghjkcdffhjkmjgijhfecZXXVUTTUVVTTUVVTTTUWXYabdeeecbaZZXWWXXXWWWXXWVVVWXYabcdddddcbZYWVVVVVWXXYYYZaaabdfhikmnnnmkihggffeeeddddccbbbbcdefgggffdcbZYXWWWWWVWVVVVVVVVWXYabcdddcbaZYXWVVVVVVVWWWWWWXYYabcdefffeecbZYXXWWWXXYYYZZaabceghjlmnnmlkihggffeedddccbaaaZabbcddddcbbaYXWVVUUUUUUUUVVVVVWXYZbcddeedccbaZZYYYYYYYYYYYYYYZabcdddeddcbaZXWWVVWWXXYZaabcdfhikmopqrrqpnmlkihhggfedddccbbccdefghhhggfecbaZZYYYYYYYYYYYYZabcdeggggggfedccbbbaaZZYdghihfedeffghiiijj&amp;chco=FDD017&amp;chds=0,60&amp;chm=h,FF0000,0,0,4741,0.4&amp;chxt=x,y&amp;chxl=0:|0|sec=479|1:|0|avg=14705|max=31016&amp;chxp=1,1,47,100&amp;chtt=templars_verdict DPS Timeline&amp;chts=dddddd,18"/>
+          <target>Fluffy_Pillow</target>
+        </action>
+      </actions>
+      <action_definitions>
+        <action_detail id="86704" name="ancient_fury">
+          <school>holy</school>
+          <resource>none</resource>
+          <range>0</range>
+          <travel_speed>0</travel_speed>
+          <trigger_gcd>0</trigger_gcd>
+          <base_cost>0</base_cost>
+          <cooldown duration="0"/>
+          <base_execute_time>0</base_execute_time>
+          <base_crit>0</base_crit>
+          <target>Fluffy_Pillow</target>
+          <description>Unleash the fury of ancient kings, causing $s1 Holy damage per application of Ancient Power, divided evenly among all targets within $a1 yards.</description>
+          <direct_damage>
+            <may_crit>true</may_crit>
+            <direct_power_mod>0.107</direct_power_mod>
+            <base min="229.653" max="310.707"/>
+          </direct_damage>
+        </action_detail>
+        <action_detail id="31884" name="avenging_wrath">
+          <school>holy</school>
+          <resource>none</resource>
+          <range>0</range>
+          <travel_speed>0</travel_speed>
+          <trigger_gcd>0</trigger_gcd>
+          <base_cost>0</base_cost>
+          <cooldown duration="120"/>
+          <base_execute_time>0</base_execute_time>
+          <base_crit>0</base_crit>
+          <target>Fluffy_Pillow</target>
+          <tooltip>All damage and healing caused increased by $s1%.$?$w4&gt;0[
+
+Your falling speed is slowed.][]</tooltip>
+          <description>Increases all damage and healing caused by $s1% for $d. $?s54927|s115931[
+
+While Avenging Wrath is active, ][]$?s54927[you heal for $115547s1% of your maximum health every $115547t sec][]$?s54927&amp;amp;s115931[ and ][]$?s115931[your falling speed is slowed][]$?s54927|s115931[.][]</description>
+        </action_detail>
+        <action_detail id="31803" name="censure">
+          <school>holy</school>
+          <resource>none</resource>
+          <range>100</range>
+          <travel_speed>0</travel_speed>
+          <trigger_gcd>0</trigger_gcd>
+          <base_cost>0</base_cost>
+          <cooldown duration="0"/>
+          <base_execute_time>0</base_execute_time>
+          <base_crit>0</base_crit>
+          <target>Fluffy_Pillow</target>
+          <tooltip>Holy damage every $t1 sec.</tooltip>
+          <description>Deals $?s31850[$m1][${$m1*5}] additional Holy damage over $31803d. Stacks up to $31803u times.</description>
+          <damage_over_time>
+            <tick_may_crit>true</tick_may_crit>
+            <tick_zero>false</tick_zero>
+            <tick_power_mod>1</tick_power_mod>
+            <base>107.341</base>
+            <num_ticks>5</num_ticks>
+            <base_tick_time>3</base_tick_time>
+            <hasted_ticks>1</hasted_ticks>
+            <dot_behavior>DOT_REFRESH</dot_behavior>
+          </damage_over_time>
+        </action_detail>
+        <action_detail id="35395" name="crusader_strike">
+          <school>physical</school>
+          <resource>mana</resource>
+          <range>5</range>
+          <travel_speed>0</travel_speed>
+          <trigger_gcd>1.500</trigger_gcd>
+          <base_cost>9000</base_cost>
+          <cooldown duration="4.500"/>
+          <base_execute_time>0</base_execute_time>
+          <base_crit>0</base_crit>
+          <target>Fluffy_Pillow</target>
+          <description>$?s85673[An instant strike that causes $m2% weapon damage plus $m1 and grants a charge of Holy Power.][An instant strike that causes $m2% weapon damage plus $m1.]</description>
+          <direct_damage>
+            <may_crit>true</may_crit>
+            <direct_power_mod>0</direct_power_mod>
+            <base min="632.627" max="632.627"/>
+          </direct_damage>
+          <weapon>
+            <normalize_speed>true</normalize_speed>
+            <power_mod>0.071</power_mod>
+            <multiplier>1.250</multiplier>
+          </weapon>
+        </action_detail>
+        <action_detail id="114157" name="execution_sentence">
+          <school>holy</school>
+          <resource>none</resource>
+          <range>40</range>
+          <travel_speed>0</travel_speed>
+          <trigger_gcd>1.500</trigger_gcd>
+          <base_cost>0</base_cost>
+          <cooldown duration="60"/>
+          <base_execute_time>0</base_execute_time>
+          <base_crit>0</base_crit>
+          <target>Fluffy_Pillow</target>
+          <description>$@spelldesc114916
+
+|CFFFFFFFFStay of Execution|R
+If used on friendly targets, the falling hammer heals the target for ${$SPH*$114917m2/1000+26.72716306*$114917m1} healing over $114917d. This healing is dealt slowly at first and increases over time, culminating in a final burst of healing.</description>
+          <damage_over_time>
+            <tick_may_crit>true</tick_may_crit>
+            <tick_zero>false</tick_zero>
+            <tick_power_mod>0.222</tick_power_mod>
+            <base>486.460</base>
+            <num_ticks>10</num_ticks>
+            <base_tick_time>1</base_tick_time>
+            <hasted_ticks>0</hasted_ticks>
+            <dot_behavior>DOT_REFRESH</dot_behavior>
+          </damage_over_time>
+        </action_detail>
+        <action_detail id="879" name="exorcism">
+          <school>holy</school>
+          <resource>mana</resource>
+          <range>30</range>
+          <travel_speed>0</travel_speed>
+          <trigger_gcd>1.500</trigger_gcd>
+          <base_cost>2400</base_cost>
+          <cooldown duration="15"/>
+          <base_execute_time>0</base_execute_time>
+          <base_crit>0</base_crit>
+          <target>Fluffy_Pillow</target>
+          <description>Forcefully attempt to expel the evil from the target with a blast of Holy Light. Causes $s1 Holy damage and generates a charge of Holy Power.</description>
+          <direct_damage>
+            <may_crit>true</may_crit>
+            <direct_power_mod>0.677</direct_power_mod>
+            <base min="6577.237" max="7342.841"/>
+          </direct_damage>
+        </action_detail>
+        <action_detail id="86698" name="guardian_of_ancient_kings">
+          <school>holy</school>
+          <resource>none</resource>
+          <range>30</range>
+          <travel_speed>0</travel_speed>
+          <trigger_gcd>0</trigger_gcd>
+          <base_cost>0</base_cost>
+          <cooldown duration="300"/>
+          <base_execute_time>0</base_execute_time>
+          <base_crit>0</base_crit>
+          <target>Fluffy_Pillow</target>
+          <tooltip>Protected by a Guardian of Ancient Kings.
+
+Attacks by you and your Guardian infuse you with Ancient Power and unleash Ancient Fury when your Guardian departs.</tooltip>
+          <description>Summons a Guardian of Ancient Kings to help you deal damage for $d.  
+
+The Guardian of Ancient Kings will attack your current enemy.  Both your attacks and the attacks of the Guardian will infuse you with Ancient Power that is unleashed as Ancient Fury when the Guardian departs.</description>
+        </action_detail>
+        <action_detail id="24275" name="hammer_of_wrath">
+          <school>holy</school>
+          <resource>mana</resource>
+          <range>30</range>
+          <travel_speed>50</travel_speed>
+          <trigger_gcd>1.500</trigger_gcd>
+          <base_cost>1800</base_cost>
+          <cooldown duration="6"/>
+          <base_execute_time>0</base_execute_time>
+          <base_crit>0</base_crit>
+          <target>Fluffy_Pillow</target>
+          <description>Hurls a magical hammer that strikes an enemy for $s1 Holy damage$?s53503[ and generates a charge of Holy Power][]. Only usable on enemies that have 20% or less health$?s53503[ or during Avenging Wrath][].</description>
+          <direct_damage>
+            <may_crit>true</may_crit>
+            <direct_power_mod>1</direct_power_mod>
+            <base min="1746.576" max="1930.426"/>
+          </direct_damage>
+          <weapon>
+            <normalize_speed>false</normalize_speed>
+            <power_mod>0.071</power_mod>
+            <multiplier>0</multiplier>
+          </weapon>
+        </action_detail>
+        <action_detail id="96172" name="hand_of_light">
+          <school>holy</school>
+          <resource>none</resource>
+          <range>5</range>
+          <travel_speed>0</travel_speed>
+          <trigger_gcd>0</trigger_gcd>
+          <base_cost>0</base_cost>
+          <cooldown duration="0"/>
+          <base_execute_time>0</base_execute_time>
+          <base_crit>0</base_crit>
+          <target>Fluffy_Pillow</target>
+          <tooltip></tooltip>
+          <description></description>
+          <direct_damage>
+            <may_crit>false</may_crit>
+            <direct_power_mod>0</direct_power_mod>
+            <base min="56238.021" max="56238.021"/>
+          </direct_damage>
+        </action_detail>
+        <action_detail id="84963" name="inquisition">
+          <school>holy</school>
+          <resource>holy_power</resource>
+          <range>0</range>
+          <travel_speed>0</travel_speed>
+          <trigger_gcd>1.500</trigger_gcd>
+          <base_cost>1</base_cost>
+          <cooldown duration="0"/>
+          <base_execute_time>0</base_execute_time>
+          <base_crit>0</base_crit>
+          <target>Fluffy_Pillow</target>
+          <tooltip>Increases Holy damage done by $w1%.
+Increases critical strike chance by $w3%.</tooltip>
+          <description>Consumes up to 3 Holy Power to increase your Holy Damage by $s1% and critical strike chance by $s3%. Lasts $d per charge of Holy Power consumed.</description>
+        </action_detail>
+        <action_detail id="20271" name="judgment">
+          <school>holy</school>
+          <resource>mana</resource>
+          <range>30</range>
+          <travel_speed>0</travel_speed>
+          <trigger_gcd>1.500</trigger_gcd>
+          <base_cost>3000</base_cost>
+          <cooldown duration="6"/>
+          <base_execute_time>0</base_execute_time>
+          <base_crit>0</base_crit>
+          <target>Fluffy_Pillow</target>
+          <description>A magic attack that unleashes the energy of a Seal to cause $s1 Holy damage$?s105424[ and generates one charge of Holy Power.]?s111529[, generate one charge of Holy Power, and apply the Physical Vulnerability debuff to a target.
+
+|Tinterface\icons\ability_deathknight_brittlebones.blp:24|t |cFFFFFFFFPhysical Vulnerability|r
+Weakens the constitution of an enemy target, increasing their physical damage taken by $81326s1% for $81326d.][.]</description>
+          <direct_damage>
+            <may_crit>true</may_crit>
+            <direct_power_mod>1</direct_power_mod>
+            <base min="623.492" max="623.492"/>
+          </direct_damage>
+        </action_detail>
+        <action_detail id="0" name="melee">
+          <school>physical</school>
+          <resource>none</resource>
+          <range>5</range>
+          <travel_speed>0</travel_speed>
+          <trigger_gcd>0</trigger_gcd>
+          <base_cost>0</base_cost>
+          <cooldown duration="0"/>
+          <base_execute_time>3</base_execute_time>
+          <base_crit>0</base_crit>
+          <target>Fluffy_Pillow</target>
+          <tooltip></tooltip>
+          <description></description>
+          <weapon>
+            <normalize_speed>false</normalize_speed>
+            <power_mod>0.071</power_mod>
+            <multiplier>1</multiplier>
+          </weapon>
+        </action_detail>
+        <action_detail id="31801" name="seal_of_truth_proc">
+          <school>holy</school>
+          <resource>mana</resource>
+          <range>0</range>
+          <travel_speed>0</travel_speed>
+          <trigger_gcd>1</trigger_gcd>
+          <base_cost>9839</base_cost>
+          <cooldown duration="0"/>
+          <base_execute_time>0</base_execute_time>
+          <base_crit>0</base_crit>
+          <target>Fluffy_Pillow</target>
+          <tooltip>Melee attacks cause Holy damage over $31803d.</tooltip>
+          <description>Fills you with Holy Light, causing melee attacks to deal $42463s1% additional weapon damage as Holy and apply Censure to the target.
+
+Replaces Seal of Command.
+
+|CFFFFFFFFCensure|R
+
+$@spelldesc31803</description>
+          <weapon>
+            <normalize_speed>false</normalize_speed>
+            <power_mod>0.071</power_mod>
+            <multiplier>0.120</multiplier>
+          </weapon>
+        </action_detail>
+        <action_detail id="120687" name="stormlash">
+          <school>nature</school>
+          <resource>none</resource>
+          <range>100</range>
+          <travel_speed>0</travel_speed>
+          <trigger_gcd>0</trigger_gcd>
+          <base_cost>0</base_cost>
+          <cooldown duration="0.100"/>
+          <base_execute_time>0</base_execute_time>
+          <base_crit>0</base_crit>
+          <target>Fluffy_Pillow</target>
+          <description>Deals Nature damage to enemy targets.</description>
+          <direct_damage>
+            <may_crit>true</may_crit>
+            <direct_power_mod>0</direct_power_mod>
+            <base min="8444.040" max="8444.040"/>
+          </direct_damage>
+        </action_detail>
+        <action_detail id="85256" name="templars_verdict">
+          <school>physical</school>
+          <resource>holy_power</resource>
+          <range>5</range>
+          <travel_speed>0</travel_speed>
+          <trigger_gcd>1.500</trigger_gcd>
+          <base_cost>3</base_cost>
+          <cooldown duration="0"/>
+          <base_execute_time>0</base_execute_time>
+          <base_crit>0</base_crit>
+          <target>Fluffy_Pillow</target>
+          <description>A powerful weapon strike that consumes 3 charges of Holy Power to deal $s1% weapon damage plus $s2.</description>
+          <direct_damage>
+            <may_crit>true</may_crit>
+            <direct_power_mod>0</direct_power_mod>
+            <base min="628.059" max="628.059"/>
+          </direct_damage>
+          <weapon>
+            <normalize_speed>true</normalize_speed>
+            <power_mod>0.071</power_mod>
+            <multiplier>2.750</multiplier>
+          </weapon>
+        </action_detail>
+      </action_definitions>
+      <buffs>
+        <buff name="bloodlust" type="dynamic"/>
+        <buff name="skull_banner" type="dynamic"/>
+        <buff name="stormlash" type="dynamic"/>
+        <buff name="mogu_power_potion" type="dynamic"/>
+        <buff name="glyph_double_jeopardy" type="dynamic"/>
+        <buff name="avenging_wrath" type="dynamic"/>
+        <buff name="ancient_power" type="dynamic"/>
+        <buff name="inquisition" type="dynamic"/>
+        <buff name="brutal_talisman_of_the_shadopan_assault" type="dynamic"/>
+        <buff name="darkmist_vortex" type="dynamic"/>
+        <buff name="dancing_steel" type="dynamic"/>
+      </buffs>
+      <benefits/>
+      <uptimes>
+        <uptime name="Mana Cap" pct="34.8"/>
+      </uptimes>
+      <procs>
+        <proc name="the_art_of_war" count="42.3" frequency="10.45"/>
+        <proc name="wasted_art_of_war" count="3.4" frequency="100.87"/>
+      </procs>
+      <gains>
+        <gain name="mp5_regen" actual="94435.3" overflow_pct="30.1"/>
+        <gain name="sword_of_light" actual="482997.2" overflow_pct="40.3"/>
+        <gain name="holy_power_crusader_strike" actual="74.7"/>
+        <gain name="holy_power_exorcism" actual="56.4"/>
+        <gain name="holy_power_hammer_of_wrath" actual="59.2"/>
+        <gain name="holy_power_judgments_of_the_bold" actual="67.7"/>
+      </gains>
+      <dps_plot_data min="-1000.0" max="1000.0" points="21"/>
+      <charts>
+        <chart type="dpet" href="http://1.chart.apis.google.com/chart?chs=550x275&amp;cht=p&amp;chf=bg,s,333333&amp;chd=t:18,14,13,12,9,9,8,6,5,5,4,1,0&amp;chds=0,100&amp;chdls=ffffff&amp;chco=FFE57F,C79C6E,FFE57F,C79C6E,FFE57F,FFE57F,FFE57F,FFE57F,C79C6E,FFE57F,C79C6E,336600,FFE57F&amp;chl=hand_of_light|templars_verdict|hammer_of_wrath|melee|censure|judgment|exorcism|seal_of_truth_proc|crusader_strike|execution_sentence|guardian_of_ancient_kings: melee|stormlash|ancient_fury&amp;chtt=%C3%80thor Damage Sources&amp;chts=dddddd,18"/>
+        <chart type="dmg" href="http://1.chart.apis.google.com/chart?chs=550x275&amp;cht=p&amp;chf=bg,s,333333&amp;chd=t:18,14,13,12,9,9,8,6,5,5,4,1,0&amp;chds=0,100&amp;chdls=ffffff&amp;chco=FFE57F,C79C6E,FFE57F,C79C6E,FFE57F,FFE57F,FFE57F,FFE57F,C79C6E,FFE57F,C79C6E,336600,FFE57F&amp;chl=hand_of_light|templars_verdict|hammer_of_wrath|melee|censure|judgment|exorcism|seal_of_truth_proc|crusader_strike|execution_sentence|guardian_of_ancient_kings: melee|stormlash|ancient_fury&amp;chtt=%C3%80thor Damage Sources&amp;chts=dddddd,18"/>
+        <chart type="timeline_dps" href="http://3.chart.apis.google.com/chart?chs=525x200&amp;cht=lc&amp;chxs=0,ffffff|1,ffffff&amp;chf=bg,s,333333&amp;chg=20,20&amp;chd=s:jmqrwyzyzzz12467877542zxwspnmjigfecbaZYXVVUTSRRQQQQPPOONNNNNNNNONOPPPOPOPPPQQRRRRRQQQPPOPOPPPOOPOOOOOOOOOOPPPPPPPPOPOPPQQRRSTTVVWWXXXYYZZaaaaaZZZYXWVVVUTTTTSSRRRRQQQQQQQQQQQQPPPPOOOOOOPPPPQPPQPQQQQRQRRQQQQPPONNNNNNNNNNNNNNNNOOOOPPPQQQQQQQQQRRSTUUVWXYYZZaabbcccccccbaaZXXWVUUTTSSRRRQQPPOOOOOOOOOOONNNNNNNNOOOPPPPQQQQQQRRRSRSRRRRRQQPPPPPPPPPPPPPPPPPPPPPPPPPPQQQQRSTTVWXYabcefghijkllmmnnmmmlkjihgfedcbbZZYXWWVUUTUTTTTTTTTSSSRRRRRRSSSSSSSTTTTTTUUUUUUUUTTSSSRRRRRRRRRSSTUTTTTTUUUUUVVV&amp;chco=FDD017&amp;chds=0,60&amp;chm=h,FF0000,0,0,3524,0.4&amp;chxt=x,y&amp;chxl=0:|0|sec=479|1:|0|avg=110717|max=314150&amp;chxp=1,1,35,100&amp;chtt=%C3%80thor DPS Timeline&amp;chts=dddddd,18"/>
+        <chart type="distribution_dps" href="http://6.chart.apis.google.com/chart?chs=525x185&amp;cht=bvs&amp;chf=bg,s,333333&amp;chg=100,100&amp;chxs=0,ffffff|1,ffffff&amp;chd=t:1,0,0,1,0,1,9,8,10,7,6,15,16,24,26,41,30,40,43,45,53,70,45,67,48,71,48,51,38,36,36,35,18,18,8,11,4,3,6,4,0,0,0,1,1,1,0,0,2,1&amp;chds=0,71&amp;chbh=5&amp;chxt=x&amp;chxl=0:|min=103818|avg=110717|max=118867&amp;chxp=0,1,46,100&amp;chtt=%C3%80thor DPS Distribution&amp;chts=dddddd,18"/>
+        <chart type="time_spent" href="http://2.chart.apis.google.com/chart?chs=525x275&amp;cht=p&amp;chf=bg,s,333333&amp;chd=t:20,4,18,9,18,4,15,8,14,7,4,0,2,1,6,1&amp;chds=0,100&amp;chdls=ffffff&amp;chco=C79C6E,C79C6E,FFE57F,FFE57F,FFE57F,FFE57F,FFE57F,ffffff&amp;chl=crusader_strike 91,8s|templars_verdict 85,0s|judgment 82,9s|hammer_of_wrath 70,9s|exorcism 66,0s|inquisition 17,8s|execution_sentence 9,4s|waiting 27,4s&amp;chtt=%C3%80thor Spent Time&amp;chts=dddddd,18"/>
+      </charts>
+    </player>
+    <player name="Àthor_guardian_of_ancient_kings" owner="Àthor">
+      <type>Player</type>
+      <level>90</level>
+      <race>none</race>
+      <class type="guardian" subtype="none"/>
+      <specialization>unknown</specialization>
+      <primary_role>hybrid</primary_role>
+      <position>back</position>
+      <dps value="35378.699" effective="4717.193" error="nan" range="-inf" convergence="0"/>
+      <waiting_time pct="100"/>
+      <active_time pct="13.328"/>
+      <apm>0</apm>
+      <attribute name="strength" base="0" gear="0" buffed="0"/>
+      <attribute name="agility" base="0" gear="0" buffed="0"/>
+      <attribute name="stamina" base="14715" gear="0" buffed="16187"/>
+      <attribute name="intellect" base="58" gear="0" buffed="61"/>
+      <attribute name="spirit" base="0" gear="0" buffed="0"/>
+      <attribute name="mastery" base="8" gear="0" buffed="8"/>
+      <attribute name="spellpower" base="0" gear="0" buffed="0"/>
+      <attribute name="spellhit" base="16" gear="0" buffed="16"/>
+      <attribute name="spellcrit" base="8" gear="0" buffed="13"/>
+      <attribute name="spellhaste" base="0" gear="0" buffed="28"/>
+      <attribute name="manareg_per_second" base="0" gear="0" buffed="0"/>
+      <attribute name="attackpower" base="206400" gear="0" buffed="257543"/>
+      <attribute name="attackhit" base="8" gear="0" buffed="8"/>
+      <attribute name="attackcrit" base="8" gear="0" buffed="13"/>
+      <attribute name="expertise" base="8" gear="0" buffed="8"/>
+      <attribute name="expertise_oh" base="8" gear="0" buffed="8"/>
+      <attribute name="attackhaste" base="22" gear="0" buffed="22"/>
+      <attribute name="attackspeed" base="22" gear="0" buffed="34"/>
+      <attribute name="armor" base="33497" gear="0" buffed="33497"/>
+      <attribute name="miss" base="0" gear="0" buffed="0"/>
+      <attribute name="dodge" base="5" gear="0" buffed="5"/>
+      <attribute name="parry" base="21" gear="0" buffed="24"/>
+      <attribute name="block" base="0" gear="0" buffed="0"/>
+      <attribute name="tank_crit" base="0" gear="0" buffed="0"/>
+      <resource name="health" base="421083" buffed="0"/>
+      <resource name="mana" base="0" buffed="0"/>
+      <glyphs/>
+      <priorities/>
+      <actions>
+        <action id="0" name="melee" count="49.505" frequency="8.095" dpe="42879" dpe_pct="4.260" dpet="34263.978" apr="0" pdps="35378.699">
+          <chart type="timeline_aps" href="http://5.chart.apis.google.com/chart?chs=525x200&amp;amp;cht=lc&amp;amp;chxs=0,ffffff|1,ffffff&amp;amp;chf=bg,s,333333&amp;amp;chg=20,20&amp;amp;chd=s:hknqstvwwxx0257678654320yvrolifcaYVTRPNLJHFDBAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABDEGHJLMOQSTVXZaceghijjkkkkkkjjhgedbZYWUSRPNLKIGFDCBAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA&amp;amp;chco=FDD017&amp;amp;chds=0,60&amp;amp;chm=h,FF0000,0,0,7661,0.4&amp;amp;chxt=x,y&amp;amp;chxl=0:|0|sec=479|1:|0|avg=35379|max=46182&amp;amp;chxp=1,1,77,100&amp;amp;chtt=melee DPS Timeline&amp;amp;chts=dddddd,18"/>
+          <etpe>1.251</etpe>
+          <ttpt>0</ttpt>
+          <actual_amount>2122721.941</actual_amount>
+          <total_amount>2122721.941</total_amount>
+          <overkill_pct>0</overkill_pct>
+          <aps>34263.978</aps>
+          <apet>34263.978</apet>
+          <direct_results count="49.505">
+            <result type="hit" count="37.753" pct="76.261" min="30906.050" max="61956.464" avg="45603.053" avg_min="41868.352" avg_max="50222.109" actual="1721648.385" total="1721648.385" overkill_pct="0"/>
+            <result type="glance" count="11.752" pct="23.739" min="23179.538" max="46467.348" avg="34129.396" avg_min="28715.381" avg_max="42562.521" actual="401073.556" total="401073.556" overkill_pct="0"/>
+          </direct_results>
+          <chart type="timeline_stat_aps" href="http://5.chart.apis.google.com/chart?chs=525x200&amp;cht=lc&amp;chxs=0,ffffff|1,ffffff&amp;chf=bg,s,333333&amp;chg=20,20&amp;chd=s:hknqstvwwxx0257678654320yvrolifcaYVTRPNLJHFDBAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABDEGHJLMOQSTVXZaceghijjkkkkkkjjhgedbZYWUSRPNLKIGFDCBAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA&amp;chco=FDD017&amp;chds=0,60&amp;chm=h,FF0000,0,0,7661,0.4&amp;chxt=x,y&amp;chxl=0:|0|sec=479|1:|0|avg=35379|max=46182&amp;chxp=1,1,77,100&amp;chtt=melee DPS Timeline&amp;chts=dddddd,18"/>
+          <target>Fluffy_Pillow</target>
+        </action>
+      </actions>
+      <action_definitions>
+        <action_detail id="0" name="melee">
+          <school>physical</school>
+          <resource>none</resource>
+          <range>5</range>
+          <travel_speed>0</travel_speed>
+          <trigger_gcd>0</trigger_gcd>
+          <base_cost>0</base_cost>
+          <cooldown duration="0"/>
+          <base_execute_time>2</base_execute_time>
+          <base_crit>0</base_crit>
+          <target>Fluffy_Pillow</target>
+          <tooltip></tooltip>
+          <description></description>
+          <weapon>
+            <normalize_speed>false</normalize_speed>
+            <power_mod>0.071</power_mod>
+            <multiplier>1</multiplier>
+          </weapon>
+        </action_detail>
+      </action_definitions>
+      <buffs/>
+      <benefits/>
+      <uptimes/>
+      <procs>
+        <proc name="hat_donor" count="nan" frequency="nan"/>
+      </procs>
+      <gains/>
+      <dps_plot_data min="-1000.0" max="1000.0" points="21"/>
+      <charts>
+        <chart type="dpet" href="http://1.chart.apis.google.com/chart?chs=550x275&amp;cht=p&amp;chf=bg,s,333333&amp;chd=t:100&amp;chds=0,100&amp;chdls=ffffff&amp;chco=C79C6E&amp;chl=guardian_of_ancient_kings: melee&amp;chtt=%C3%80thor_guardian_of_ancient_kings Damage Sources&amp;chts=dddddd,18"/>
+        <chart type="dmg" href="http://1.chart.apis.google.com/chart?chs=550x275&amp;cht=p&amp;chf=bg,s,333333&amp;chd=t:100&amp;chds=0,100&amp;chdls=ffffff&amp;chco=C79C6E&amp;chl=guardian_of_ancient_kings: melee&amp;chtt=%C3%80thor_guardian_of_ancient_kings Damage Sources&amp;chts=dddddd,18"/>
+        <chart type="time_spent" href="http://2.chart.apis.google.com/chart?chs=525x275&amp;cht=p&amp;chf=bg,s,333333&amp;chd=t:100,0&amp;chds=0,100&amp;chdls=ffffff&amp;chco=ffffff&amp;chl=waiting 60,0s&amp;chtt=%C3%80thor_guardian_of_ancient_kings Spent Time&amp;chts=dddddd,18"/>
+      </charts>
+    </player>
+  </players>
+  <targets>
+    <player name="Fluffy_Pillow">
+      <type>Target</type>
+      <level>93</level>
+      <race>humanoid</race>
+      <class type="enemy"/>
+      <specialization>unknown</specialization>
+      <primary_role>tank</primary_role>
+      <position>front</position>
+      <dps value="0" effective="0" error="0" range="0" convergence="0"/>
+      <waiting_time pct="0"/>
+      <active_time pct="100"/>
+      <apm>0</apm>
+      <attribute name="strength" base="0" gear="0" buffed="0"/>
+      <attribute name="agility" base="0" gear="0" buffed="0"/>
+      <attribute name="stamina" base="0" gear="0" buffed="0"/>
+      <attribute name="intellect" base="0" gear="0" buffed="0"/>
+      <attribute name="spirit" base="0" gear="0" buffed="0"/>
+      <attribute name="mastery" base="8" gear="0" buffed="8"/>
+      <attribute name="spellpower" base="0" gear="0" buffed="0"/>
+      <attribute name="spellhit" base="0" gear="0" buffed="0"/>
+      <attribute name="spellcrit" base="-nan" gear="0" buffed="-nan"/>
+      <attribute name="spellhaste" base="0" gear="0" buffed="0"/>
+      <attribute name="manareg_per_second" base="0" gear="0" buffed="0"/>
+      <attribute name="attackpower" base="0" gear="0" buffed="0"/>
+      <attribute name="attackhit" base="0" gear="0" buffed="0"/>
+      <attribute name="attackcrit" base="5" gear="0" buffed="5"/>
+      <attribute name="expertise" base="0" gear="0" buffed="0"/>
+      <attribute name="expertise_oh" base="0" gear="0" buffed="0"/>
+      <attribute name="attackhaste" base="0" gear="0" buffed="0"/>
+      <attribute name="attackspeed" base="0" gear="0" buffed="0"/>
+      <attribute name="armor" base="24835" gear="0" buffed="24835"/>
+      <attribute name="miss" base="0" gear="0" buffed="0"/>
+      <attribute name="dodge" base="0" gear="0" buffed="0"/>
+      <attribute name="parry" base="0" gear="0" buffed="0"/>
+      <attribute name="block" base="5" gear="0" buffed="5"/>
+      <attribute name="tank_crit" base="0" gear="0" buffed="0"/>
+      <resource name="health" base="49760436" buffed="0"/>
+      <resource name="mana" base="0" buffed="0"/>
+      <glyphs/>
+      <priorities>
+        <action index="0" list="precombat" value="snapshot_stats"/>
+      </priorities>
+      <actions/>
+      <action_definitions/>
+      <buffs>
+        <buff name="Health Decade (0 - 10)" type="dynamic"/>
+        <buff name="Health Decade (10 - 20)" type="dynamic"/>
+        <buff name="Health Decade (20 - 30)" type="dynamic"/>
+        <buff name="Health Decade (30 - 40)" type="dynamic"/>
+        <buff name="Health Decade (40 - 50)" type="dynamic"/>
+        <buff name="Health Decade (50 - 60)" type="dynamic"/>
+        <buff name="Health Decade (60 - 70)" type="dynamic"/>
+        <buff name="Health Decade (70 - 80)" type="dynamic"/>
+        <buff name="Health Decade (80 - 90)" type="dynamic"/>
+        <buff name="censure" type="dynamic"/>
+      </buffs>
+      <benefits/>
+      <uptimes/>
+      <procs/>
+      <gains/>
+      <dps_plot_data min="-1000.0" max="1000.0" points="21"/>
+      <charts>
+        <chart type="timeline_dps" href="http://6.chart.apis.google.com/chart?chs=525x200&amp;cht=lc&amp;chxs=0,ffffff|1,ffffff&amp;chf=bg,s,333333&amp;chg=20,20&amp;chd=s:AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA&amp;chco=FDD017&amp;chds=0,60&amp;chxt=x,y&amp;chxl=0:|0|sec=479|1:|0|&amp;chxp=1,1,-nan,100&amp;chtt=Fluffy_Pillow DPS Timeline&amp;chts=dddddd,18"/>
+      </charts>
+    </player>
+  </targets>
+  <buffs/>
+  <performance>
+    <total_events>9412861</total_events>
+    <max_event_queue>29</max_event_queue>
+    <target_health>49760436</target_health>
+    <sim_seconds>450192</sim_seconds>
+    <cpu_seconds>1.970</cpu_seconds>
+    <speed_up>228524</speed_up>
+  </performance>
+</simulationcraft>

@@ -1,0 +1,11 @@
+--- configure.in~	2012-09-23 23:01:51.873892475 +0200
++++ configure.in	2012-09-23 23:01:51.873892475 +0200
+@@ -67,7 +67,7 @@
+ 	fi    
+     QT4DIR=${QT4/\/bin\/qmake/}
+     QT_INCLUDES="-I$QT4DIR/include -I$QT4DIR/include/Qt" 
+-    DIRS="tgraph freeglut qt ClientServer"
++    DIRS="tgraph qt ClientServer"
+ fi
+ 
+ AC_SUBST(DIRS)

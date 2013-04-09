@@ -1,0 +1,90 @@
+ 
+qt/simulationcraftqt.hpp:105:36: error: invalid use of incomplete type 'class QNetworkCookieJar'
+In file included from /usr/include/QtWebKit/qgraphicswebview.h:34:0,
+                 from /usr/include/QtWebKit/QtWebKit:3,
+                 from qt/simulationcraftqt.hpp:11,
+                 from moc_simulationcraftqt.cpp:10:
+/usr/include/QtNetwork/qnetworkaccessmanager.h:59:7: error: forward declaration of 'class QNetworkCookieJar'
+In file included from qt/main.cpp:2:0:
+qt/simulationcraftqt.hpp:105:36: error: invalid use of incomplete type 'class QNetworkCookieJar'
+In file included from /usr/include/QtWebKit/qgraphicswebview.h:34:0,
+                 from /usr/include/QtWebKit/QtWebKit:3,
+                 from qt/simulationcraftqt.hpp:11,
+                 from qt/main.cpp:2:
+/usr/include/QtNetwork/qnetworkaccessmanager.h:59:7: error: forward declaration of 'class QNetworkCookieJar'
+In file included from qt/sc_window.cpp:7:0:
+qt/simulationcraftqt.hpp:105:36: error: invalid use of incomplete type 'class QNetworkCookieJar'
+In file included from /usr/include/QtWebKit/qgraphicswebview.h:34:0,
+                 from /usr/include/QtWebKit/QtWebKit:3,
+                 from qt/simulationcraftqt.hpp:11,
+                 from qt/sc_window.cpp:7:
+/usr/include/QtNetwork/qnetworkaccessmanager.h:59:7: error: forward declaration of 'class QNetworkCookieJar'
+In file included from qt/sc_import.cpp:7:0:
+qt/simulationcraftqt.hpp:105:36: error: invalid use of incomplete type 'class QNetworkCookieJar'
+In file included from /usr/include/QtWebKit/qgraphicswebview.h:34:0,
+                 from /usr/include/QtWebKit/QtWebKit:3,
+                 from qt/simulationcraftqt.hpp:11,
+                 from qt/sc_import.cpp:7:
+/usr/include/QtNetwork/qnetworkaccessmanager.h:59:7: error: forward declaration of 'class QNetworkCookieJar'
+qt/sc_window.cpp: In member function 'void SC_MainWindow::createImportTab()':
+qt/sc_window.cpp:788:83: error: no matching function for call to 'QNetworkAccessManager::setCookieJar(PersistentCookieJar*&)'
+qt/sc_window.cpp:788:83: note: candidate is:
+In file included from /usr/include/QtWebKit/qgraphicswebview.h:34:0,
+                 from /usr/include/QtWebKit/QtWebKit:3,
+                 from qt/simulationcraftqt.hpp:11,
+                 from qt/sc_window.cpp:7:
+/usr/include/QtNetwork/qnetworkaccessmanager.h:114:10: note: void QNetworkAccessManager::setCookieJar(QNetworkCookieJar*)
+/usr/include/QtNetwork/qnetworkaccessmanager.h:114:10: note:   no known conversion for argument 1 from 'PersistentCookieJar*' to 'QNetworkCookieJar*'
+qt/sc_window.cpp: In member function 'void PersistentCookieJar::save()':
+qt/sc_window.cpp:2196:48: error: 'allCookies' was not declared in this scope
+qt/sc_window.cpp:2202:15: error: invalid use of incomplete type 'const class QNetworkCookie'
+In file included from /usr/include/QtWebKit/qgraphicswebview.h:34:0,
+                 from /usr/include/QtWebKit/QtWebKit:3,
+                 from qt/simulationcraftqt.hpp:11,
+                 from qt/sc_window.cpp:7:
+/usr/include/QtNetwork/qnetworkaccessmanager.h:58:7: error: forward declaration of 'const class QNetworkCookie'
+qt/sc_window.cpp:2203:15: error: invalid use of incomplete type 'const class QNetworkCookie'
+In file included from /usr/include/QtWebKit/qgraphicswebview.h:34:0,
+                 from /usr/include/QtWebKit/QtWebKit:3,
+                 from qt/simulationcraftqt.hpp:11,
+                 from qt/sc_window.cpp:7:
+/usr/include/QtNetwork/qnetworkaccessmanager.h:58:7: error: forward declaration of 'const class QNetworkCookie'
+qt/sc_window.cpp: In member function 'void PersistentCookieJar::load()':
+qt/sc_window.cpp:2223:51: error: invalid use of incomplete type 'class QNetworkCookie'
+In file included from /usr/include/QtWebKit/qgraphicswebview.h:34:0,
+                 from /usr/include/QtWebKit/QtWebKit:3,
+                 from qt/simulationcraftqt.hpp:11,
+                 from qt/sc_window.cpp:7:
+/usr/include/QtNetwork/qnetworkaccessmanager.h:58:7: error: forward declaration of 'class QNetworkCookie'
+qt/sc_window.cpp:2225:28: error: 'setAllCookies' was not declared in this scope
+In file included from /usr/include/QtCore/qalgorithms.h:45:0,
+                 from /usr/include/QtCore/QtCore:3,
+                 from /usr/include/QtGui/QtGui:3,
+                 from qt/simulationcraftqt.hpp:10,
+                 from qt/sc_window.cpp:7:
+/usr/include/QtCore/qglobal.h: In instantiation of 'class QTypeInfo<QNetworkCookie>':
+/usr/include/QtCore/qlist.h:114:50:   required from 'T& QList<T>::Node::t() [with T = QNetworkCookie]'
+/usr/include/QtCore/qlist.h:470:46:   required from 'const T& QList<T>::at(int) const [with T = QNetworkCookie]'
+qt/sc_window.cpp:2201:47:   required from here
+/usr/include/QtCore/qglobal.h:2113:10: error: invalid application of 'sizeof' to incomplete type 'QNetworkCookie'
+In file included from /usr/include/QtCore/qhash.h:48:0,
+                 from /usr/include/QtCore/qcache.h:45,
+                 from /usr/include/QtCore/QtCore:7,
+                 from /usr/include/QtGui/QtGui:3,
+                 from qt/simulationcraftqt.hpp:10,
+                 from qt/sc_window.cpp:7:
+/usr/include/QtCore/qlist.h: In instantiation of 'void QList<T>::node_destruct(QList<T>::Node*, QList<T>::Node*) [with T = QNetworkCookie]':
+/usr/include/QtCore/qlist.h:757:5:   required from 'void QList<T>::free(QListData::Data*) [with T = QNetworkCookie]'
+/usr/include/QtCore/qlist.h:732:9:   required from 'QList<T>::~QList() [with T = QNetworkCookie]'
+qt/sc_window.cpp:2196:48:   required from here
+/usr/include/QtCore/qlist.h:433:28: error: invalid use of incomplete type 'class QNetworkCookie'
+In file included from /usr/include/QtWebKit/qgraphicswebview.h:34:0,
+                 from /usr/include/QtWebKit/QtWebKit:3,
+                 from qt/simulationcraftqt.hpp:11,
+                 from qt/sc_window.cpp:7:
+/usr/include/QtNetwork/qnetworkaccessmanager.h:58:7: error: forward declaration of 'class QNetworkCookie'
+make: *** [moc_simulationcraftqt.o] Error 1
+make: *** Waiting for unfinished jobs....
+make: *** [sc_import.o] Error 1
+make: *** [main.o] Error 1
+make: *** [sc_window.o] Error 1

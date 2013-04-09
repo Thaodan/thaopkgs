@@ -1,0 +1,120 @@
+
+DPS Ranking:
+ 110717 100.0%  Raid
+ 110717  100,0%  Àthor
+
+HPS Ranking:
+      0 100.0%  Raid
+
+Player: Àthor human paladin retribution 90
+  DPS: 110717,2  DPS-Error=128,7/0,1% HPS: 0,0 HPS-Error=0,0/0,0% DPS-Range=7524/6,8%  DPS-Convergence=66,5%  DPR=82,3  RPS-Out=1286,9 RPS-In=1282,6  Resource=(mana) Waiting=6,1 ApM=47,8
+  Origin: http://eu.battle.net/wow/en/character/Lordaeron/Àthor%0A%09%09%09%09%0A%09%09%09%09%09 /advanced
+  Talents: http://eu.battle.net/wow/en/tool/talent-calculator#bb!220212
+  Core Stats:    strength=19066|16793(15817)  agility=194|185(80)  stamina=21582|19620(19451)  intellect=204|194(80)  spirit=208|208(80)  mastery=40,05%|30,80%(5189)  health=448551|421083  mana=60000|60000
+  Spell Stats:   power=21110|16918(0)  hit=15,67%|15,67%(2663)  crit=11,56%|6,56%(1885)  haste=27,83%|21,74%(9241)  manareg=300|300(0)
+  Attack Stats:  power=42220|33836(0)  hit=7,83%|7,83%(2663)  crit=13,16%|8,16%(1885)  expertise=7,84%|7,84%(2666)  haste=21,74%|21,74%(9241)  speed=33,92%|21,74%(9241)
+  Defense Stats: armor=33497|33497(33497) miss=0,00%|0,00%  dodge=5,03%|5,03%(0)  parry=23,72%|21,44%(0)  block=3,00%|3,00%(0) crit=0,00%|0,00%
+  Glyphs: double_jeopardy/templars_verdict/mass_exorcism/winged_vengeance/bladed_judgment/seal_of_blood
+  Priorities (actions.precombat):
+    flask,type=winters_bite/food,type=black_pepper_ribs_and_shrimp
+    blessing_of_kings,if=!aura.str_agi_int.up
+    blessing_of_might,if=!aura.mastery.up&!aura.str_agi_int.up/seal_of_truth
+    snapshot_stats/mogu_power_potion
+  Priorities:
+    rebuke/seal_of_truth,if=mana.pct>=90|seal.none/seal_of_insight,if=mana.pct<=30
+    mogu_power_potion,if=(buff.bloodlust.react|(buff.ancient_power.up&buff.avenging_wrath.up)|target.time_to_die<=40)
+    auto_attack
+    inquisition,if=(buff.inquisition.down|buff.inquisition.remains<=2)&(holy_power>=3)
+    avenging_wrath,if=buff.inquisition.up
+    guardian_of_ancient_kings,if=buff.avenging_wrath.up
+    execution_sentence,if=buff.inquisition.up/templars_verdict,if=holy_power=5
+    hammer_of_wrath
+    wait,sec=cooldown.hammer_of_wrath.remains,if=cooldown.hammer_of_wrath.remains>0&cooldown.hammer_of_wrath.remains<=0.2
+    exorcism/judgment,if=target.health.pct<=20|buff.avenging_wrath.up/crusader_strike
+    judgment/templars_verdict,if=holy_power>=3
+  Actions:
+    ancient_fury        Count=  2,0|362,89sec  DPE=106801| 0%  DPET=     0  DPR= 0,0  pDPS=  475  Miss=0,00%  Hit=89891|62528|125714  Crit=185052|167450|258970|17,8%
+    avenging_wrath      Count=  4,0|120,96sec  DPE=     0| 0%  DPET=     0  DPR= 0,0  pDPS=    0  Miss=0,00%
+    censure             Count=423,7|  1,06sec  DPE= 10325| 9%  DPET=     0  DPR= 0,0  pDPS= 9720  Miss=0,00%  TickCount=201  MissTick=0,0%  Tick=18050|5349|36547  CritTick=38162|11020|90344|18,3%  UpTime=99,5%
+    crusader_strike     Count= 74,7|  6,03sec  DPE= 34956| 5%  DPET= 28434  DPR=19,4  pDPS= 5800  Miss=0,00%  Hit=28768|27078|46982  Crit=59746|55781|116139|20,0%
+    execution_sentence  Count=  8,0| 60,83sec  DPE=301730| 5%  DPET=256371  DPR= 0,0  pDPS= 5358  Miss=0,00%  TickCount=80  MissTick=0,0%  Tick=24790|7769|208113  CritTick=54324|16005|436910|18,7%  UpTime=17,7%
+    exorcism            Count= 56,4|  8,03sec  DPE= 70429| 8%  DPET= 60164  DPR=29,3  pDPS= 8823  Miss=0,00%  Hit=58339|37320|114162  Crit=123658|76879|282210|18,5%
+    guardian_of_ancient_kings  Count=  2,0|362,89sec  DPE=     0| 0%  DPET=     0  DPR= 0,0  pDPS=    0  Miss=0,00%
+    hammer_of_wrath     Count= 59,2|  7,60sec  DPE=104421|12%  DPET= 87136  DPR=58,0  pDPS=13732  Miss=0,00%  Hit=85147|47152|143984  Crit=181304|106939|355928|20,0%
+    hand_of_light       Count=203,6|  2,21sec  DPE= 41331|17%  DPET=     0  DPR= 0,0  pDPS=18701  Miss=0,00%  Hit=41334|11388|194595
+    inquisition         Count= 15,2| 30,32sec  DPE=     0| 0%  DPET=     0  DPR= 0,0  pDPS=    0  Miss=0,00%
+    judgment            Count= 67,7|  6,66sec  DPE= 60617| 8%  DPET= 49524  DPR=20,2  pDPS= 9119  Miss=0,00%  Hit=49665|31392|106083  Crit=104703|64667|262238|19,9%
+    melee               Count=211,6|  2,12sec  DPE= 26869|11%  DPET= 12654  DPR= 0,0  pDPS=12629  Miss=0,00%  Hit=23213|20413|35033  Crit=48621|42052|86601|19,9%  Glance=17399|24,2%
+    seal_of_truth_proc  Count=423,7|  1,06sec  DPE=  6447| 5%  DPET=     0  DPR= 0,0  pDPS= 6068  Miss=0,00%  Hit=5285|3642|8125  Crit=11071| 7502|20084|20,1%
+    stormlash           Count= 23,7| 13,62sec  DPE= 16561| 1%  DPET=     0  DPR= 0,0  pDPS=  871  Miss=0,00%  Hit=13119|4092|23353  Crit=31750| 8429|57728|18,5%
+    templars_verdict    Count= 69,7|  6,36sec  DPE= 94875|13%  DPET= 77816  DPR= 0,0  pDPS=14705  Miss=0,00%  Hit=77762|68495|118848  Crit=162462|141099|293793|20,2%
+   guardian_of_ancient_kings  (DPS=35378,7)
+    melee               Count= 49,5|  8,10sec  DPE= 42879| 4%  DPET= 34264  DPR= 0,0  pDPS=35379  Miss=0,00%  Hit=45603|30906|61956  Glance=34129|23,7%
+
+  Dynamic Buffs:
+    ancient_power                           : start= 2,0 refresh=206,5 interval=362,9 trigger=  1,9 uptime=13%
+    avenging_wrath                          : start= 4,0 refresh=  0,0 interval=121,0 trigger=121,0 uptime=27%  benefit=29%
+    bloodlust                               : start= 1,0 refresh=  0,0 interval=  0,0 trigger=  0,0 uptime= 9%  benefit=12%
+    brutal_talisman_of_the_shadopan_assault : start= 6,0 refresh=  0,0 interval= 80,3 trigger= 80,3 uptime=20%
+    dancing_steel                           : start=12,8 refresh= 10,4 interval= 34,7 trigger= 18,6 uptime=47%
+    darkmist_vortex                         : start= 4,7 refresh=  0,0 interval=110,3 trigger=110,3 uptime=19%
+    glyph_double_jeopardy                   : start= 7,9 refresh= 59,9 interval= 58,1 trigger=  6,7 uptime=94%
+    inquisition                             : start= 5,0 refresh= 10,2 interval= 82,9 trigger= 30,3 uptime=98%  benefit=99%
+    mogu_power_potion                       : start= 1,0 refresh=  0,0 interval=367,7 trigger=  0,0 uptime=10%
+    skull_banner                            : start= 3,0 refresh=  0,0 interval=180,0 trigger=180,0 uptime= 7%  benefit= 9%
+    stormlash                               : start= 2,0 refresh=  0,0 interval=300,0 trigger=300,0 uptime= 4%
+  Up-Times:
+     34,8% : Mana Cap                      
+  Procs:
+     42,3 |  10,45sec : the_art_of_war
+      3,4 | 100,87sec : wasted_art_of_war
+  Gains:
+     94435,3 : mp5_regen                        (mana)  (overflow=30,1%)
+    482997,2 : sword_of_light                   (mana)  (overflow=40,3%)
+        74,7 : holy_power_crusader_strike       (holy_power)
+        56,4 : holy_power_exorcism              (holy_power)
+        59,2 : holy_power_hammer_of_wrath       (holy_power)
+        67,7 : holy_power_judgments_of_the_bold (holy_power)
+  DPS Plot Data ( min=-1000,0 max=1000,0 points=21 )
+
+
+ *** Targets *** 
+
+
+Target: Fluffy_Pillow humanoid enemy unknown 93
+  DPS: 0,0  DPS-Error=0,0/0,0% HPS: 0,0 HPS-Error=0,0/0,0% DPS-Range=0/0,0%  DPS-Convergence=0,0%
+  Core Stats:    strength=0|0(0)  agility=0|0(0)  stamina=0|0(0)  intellect=0|0(0)  spirit=0|0(0)  mastery=0,00%|0,00%(0)  health=0|49760436  mana=0|0
+  Spell Stats:   power=0|0(0)  hit=0,00%|0,00%(0)  crit=-nan%|-nan%(0)  haste=0,00%|0,00%(0)  manareg=0|0(0)
+  Attack Stats:  power=0|0(0)  hit=0,00%|0,00%(0)  crit=5,00%|5,00%(0)  expertise=0,00%|0,00%(0)  haste=0,00%|0,00%(0)  speed=0,00%|0,00%(0)
+  Defense Stats: armor=24835|24835(0) miss=0,00%|0,00%  dodge=0,00%|0,00%(0)  parry=0,00%|0,00%(0)  block=5,00%|5,00%(0) crit=0,00%|0,00%
+  Priorities (actions.precombat):
+    snapshot_stats
+  Priorities:
+
+  Actions:
+
+  Dynamic Buffs:
+    Health Decade (0 - 10)  : start= 1,0 refresh=  0,0 interval=  0,0 trigger=  0,0 uptime=11%
+    Health Decade (10 - 20) : start= 1,0 refresh=  0,0 interval=  0,0 trigger=  0,0 uptime= 6%
+    Health Decade (20 - 30) : start= 1,0 refresh=  0,0 interval=  0,0 trigger=  0,0 uptime=12%
+    Health Decade (30 - 40) : start= 1,0 refresh=  0,0 interval=  0,0 trigger=  0,0 uptime=13%
+    Health Decade (40 - 50) : start= 1,0 refresh=  0,0 interval=  0,0 trigger=  0,0 uptime=10%
+    Health Decade (50 - 60) : start= 1,0 refresh=  0,0 interval=  0,0 trigger=  0,0 uptime=13%
+    Health Decade (60 - 70) : start= 1,0 refresh=  0,0 interval=  0,0 trigger=  0,0 uptime=10%
+    Health Decade (70 - 80) : start= 1,0 refresh=  0,0 interval=  0,0 trigger=  0,0 uptime=14%
+    Health Decade (80 - 90) : start= 1,0 refresh=  0,0 interval=  0,0 trigger=  0,0 uptime= 7%
+    censure                 : start= 1,0 refresh=422,7 interval=  1,2 trigger=  1,1 uptime=100%  benefit=100%
+  DPS Plot Data ( min=-1000,0 max=1000,0 points=21 )
+
+Waiting:
+     6,1% : Àthor
+
+Baseline Performance:
+  TotalEvents   = 9412861
+  MaxEventQueue = 29
+  TargetHealth  = 49760436
+  SimSeconds    = 450192
+  CpuSeconds    = 1,970
+  SpeedUp       = 228524
+
+

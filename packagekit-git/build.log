@@ -1,0 +1,738 @@
+==> Making package: packagekit-git 20130405-1 (Mon Apr  8 21:12:51 CEST 2013)
+==> Checking runtime dependencies...
+==> Checking buildtime dependencies...
+==> Retrieving sources...
+==> Extracting sources...
+==> Starting build()...
+==> Connecting to GIT server....
+Cloning into 'packagekit'...
+==> GIT checkout done or server timeout
+==> Starting make...
+configure.ac:656: warning: AC_LANG_CONFTEST: no AC_LANG_SOURCE call detected in body
+../../lib/autoconf/lang.m4:193: AC_LANG_CONFTEST is expanded from...
+../../lib/autoconf/general.m4:2590: _AC_COMPILE_IFELSE is expanded from...
+../../lib/autoconf/general.m4:2606: AC_COMPILE_IFELSE is expanded from...
+configure.ac:656: the top level
+configure.ac:663: warning: AC_LANG_CONFTEST: no AC_LANG_SOURCE call detected in body
+../../lib/autoconf/lang.m4:193: AC_LANG_CONFTEST is expanded from...
+../../lib/autoconf/general.m4:2590: _AC_COMPILE_IFELSE is expanded from...
+../../lib/autoconf/general.m4:2606: AC_COMPILE_IFELSE is expanded from...
+configure.ac:663: the top level
+configure.ac:656: warning: AC_LANG_CONFTEST: no AC_LANG_SOURCE call detected in body
+../../lib/autoconf/lang.m4:193: AC_LANG_CONFTEST is expanded from...
+../../lib/autoconf/general.m4:2590: _AC_COMPILE_IFELSE is expanded from...
+../../lib/autoconf/general.m4:2606: AC_COMPILE_IFELSE is expanded from...
+configure.ac:656: the top level
+configure.ac:663: warning: AC_LANG_CONFTEST: no AC_LANG_SOURCE call detected in body
+../../lib/autoconf/lang.m4:193: AC_LANG_CONFTEST is expanded from...
+../../lib/autoconf/general.m4:2590: _AC_COMPILE_IFELSE is expanded from...
+../../lib/autoconf/general.m4:2606: AC_COMPILE_IFELSE is expanded from...
+configure.ac:663: the top level
+configure.ac:656: warning: AC_LANG_CONFTEST: no AC_LANG_SOURCE call detected in body
+../../lib/autoconf/lang.m4:193: AC_LANG_CONFTEST is expanded from...
+../../lib/autoconf/general.m4:2590: _AC_COMPILE_IFELSE is expanded from...
+../../lib/autoconf/general.m4:2606: AC_COMPILE_IFELSE is expanded from...
+configure.ac:656: the top level
+configure.ac:663: warning: AC_LANG_CONFTEST: no AC_LANG_SOURCE call detected in body
+../../lib/autoconf/lang.m4:193: AC_LANG_CONFTEST is expanded from...
+../../lib/autoconf/general.m4:2590: _AC_COMPILE_IFELSE is expanded from...
+../../lib/autoconf/general.m4:2606: AC_COMPILE_IFELSE is expanded from...
+configure.ac:663: the top level
+libtoolize: putting auxiliary files in AC_CONFIG_AUX_DIR, `build-aux'.
+libtoolize: copying file `build-aux/ltmain.sh'
+libtoolize: putting macros in AC_CONFIG_MACRO_DIR, `m4'.
+libtoolize: copying file `m4/libtool.m4'
+libtoolize: copying file `m4/ltoptions.m4'
+libtoolize: copying file `m4/ltsugar.m4'
+libtoolize: copying file `m4/ltversion.m4'
+libtoolize: copying file `m4/lt~obsolete.m4'
+configure.ac:656: warning: AC_LANG_CONFTEST: no AC_LANG_SOURCE call detected in body
+../../lib/autoconf/lang.m4:193: AC_LANG_CONFTEST is expanded from...
+../../lib/autoconf/general.m4:2590: _AC_COMPILE_IFELSE is expanded from...
+../../lib/autoconf/general.m4:2606: AC_COMPILE_IFELSE is expanded from...
+configure.ac:656: the top level
+configure.ac:663: warning: AC_LANG_CONFTEST: no AC_LANG_SOURCE call detected in body
+../../lib/autoconf/lang.m4:193: AC_LANG_CONFTEST is expanded from...
+../../lib/autoconf/general.m4:2590: _AC_COMPILE_IFELSE is expanded from...
+../../lib/autoconf/general.m4:2606: AC_COMPILE_IFELSE is expanded from...
+configure.ac:663: the top level
+configure.ac:656: warning: AC_LANG_CONFTEST: no AC_LANG_SOURCE call detected in body
+../../lib/autoconf/lang.m4:193: AC_LANG_CONFTEST is expanded from...
+../../lib/autoconf/general.m4:2590: _AC_COMPILE_IFELSE is expanded from...
+../../lib/autoconf/general.m4:2606: AC_COMPILE_IFELSE is expanded from...
+configure.ac:656: the top level
+configure.ac:663: warning: AC_LANG_CONFTEST: no AC_LANG_SOURCE call detected in body
+../../lib/autoconf/lang.m4:193: AC_LANG_CONFTEST is expanded from...
+../../lib/autoconf/general.m4:2590: _AC_COMPILE_IFELSE is expanded from...
+../../lib/autoconf/general.m4:2606: AC_COMPILE_IFELSE is expanded from...
+configure.ac:663: the top level
+configure.ac:656: warning: AC_LANG_CONFTEST: no AC_LANG_SOURCE call detected in body
+../../lib/autoconf/lang.m4:193: AC_LANG_CONFTEST is expanded from...
+../../lib/autoconf/general.m4:2590: _AC_COMPILE_IFELSE is expanded from...
+../../lib/autoconf/general.m4:2606: AC_COMPILE_IFELSE is expanded from...
+configure.ac:656: the top level
+configure.ac:663: warning: AC_LANG_CONFTEST: no AC_LANG_SOURCE call detected in body
+../../lib/autoconf/lang.m4:193: AC_LANG_CONFTEST is expanded from...
+../../lib/autoconf/general.m4:2590: _AC_COMPILE_IFELSE is expanded from...
+../../lib/autoconf/general.m4:2606: AC_COMPILE_IFELSE is expanded from...
+configure.ac:663: the top level
+configure.ac:656: warning: AC_LANG_CONFTEST: no AC_LANG_SOURCE call detected in body
+../../lib/autoconf/lang.m4:193: AC_LANG_CONFTEST is expanded from...
+../../lib/autoconf/general.m4:2590: _AC_COMPILE_IFELSE is expanded from...
+../../lib/autoconf/general.m4:2606: AC_COMPILE_IFELSE is expanded from...
+configure.ac:656: the top level
+configure.ac:663: warning: AC_LANG_CONFTEST: no AC_LANG_SOURCE call detected in body
+../../lib/autoconf/lang.m4:193: AC_LANG_CONFTEST is expanded from...
+../../lib/autoconf/general.m4:2590: _AC_COMPILE_IFELSE is expanded from...
+../../lib/autoconf/general.m4:2606: AC_COMPILE_IFELSE is expanded from...
+configure.ac:663: the top level
+configure.ac:656: warning: AC_LANG_CONFTEST: no AC_LANG_SOURCE call detected in body
+../../lib/autoconf/lang.m4:193: AC_LANG_CONFTEST is expanded from...
+../../lib/autoconf/general.m4:2590: _AC_COMPILE_IFELSE is expanded from...
+../../lib/autoconf/general.m4:2606: AC_COMPILE_IFELSE is expanded from...
+configure.ac:656: the top level
+configure.ac:663: warning: AC_LANG_CONFTEST: no AC_LANG_SOURCE call detected in body
+../../lib/autoconf/lang.m4:193: AC_LANG_CONFTEST is expanded from...
+../../lib/autoconf/general.m4:2590: _AC_COMPILE_IFELSE is expanded from...
+../../lib/autoconf/general.m4:2606: AC_COMPILE_IFELSE is expanded from...
+configure.ac:663: the top level
+configure.ac:67: installing 'build-aux/compile'
+configure.ac:70: installing 'build-aux/config.guess'
+configure.ac:70: installing 'build-aux/config.sub'
+configure.ac:21: installing 'build-aux/install-sh'
+configure.ac:21: installing 'build-aux/missing'
+Makefile.am: installing './INSTALL'
+backends/alpm/Makefile.am: installing 'build-aux/depcomp'
+docs/api/Makefile.am:103: warning: CLEANFILES multiply defined in condition TRUE ...
+gtk-doc.make:52: ... 'CLEANFILES' previously defined here
+docs/api/Makefile.am:98:   'gtk-doc.make' included from here
+parallel-tests: installing 'build-aux/test-driver'
+lib/python/packagekit/Makefile.am:9: installing 'build-aux/py-compile'
+Running ./configure --enable-gtk-doc --prefix=/usr --sysconfdir=/etc --localstatedir=/var --libexecdir=/usr/lib/PackageKit --enable-strict --disable-static --disable-gtk-doc --disable-tests --disable-local --disable-browser-plugin --disable-gstreamer-plugin --disable-gtk-module --disable-command-not-found --disable-cron --disable-debuginfo-install --enable-pm-utils --disable-dummy --enable-alpm --with-default-backend=alpm ...
+checking for a BSD-compatible install... /usr/bin/install -c
+checking whether build environment is sane... yes
+checking for a thread-safe mkdir -p... /usr/bin/mkdir -p
+checking for gawk... gawk
+checking whether make sets $(MAKE)... yes
+checking whether make supports nested variables... yes
+checking how to create a ustar tar archive... gnutar
+checking whether to enable maintainer-specific portions of Makefiles... yes
+checking whether make supports nested variables... (cached) yes
+checking for pkg-config... /usr/bin/pkg-config
+checking pkg-config is at least version 0.9.0... yes
+checking for gobject-introspection... yes
+checking for gcc... gcc
+checking whether the C compiler works... yes
+checking for C compiler default output file name... a.out
+checking for suffix of executables... 
+checking whether we are cross compiling... no
+checking for suffix of object files... o
+checking whether we are using the GNU C compiler... yes
+checking whether gcc accepts -g... yes
+checking for gcc option to accept ISO C89... none needed
+checking for style of include used by make... GNU
+checking dependency style of gcc... gcc3
+checking for g++... g++
+checking whether we are using the GNU C++ compiler... yes
+checking whether g++ accepts -g... yes
+checking dependency style of g++... gcc3
+checking for library containing strerror... none required
+checking how to run the C preprocessor... gcc -E
+checking for grep that handles long lines and -e... /usr/bin/grep
+checking for egrep... /usr/bin/grep -E
+checking for ANSI C header files... yes
+checking whether gcc and cc understand -c and -o together... yes
+checking build system type... x86_64-unknown-linux-gnu
+checking host system type... x86_64-unknown-linux-gnu
+checking how to print strings... printf
+checking for a sed that does not truncate output... /usr/bin/sed
+checking for fgrep... /usr/bin/grep -F
+checking for ld used by gcc... /usr/bin/ld
+checking if the linker (/usr/bin/ld) is GNU ld... yes
+checking for BSD- or MS-compatible name lister (nm)... /usr/bin/nm -B
+checking the name lister (/usr/bin/nm -B) interface... BSD nm
+checking whether ln -s works... yes
+checking the maximum length of command line arguments... 1572864
+checking whether the shell understands some XSI constructs... yes
+checking whether the shell understands "+="... yes
+checking how to convert x86_64-unknown-linux-gnu file names to x86_64-unknown-linux-gnu format... func_convert_file_noop
+checking how to convert x86_64-unknown-linux-gnu file names to toolchain format... func_convert_file_noop
+checking for /usr/bin/ld option to reload object files... -r
+checking for objdump... objdump
+checking how to recognize dependent libraries... pass_all
+checking for dlltool... no
+checking how to associate runtime and link libraries... printf %s\n
+checking for ar... ar
+checking for archiver @FILE support... @
+checking for strip... strip
+checking for ranlib... ranlib
+checking command to parse /usr/bin/nm -B output from gcc object... ok
+checking for sysroot... no
+checking for mt... no
+checking if : is a manifest tool... no
+checking for sys/types.h... yes
+checking for sys/stat.h... yes
+checking for stdlib.h... yes
+checking for string.h... yes
+checking for memory.h... yes
+checking for strings.h... yes
+checking for inttypes.h... yes
+checking for stdint.h... yes
+checking for unistd.h... yes
+checking for dlfcn.h... yes
+checking for objdir... .libs
+checking if gcc supports -fno-rtti -fno-exceptions... no
+checking for gcc option to produce PIC... -fPIC -DPIC
+checking if gcc PIC flag -fPIC -DPIC works... yes
+checking if gcc static flag -static works... yes
+checking if gcc supports -c -o file.o... yes
+checking if gcc supports -c -o file.o... (cached) yes
+checking whether the gcc linker (/usr/bin/ld -m elf_x86_64) supports shared libraries... yes
+checking whether -lc should be explicitly linked in... no
+checking dynamic linker characteristics... GNU/Linux ld.so
+checking how to hardcode library paths into programs... immediate
+checking whether stripping libraries is possible... yes
+checking if libtool supports shared libraries... yes
+checking whether to build shared libraries... yes
+checking whether to build static libraries... no
+checking how to run the C++ preprocessor... g++ -E
+checking for ld used by g++... /usr/bin/ld -m elf_x86_64
+checking if the linker (/usr/bin/ld -m elf_x86_64) is GNU ld... yes
+checking whether the g++ linker (/usr/bin/ld -m elf_x86_64) supports shared libraries... yes
+checking for g++ option to produce PIC... -fPIC -DPIC
+checking if g++ PIC flag -fPIC -DPIC works... yes
+checking if g++ static flag -static works... yes
+checking if g++ supports -c -o file.o... yes
+checking if g++ supports -c -o file.o... (cached) yes
+checking whether the g++ linker (/usr/bin/ld -m elf_x86_64) supports shared libraries... yes
+checking dynamic linker characteristics... (cached) GNU/Linux ld.so
+checking how to hardcode library paths into programs... immediate
+checking whether NLS is requested... yes
+checking for intltool >= 0.35.0... 0.50.2 found
+checking for intltool-update... /usr/bin/intltool-update
+checking for intltool-merge... /usr/bin/intltool-merge
+checking for intltool-extract... /usr/bin/intltool-extract
+checking for xgettext... /usr/bin/xgettext
+checking for msgmerge... /usr/bin/msgmerge
+checking for msgfmt... /usr/bin/msgfmt
+checking for gmsgfmt... /usr/bin/msgfmt
+checking for perl... /usr/bin/perl
+checking for perl >= 5.8.1... 5.16.3
+checking for XML::Parser... ok
+checking locale.h usability... yes
+checking locale.h presence... yes
+checking for locale.h... yes
+checking for LC_MESSAGES... yes
+checking libintl.h usability... yes
+checking libintl.h presence... yes
+checking for libintl.h... yes
+checking for ngettext in libc... yes
+checking for dgettext in libc... yes
+checking for bind_textdomain_codeset... yes
+checking for msgfmt... (cached) /usr/bin/msgfmt
+checking for dcgettext... yes
+checking if msgfmt accepts -c... yes
+checking for gmsgfmt... (cached) /usr/bin/msgfmt
+checking for xgettext... (cached) /usr/bin/xgettext
+checking for gtkdoc-check... /usr/bin/gtkdoc-check
+checking for gtkdoc-rebase... /usr/bin/gtkdoc-rebase
+checking for gtkdoc-mkpdf... /usr/bin/gtkdoc-mkpdf
+checking whether to build gtk-doc documentation... no
+checking for glib-genmarshal... /usr/bin/glib-genmarshal
+checking for glib-mkenums... /usr/bin/glib-mkenums
+checking whether /usr/bin/python2 version is >= 2.7... yes
+checking for /usr/bin/python2 version... 2.7
+checking for /usr/bin/python2 platform... linux2
+checking for /usr/bin/python2 script directory... ${prefix}/lib/python2.7/site-packages
+checking for /usr/bin/python2 extension module directory... ${exec_prefix}/lib/python2.7/site-packages
+checking for locale.h... (cached) yes
+checking for LC_MESSAGES... (cached) yes
+checking for libintl.h... (cached) yes
+checking for ngettext in libc... (cached) yes
+checking for dgettext in libc... (cached) yes
+checking for bind_textdomain_codeset... (cached) yes
+checking for msgfmt... (cached) /usr/bin/msgfmt
+checking for dcgettext... (cached) yes
+checking if msgfmt accepts -c... yes
+checking for gmsgfmt... (cached) /usr/bin/msgfmt
+checking for xgettext... (cached) /usr/bin/xgettext
+checking for GLIB... yes
+checking for GMODULE... yes
+checking for SQLITE... yes
+checking for GIO... yes
+checking archive.h usability... yes
+checking archive.h presence... yes
+checking for archive.h... yes
+checking execinfo.h usability... yes
+checking execinfo.h presence... yes
+checking for execinfo.h... yes
+checking for clearenv... yes
+checking for msgfmt... (cached) /usr/bin/msgfmt
+checking for library containing daemon... none required
+checking for setpriority... yes
+checking for NETWORK_MANAGER... yes
+checking for CONNMAN... no
+checking for SYSTEMD... yes
+checking for xsltproc... /usr/bin/xsltproc
+checking for GUDEV... yes
+checking for PM_UTILS... yes
+checking for POLKIT... yes
+checking alpm.h usability... yes
+checking alpm.h presence... yes
+checking for alpm.h... yes
+checking that generated files are newer than configure... done
+configure: creating ./config.status
+config.status: creating Makefile
+config.status: creating etc/Makefile
+config.status: creating docs/Makefile
+config.status: creating docs/api/Makefile
+config.status: creating docs/api/dbus/Makefile
+config.status: creating docs/api/version.xml
+config.status: creating contrib/Makefile
+config.status: creating contrib/browser-plugin/Makefile
+config.status: creating contrib/gstreamer-plugin/Makefile
+config.status: creating contrib/gtk-module/Makefile
+config.status: creating contrib/gtk-module/gtk2/Makefile
+config.status: creating contrib/yum-packagekit/Makefile
+config.status: creating contrib/command-not-found/Makefile
+config.status: creating contrib/cron/Makefile
+config.status: creating contrib/debuginfo-install/Makefile
+config.status: creating contrib/device-rebind/Makefile
+config.status: creating contrib/pm-utils/Makefile
+config.status: creating contrib/systemd-updates/Makefile
+config.status: creating backends/Makefile
+config.status: creating backends/alpm/Makefile
+config.status: creating backends/apt/Makefile
+config.status: creating backends/aptcc/Makefile
+config.status: creating backends/box/Makefile
+config.status: creating backends/conary/Makefile
+config.status: creating backends/dummy/Makefile
+config.status: creating backends/entropy/Makefile
+config.status: creating backends/opkg/Makefile
+config.status: creating backends/slapt/Makefile
+config.status: creating backends/smart/Makefile
+config.status: creating backends/test/Makefile
+config.status: creating backends/test/helpers/Makefile
+config.status: creating backends/urpmi/Makefile
+config.status: creating backends/urpmi/helpers/Makefile
+config.status: creating backends/urpmi/helpers/perl_packagekit/Makefile
+config.status: creating backends/urpmi/helpers/urpmi_backend/Makefile
+config.status: creating backends/yum/Makefile
+config.status: creating backends/zif/Makefile
+config.status: creating backends/pisi/Makefile
+config.status: creating backends/poldek/Makefile
+config.status: creating backends/portage/Makefile
+config.status: creating backends/ports/Makefile
+config.status: creating backends/ports/ruby_packagekit/Makefile
+config.status: creating backends/zypp/Makefile
+config.status: creating data/Makefile
+config.status: creating data/org.freedesktop.PackageKit.conf
+config.status: creating data/tests/Makefile
+config.status: creating lib/Makefile
+config.status: creating lib/packagekit-glib2/pk-version.h
+config.status: creating lib/packagekit-glib2/Makefile
+config.status: creating lib/packagekit-glib2/packagekit-glib2.pc
+config.status: creating lib/python/Makefile
+config.status: creating lib/python/packagekit/Makefile
+config.status: creating policy/Makefile
+config.status: creating src/Makefile
+config.status: creating src/plugins/Makefile
+config.status: creating src/plugins/packagekit-plugin.pc
+config.status: creating client/Makefile
+config.status: creating tools/Makefile
+config.status: creating po/Makefile.in
+config.status: creating config.h
+config.status: executing depfiles commands
+config.status: executing libtool commands
+config.status: executing default-1 commands
+config.status: executing default-2 commands
+config.status: executing po/stamp-it commands
+
+                    PackageKit 0.8.8
+                  ====================
+
+        prefix:                    /usr
+        datadir:                   ${datarootdir}
+        compiler:                  gcc
+        cflags:                    -march=native -mtune=native -O2 -pipe -fstack-protector --param=ssp-buffer-size=4 -D_FORTIFY_SOURCE=2
+        cppflags:                  
+        Building unit tests:       no
+        Able to run locally:       no
+        Use systemd:               yes
+        Security framework:        polkit
+        Networking stacks:         unix,NetworkManager
+        Browser plugin:            no
+        GStreamer plugin:          no
+        Pango module (GTK+3):      no
+        gobject-introspection:     yes
+        BASH Command not found:    no
+        Cron scripts:              no
+        debuginfo-install:         no
+        device-rebind:             yes
+        systemd-updates:           yes
+        pm-utils scripts:          yes
+        python3:                   
+
+        Backends:
+        ALPM backend:              yes
+        APT backend:               no
+        APTcc backend:             no
+        BOX backend:               no
+        CONARY backend:            no
+        dummy backend:             no
+        Entropy backend:           no
+        OPKG backend:              no
+        PiSi backend:              no
+        poldek backend:            no
+        Portage backend:           no
+        Ports backend:             no
+        Slapt backend:             no
+        SMART backend:             no
+        URPMI backend:             no
+        YUM backend:               no
+        Zif backend:               no
+        Zypp backend:              no
+        Default backend:           alpm
+
+Now type `make' to compile.
+  GEN      .gitignore
+Making all in po
+  MSGFMT ar.gmo
+  MSGFMT as.gmo
+  MSGFMT bg_BG.gmo
+  MSGFMT bg.gmo
+  MSGFMT bn_IN.gmo
+  MSGFMT ca.gmo
+  MSGFMT ca@valencia.gmo
+  MSGFMT cs.gmo
+  MSGFMT da.gmo
+  MSGFMT de.gmo
+  MSGFMT el.gmo
+  MSGFMT en_GB.gmo
+  MSGFMT es.gmo
+  MSGFMT eu.gmo
+  MSGFMT fa_IR.gmo
+  MSGFMT fi.gmo
+  MSGFMT fr.gmo
+  MSGFMT ga.gmo
+  MSGFMT gl.gmo
+  MSGFMT gu.gmo
+  MSGFMT he.gmo
+  MSGFMT hi.gmo
+  MSGFMT hu.gmo
+  MSGFMT id.gmo
+  MSGFMT it_IT.gmo
+  MSGFMT it.gmo
+  MSGFMT ja.gmo
+  MSGFMT kk.gmo
+  MSGFMT kn.gmo
+  MSGFMT ko.gmo
+  MSGFMT lt.gmo
+  MSGFMT lv.gmo
+  MSGFMT ml.gmo
+  MSGFMT mr.gmo
+  MSGFMT ms.gmo
+  MSGFMT nb.gmo
+  MSGFMT nl.gmo
+  MSGFMT or.gmo
+  MSGFMT pa.gmo
+  MSGFMT pl.gmo
+  MSGFMT pt_BR.gmo
+  MSGFMT pt.gmo
+  MSGFMT ro.gmo
+  MSGFMT sk.gmo
+  MSGFMT sl.gmo
+  MSGFMT sr@latin.gmo
+  MSGFMT sr.gmo
+  MSGFMT sv.gmo
+  MSGFMT ta.gmo
+  MSGFMT te.gmo
+  MSGFMT th.gmo
+  MSGFMT tr.gmo
+  MSGFMT uk.gmo
+  MSGFMT wa.gmo
+  MSGFMT zh_CN.gmo
+  MSGFMT zh_TW.gmo
+Making all in policy
+  ITMRG  org.freedesktop.packagekit.policy
+  GEN      .gitignore
+Making all in etc
+  GEN      .gitignore
+Making all in data
+  GEN      .gitignore
+Making all in tests
+  GEN      .gitignore
+  ITMRG  packagekit-catalog.xml
+  ITMRG  packagekit-package-list.xml
+  ITMRG  packagekit-servicepack.xml
+Making all in lib
+  GEN      .gitignore
+Making all in python
+  GEN      .gitignore
+Making all in packagekit
+  GEN      .gitignore
+Making all in packagekit-glib2
+  GEN      pk-enum-types.h
+  GEN      pk-enum-types.c
+  GEN      .gitignore
+  CC       libpackagekitprivate_a-pk-console-shared.o
+  CC       libpackagekitprivate_a-pk-task-text.o
+  CC       libpackagekitprivate_a-pk-task-wrapper.o
+In file included from /usr/lib/glib-2.0/include/glibconfig.h:9:0,
+                 from /usr/include/glib-2.0/glib/gtypes.h:34,
+                 from /usr/include/glib-2.0/glib/galloca.h:34,
+                 from /usr/include/glib-2.0/glib.h:32,
+                 from pk-progress-bar.c:22:
+pk-progress-bar.c: In function 'pk_progress_bar_get_type':
+/usr/include/glib-2.0/glib/gmacros.h:162:53: error: typedef '_GStaticAssertCompileTimeAssertion_0' locally defined but not used [-Werror=unused-local-typedefs]
+ #define G_STATIC_ASSERT(expr) typedef char G_PASTE (_GStaticAssertCompileTimeAssertion_, __COUNTER__)[(expr) ? 1 : -1]
+                                                     ^
+/usr/include/glib-2.0/glib/gmacros.h:159:47: note: in definition of macro 'G_PASTE_ARGS'
+ #define G_PASTE_ARGS(identifier1,identifier2) identifier1 ## identifier2
+                                               ^
+/usr/include/glib-2.0/glib/gmacros.h:162:44: note: in expansion of macro 'G_PASTE'
+ #define G_STATIC_ASSERT(expr) typedef char G_PASTE (_GStaticAssertCompileTimeAssertion_, __COUNTER__)[(expr) ? 1 : -1]
+                                            ^
+/usr/include/glib-2.0/glib/gthread.h:234:5: note: in expansion of macro 'G_STATIC_ASSERT'
+     G_STATIC_ASSERT (sizeof *(location) == sizeof (gpointer));       \
+     ^
+/usr/include/glib-2.0/gobject/gtype.h:1463:7: note: in expansion of macro 'g_once_init_enter'
+   if (g_once_init_enter (&g_define_type_id__volatile))  \
+       ^
+/usr/include/glib-2.0/gobject/gtype.h:1387:60: note: in expansion of macro '_G_DEFINE_TYPE_EXTENDED_BEGIN'
+ #define G_DEFINE_TYPE_EXTENDED(TN, t_n, T_P, _f_, _C_)     _G_DEFINE_TYPE_EXTENDED_BEGIN (TN, t_n, T_P, _f_) {_C_;} _G_DEFINE_TYPE_EXTENDED_END()
+                                                            ^
+/usr/include/glib-2.0/gobject/gtype.h:1279:43: note: in expansion of macro 'G_DEFINE_TYPE_EXTENDED'
+ #define G_DEFINE_TYPE(TN, t_n, T_P)       G_DEFINE_TYPE_EXTENDED (TN, t_n, T_P, 0, {})
+                                           ^
+pk-progress-bar.c:49:1: note: in expansion of macro 'G_DEFINE_TYPE'
+ G_DEFINE_TYPE (PkProgressBar, pk_progress_bar, G_TYPE_OBJECT)
+ ^
+/usr/include/glib-2.0/glib/gmacros.h:162:53: error: typedef '_GStaticAssertCompileTimeAssertion_1' locally defined but not used [-Werror=unused-local-typedefs]
+ #define G_STATIC_ASSERT(expr) typedef char G_PASTE (_GStaticAssertCompileTimeAssertion_, __COUNTER__)[(expr) ? 1 : -1]
+                                                     ^
+/usr/include/glib-2.0/glib/gmacros.h:159:47: note: in definition of macro 'G_PASTE_ARGS'
+ #define G_PASTE_ARGS(identifier1,identifier2) identifier1 ## identifier2
+                                               ^
+/usr/include/glib-2.0/glib/gmacros.h:162:44: note: in expansion of macro 'G_PASTE'
+ #define G_STATIC_ASSERT(expr) typedef char G_PASTE (_GStaticAssertCompileTimeAssertion_, __COUNTER__)[(expr) ? 1 : -1]
+                                            ^
+/usr/include/glib-2.0/glib/gatomic.h:136:5: note: in expansion of macro 'G_STATIC_ASSERT'
+     G_STATIC_ASSERT (sizeof *(atomic) == sizeof (gpointer));                 \
+     ^
+/usr/include/glib-2.0/glib/gthread.h:236:7: note: in expansion of macro 'g_atomic_pointer_get'
+     (!g_atomic_pointer_get (location) &&                             \
+       ^
+/usr/include/glib-2.0/gobject/gtype.h:1463:7: note: in expansion of macro 'g_once_init_enter'
+   if (g_once_init_enter (&g_define_type_id__volatile))  \
+       ^
+/usr/include/glib-2.0/gobject/gtype.h:1387:60: note: in expansion of macro '_G_DEFINE_TYPE_EXTENDED_BEGIN'
+ #define G_DEFINE_TYPE_EXTENDED(TN, t_n, T_P, _f_, _C_)     _G_DEFINE_TYPE_EXTENDED_BEGIN (TN, t_n, T_P, _f_) {_C_;} _G_DEFINE_TYPE_EXTENDED_END()
+                                                            ^
+/usr/include/glib-2.0/gobject/gtype.h:1279:43: note: in expansion of macro 'G_DEFINE_TYPE_EXTENDED'
+ #define G_DEFINE_TYPE(TN, t_n, T_P)       G_DEFINE_TYPE_EXTENDED (TN, t_n, T_P, 0, {})
+                                           ^
+pk-progress-bar.c:49:1: note: in expansion of macro 'G_DEFINE_TYPE'
+ G_DEFINE_TYPE (PkProgressBar, pk_progress_bar, G_TYPE_OBJECT)
+ ^
+/usr/include/glib-2.0/glib/gmacros.h:162:53: error: typedef '_GStaticAssertCompileTimeAssertion_2' locally defined but not used [-Werror=unused-local-typedefs]
+ #define G_STATIC_ASSERT(expr) typedef char G_PASTE (_GStaticAssertCompileTimeAssertion_, __COUNTER__)[(expr) ? 1 : -1]
+                                                     ^
+/usr/include/glib-2.0/glib/gmacros.h:159:47: note: in definition of macro 'G_PASTE_ARGS'
+ #define G_PASTE_ARGS(identifier1,identifier2) identifier1 ## identifier2
+                                               ^
+/usr/include/glib-2.0/glib/gmacros.h:162:44: note: in expansion of macro 'G_PASTE'
+ #define G_STATIC_ASSERT(expr) typedef char G_PASTE (_GStaticAssertCompileTimeAssertion_, __COUNTER__)[(expr) ? 1 : -1]
+                                            ^
+/usr/include/glib-2.0/glib/gthread.h:241:5: note: in expansion of macro 'G_STATIC_ASSERT'
+     G_STATIC_ASSERT (sizeof *(location) == sizeof (gpointer));       \
+     ^
+/usr/include/glib-2.0/gobject/gtype.h:1477:7: note: in expansion of macro 'g_once_init_leave'
+       g_once_init_leave (&g_define_type_id__volatile, g_define_type_id); \
+       ^
+/usr/include/glib-2.0/gobject/gtype.h:1387:117: note: in expansion of macro '_G_DEFINE_TYPE_EXTENDED_END'
+ #define G_DEFINE_TYPE_EXTENDED(TN, t_n, T_P, _f_, _C_)     _G_DEFINE_TYPE_EXTENDED_BEGIN (TN, t_n, T_P, _f_) {_C_;} _G_DEFINE_TYPE_EXTENDED_END()
+                                                                                                                     ^
+/usr/include/glib-2.0/gobject/gtype.h:1279:43: note: in expansion of macro 'G_DEFINE_TYPE_EXTENDED'
+ #define G_DEFINE_TYPE(TN, t_n, T_P)       G_DEFINE_TYPE_EXTENDED (TN, t_n, T_P, 0, {})
+                                           ^
+pk-progress-bar.c:49:1: note: in expansion of macro 'G_DEFINE_TYPE'
+ G_DEFINE_TYPE (PkProgressBar, pk_progress_bar, G_TYPE_OBJECT)
+ ^
+cc1: all warnings being treated as errors
+make[4]: *** [libpackagekitprivate_a-pk-progress-bar.o] Error 1
+make[4]: *** Waiting for unfinished jobs....
+In file included from /usr/lib/glib-2.0/include/glibconfig.h:9:0,
+                 from /usr/include/glib-2.0/glib/gtypes.h:34,
+                 from /usr/include/glib-2.0/glib/galloca.h:34,
+                 from /usr/include/glib-2.0/glib.h:32,
+                 from ../../lib/packagekit-glib2/pk-enum.h:29,
+                 from pk-task-wrapper.c:24:
+pk-task-wrapper.c: In function 'pk_task_wrapper_get_type':
+/usr/include/glib-2.0/glib/gmacros.h:162:53: error: typedef '_GStaticAssertCompileTimeAssertion_0' locally defined but not used [-Werror=unused-local-typedefs]
+ #define G_STATIC_ASSERT(expr) typedef char G_PASTE (_GStaticAssertCompileTimeAssertion_, __COUNTER__)[(expr) ? 1 : -1]
+                                                     ^
+/usr/include/glib-2.0/glib/gmacros.h:159:47: note: in definition of macro 'G_PASTE_ARGS'
+ #define G_PASTE_ARGS(identifier1,identifier2) identifier1 ## identifier2
+                                               ^
+/usr/include/glib-2.0/glib/gmacros.h:162:44: note: in expansion of macro 'G_PASTE'
+ #define G_STATIC_ASSERT(expr) typedef char G_PASTE (_GStaticAssertCompileTimeAssertion_, __COUNTER__)[(expr) ? 1 : -1]
+                                            ^
+/usr/include/glib-2.0/glib/gthread.h:234:5: note: in expansion of macro 'G_STATIC_ASSERT'
+     G_STATIC_ASSERT (sizeof *(location) == sizeof (gpointer));       \
+     ^
+/usr/include/glib-2.0/gobject/gtype.h:1463:7: note: in expansion of macro 'g_once_init_enter'
+   if (g_once_init_enter (&g_define_type_id__volatile))  \
+       ^
+/usr/include/glib-2.0/gobject/gtype.h:1387:60: note: in expansion of macro '_G_DEFINE_TYPE_EXTENDED_BEGIN'
+ #define G_DEFINE_TYPE_EXTENDED(TN, t_n, T_P, _f_, _C_)     _G_DEFINE_TYPE_EXTENDED_BEGIN (TN, t_n, T_P, _f_) {_C_;} _G_DEFINE_TYPE_EXTENDED_END()
+                                                            ^
+/usr/include/glib-2.0/gobject/gtype.h:1279:43: note: in expansion of macro 'G_DEFINE_TYPE_EXTENDED'
+ #define G_DEFINE_TYPE(TN, t_n, T_P)       G_DEFINE_TYPE_EXTENDED (TN, t_n, T_P, 0, {})
+                                           ^
+pk-task-wrapper.c:44:1: note: in expansion of macro 'G_DEFINE_TYPE'
+ G_DEFINE_TYPE (PkTaskWrapper, pk_task_wrapper, PK_TYPE_TASK)
+ ^
+/usr/include/glib-2.0/glib/gmacros.h:162:53: error: typedef '_GStaticAssertCompileTimeAssertion_1' locally defined but not used [-Werror=unused-local-typedefs]
+ #define G_STATIC_ASSERT(expr) typedef char G_PASTE (_GStaticAssertCompileTimeAssertion_, __COUNTER__)[(expr) ? 1 : -1]
+                                                     ^
+/usr/include/glib-2.0/glib/gmacros.h:159:47: note: in definition of macro 'G_PASTE_ARGS'
+ #define G_PASTE_ARGS(identifier1,identifier2) identifier1 ## identifier2
+                                               ^
+/usr/include/glib-2.0/glib/gmacros.h:162:44: note: in expansion of macro 'G_PASTE'
+ #define G_STATIC_ASSERT(expr) typedef char G_PASTE (_GStaticAssertCompileTimeAssertion_, __COUNTER__)[(expr) ? 1 : -1]
+                                            ^
+/usr/include/glib-2.0/glib/gatomic.h:136:5: note: in expansion of macro 'G_STATIC_ASSERT'
+     G_STATIC_ASSERT (sizeof *(atomic) == sizeof (gpointer));                 \
+     ^
+/usr/include/glib-2.0/glib/gthread.h:236:7: note: in expansion of macro 'g_atomic_pointer_get'
+     (!g_atomic_pointer_get (location) &&                             \
+       ^
+/usr/include/glib-2.0/gobject/gtype.h:1463:7: note: in expansion of macro 'g_once_init_enter'
+   if (g_once_init_enter (&g_define_type_id__volatile))  \
+       ^
+/usr/include/glib-2.0/gobject/gtype.h:1387:60: note: in expansion of macro '_G_DEFINE_TYPE_EXTENDED_BEGIN'
+ #define G_DEFINE_TYPE_EXTENDED(TN, t_n, T_P, _f_, _C_)     _G_DEFINE_TYPE_EXTENDED_BEGIN (TN, t_n, T_P, _f_) {_C_;} _G_DEFINE_TYPE_EXTENDED_END()
+                                                            ^
+/usr/include/glib-2.0/gobject/gtype.h:1279:43: note: in expansion of macro 'G_DEFINE_TYPE_EXTENDED'
+ #define G_DEFINE_TYPE(TN, t_n, T_P)       G_DEFINE_TYPE_EXTENDED (TN, t_n, T_P, 0, {})
+                                           ^
+pk-task-wrapper.c:44:1: note: in expansion of macro 'G_DEFINE_TYPE'
+ G_DEFINE_TYPE (PkTaskWrapper, pk_task_wrapper, PK_TYPE_TASK)
+ ^
+/usr/include/glib-2.0/glib/gmacros.h:162:53: error: typedef '_GStaticAssertCompileTimeAssertion_2' locally defined but not used [-Werror=unused-local-typedefs]
+ #define G_STATIC_ASSERT(expr) typedef char G_PASTE (_GStaticAssertCompileTimeAssertion_, __COUNTER__)[(expr) ? 1 : -1]
+                                                     ^
+/usr/include/glib-2.0/glib/gmacros.h:159:47: note: in definition of macro 'G_PASTE_ARGS'
+ #define G_PASTE_ARGS(identifier1,identifier2) identifier1 ## identifier2
+                                               ^
+/usr/include/glib-2.0/glib/gmacros.h:162:44: note: in expansion of macro 'G_PASTE'
+ #define G_STATIC_ASSERT(expr) typedef char G_PASTE (_GStaticAssertCompileTimeAssertion_, __COUNTER__)[(expr) ? 1 : -1]
+                                            ^
+/usr/include/glib-2.0/glib/gthread.h:241:5: note: in expansion of macro 'G_STATIC_ASSERT'
+     G_STATIC_ASSERT (sizeof *(location) == sizeof (gpointer));       \
+     ^
+/usr/include/glib-2.0/gobject/gtype.h:1477:7: note: in expansion of macro 'g_once_init_leave'
+       g_once_init_leave (&g_define_type_id__volatile, g_define_type_id); \
+       ^
+/usr/include/glib-2.0/gobject/gtype.h:1387:117: note: in expansion of macro '_G_DEFINE_TYPE_EXTENDED_END'
+ #define G_DEFINE_TYPE_EXTENDED(TN, t_n, T_P, _f_, _C_)     _G_DEFINE_TYPE_EXTENDED_BEGIN (TN, t_n, T_P, _f_) {_C_;} _G_DEFINE_TYPE_EXTENDED_END()
+                                                                                                                     ^
+/usr/include/glib-2.0/gobject/gtype.h:1279:43: note: in expansion of macro 'G_DEFINE_TYPE_EXTENDED'
+ #define G_DEFINE_TYPE(TN, t_n, T_P)       G_DEFINE_TYPE_EXTENDED (TN, t_n, T_P, 0, {})
+                                           ^
+pk-task-wrapper.c:44:1: note: in expansion of macro 'G_DEFINE_TYPE'
+ G_DEFINE_TYPE (PkTaskWrapper, pk_task_wrapper, PK_TYPE_TASK)
+ ^
+cc1: all warnings being treated as errors
+make[4]: *** [libpackagekitprivate_a-pk-task-wrapper.o] Error 1
+In file included from /usr/lib/glib-2.0/include/glibconfig.h:9:0,
+                 from /usr/include/glib-2.0/glib/gtypes.h:34,
+                 from /usr/include/glib-2.0/glib/galloca.h:34,
+                 from /usr/include/glib-2.0/glib.h:32,
+                 from /usr/include/glib-2.0/glib/gi18n.h:23,
+                 from pk-task-text.c:24:
+pk-task-text.c: In function 'pk_task_text_get_type':
+/usr/include/glib-2.0/glib/gmacros.h:162:53: error: typedef '_GStaticAssertCompileTimeAssertion_0' locally defined but not used [-Werror=unused-local-typedefs]
+ #define G_STATIC_ASSERT(expr) typedef char G_PASTE (_GStaticAssertCompileTimeAssertion_, __COUNTER__)[(expr) ? 1 : -1]
+                                                     ^
+/usr/include/glib-2.0/glib/gmacros.h:159:47: note: in definition of macro 'G_PASTE_ARGS'
+ #define G_PASTE_ARGS(identifier1,identifier2) identifier1 ## identifier2
+                                               ^
+/usr/include/glib-2.0/glib/gmacros.h:162:44: note: in expansion of macro 'G_PASTE'
+ #define G_STATIC_ASSERT(expr) typedef char G_PASTE (_GStaticAssertCompileTimeAssertion_, __COUNTER__)[(expr) ? 1 : -1]
+                                            ^
+/usr/include/glib-2.0/glib/gthread.h:234:5: note: in expansion of macro 'G_STATIC_ASSERT'
+     G_STATIC_ASSERT (sizeof *(location) == sizeof (gpointer));       \
+     ^
+/usr/include/glib-2.0/gobject/gtype.h:1463:7: note: in expansion of macro 'g_once_init_enter'
+   if (g_once_init_enter (&g_define_type_id__volatile))  \
+       ^
+/usr/include/glib-2.0/gobject/gtype.h:1387:60: note: in expansion of macro '_G_DEFINE_TYPE_EXTENDED_BEGIN'
+ #define G_DEFINE_TYPE_EXTENDED(TN, t_n, T_P, _f_, _C_)     _G_DEFINE_TYPE_EXTENDED_BEGIN (TN, t_n, T_P, _f_) {_C_;} _G_DEFINE_TYPE_EXTENDED_END()
+                                                            ^
+/usr/include/glib-2.0/gobject/gtype.h:1279:43: note: in expansion of macro 'G_DEFINE_TYPE_EXTENDED'
+ #define G_DEFINE_TYPE(TN, t_n, T_P)       G_DEFINE_TYPE_EXTENDED (TN, t_n, T_P, 0, {})
+                                           ^
+pk-task-text.c:49:1: note: in expansion of macro 'G_DEFINE_TYPE'
+ G_DEFINE_TYPE (PkTaskText, pk_task_text, PK_TYPE_TASK)
+ ^
+/usr/include/glib-2.0/glib/gmacros.h:162:53: error: typedef '_GStaticAssertCompileTimeAssertion_1' locally defined but not used [-Werror=unused-local-typedefs]
+ #define G_STATIC_ASSERT(expr) typedef char G_PASTE (_GStaticAssertCompileTimeAssertion_, __COUNTER__)[(expr) ? 1 : -1]
+                                                     ^
+/usr/include/glib-2.0/glib/gmacros.h:159:47: note: in definition of macro 'G_PASTE_ARGS'
+ #define G_PASTE_ARGS(identifier1,identifier2) identifier1 ## identifier2
+                                               ^
+/usr/include/glib-2.0/glib/gmacros.h:162:44: note: in expansion of macro 'G_PASTE'
+ #define G_STATIC_ASSERT(expr) typedef char G_PASTE (_GStaticAssertCompileTimeAssertion_, __COUNTER__)[(expr) ? 1 : -1]
+                                            ^
+/usr/include/glib-2.0/glib/gatomic.h:136:5: note: in expansion of macro 'G_STATIC_ASSERT'
+     G_STATIC_ASSERT (sizeof *(atomic) == sizeof (gpointer));                 \
+     ^
+/usr/include/glib-2.0/glib/gthread.h:236:7: note: in expansion of macro 'g_atomic_pointer_get'
+     (!g_atomic_pointer_get (location) &&                             \
+       ^
+/usr/include/glib-2.0/gobject/gtype.h:1463:7: note: in expansion of macro 'g_once_init_enter'
+   if (g_once_init_enter (&g_define_type_id__volatile))  \
+       ^
+/usr/include/glib-2.0/gobject/gtype.h:1387:60: note: in expansion of macro '_G_DEFINE_TYPE_EXTENDED_BEGIN'
+ #define G_DEFINE_TYPE_EXTENDED(TN, t_n, T_P, _f_, _C_)     _G_DEFINE_TYPE_EXTENDED_BEGIN (TN, t_n, T_P, _f_) {_C_;} _G_DEFINE_TYPE_EXTENDED_END()
+                                                            ^
+/usr/include/glib-2.0/gobject/gtype.h:1279:43: note: in expansion of macro 'G_DEFINE_TYPE_EXTENDED'
+ #define G_DEFINE_TYPE(TN, t_n, T_P)       G_DEFINE_TYPE_EXTENDED (TN, t_n, T_P, 0, {})
+                                           ^
+pk-task-text.c:49:1: note: in expansion of macro 'G_DEFINE_TYPE'
+ G_DEFINE_TYPE (PkTaskText, pk_task_text, PK_TYPE_TASK)
+ ^
+/usr/include/glib-2.0/glib/gmacros.h:162:53: error: typedef '_GStaticAssertCompileTimeAssertion_2' locally defined but not used [-Werror=unused-local-typedefs]
+ #define G_STATIC_ASSERT(expr) typedef char G_PASTE (_GStaticAssertCompileTimeAssertion_, __COUNTER__)[(expr) ? 1 : -1]
+                                                     ^
+/usr/include/glib-2.0/glib/gmacros.h:159:47: note: in definition of macro 'G_PASTE_ARGS'
+ #define G_PASTE_ARGS(identifier1,identifier2) identifier1 ## identifier2
+                                               ^
+/usr/include/glib-2.0/glib/gmacros.h:162:44: note: in expansion of macro 'G_PASTE'
+ #define G_STATIC_ASSERT(expr) typedef char G_PASTE (_GStaticAssertCompileTimeAssertion_, __COUNTER__)[(expr) ? 1 : -1]
+                                            ^
+/usr/include/glib-2.0/glib/gthread.h:241:5: note: in expansion of macro 'G_STATIC_ASSERT'
+     G_STATIC_ASSERT (sizeof *(location) == sizeof (gpointer));       \
+     ^
+/usr/include/glib-2.0/gobject/gtype.h:1477:7: note: in expansion of macro 'g_once_init_leave'
+       g_once_init_leave (&g_define_type_id__volatile, g_define_type_id); \
+       ^
+/usr/include/glib-2.0/gobject/gtype.h:1387:117: note: in expansion of macro '_G_DEFINE_TYPE_EXTENDED_END'
+ #define G_DEFINE_TYPE_EXTENDED(TN, t_n, T_P, _f_, _C_)     _G_DEFINE_TYPE_EXTENDED_BEGIN (TN, t_n, T_P, _f_) {_C_;} _G_DEFINE_TYPE_EXTENDED_END()
+                                                                                                                     ^
+/usr/include/glib-2.0/gobject/gtype.h:1279:43: note: in expansion of macro 'G_DEFINE_TYPE_EXTENDED'
+ #define G_DEFINE_TYPE(TN, t_n, T_P)       G_DEFINE_TYPE_EXTENDED (TN, t_n, T_P, 0, {})
+                                           ^
+pk-task-text.c:49:1: note: in expansion of macro 'G_DEFINE_TYPE'
+ G_DEFINE_TYPE (PkTaskText, pk_task_text, PK_TYPE_TASK)
+ ^
+cc1: all warnings being treated as errors
+make[4]: *** [libpackagekitprivate_a-pk-task-text.o] Error 1
+make[3]: *** [all] Error 2
+make[2]: *** [all-recursive] Error 1
+make[1]: *** [all-recursive] Error 1
+make: *** [all] Error 2
+==> ERROR: A failure occurred in build().
+    Aborting...

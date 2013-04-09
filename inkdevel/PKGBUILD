@@ -1,0 +1,22 @@
+
+pkgname=oilrush
+pkgver=1.07
+pkgrel=1
+pkgdesc="A library for checking the ink level of your printer"
+arch=('x86_64')
+url=" http://oilrush-game.com//"
+license=('commercial')
+source=( OilRush-1.07.run )
+md5sums=('aa39fcce86925bf884ce45492f85b0bc')
+
+build() {
+
+  msg "Please enter path of $source"
+  
+  read inst_file
+  
+  sh $inst_file --keep --noexec --target "$srcdir"/${pkgname}_$pkgver
+
+
+  
+}

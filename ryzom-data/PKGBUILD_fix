@@ -1,0 +1,44 @@
+# Mantainer: Jorge Araya Navarro <jorgean@lavabit.com>
+pkgname='ryzom-data'
+group='ryzom'
+pkgver=0.8.0
+pkgrel=1
+arch=('any')
+url="http://media.ryzom.com/"
+license=('CCPL:by-sa')
+makedepends=('rsync' 'p7zip')
+conflicts=('ryzom-data')
+pkgdesc="An awesome free software 3D MMORPG game. Game data."
+source=("http://sourceforge.net/projects/ryzom/files/ryzom_client.7z/download")
+noextract=("download")
+sha256sums=('fa9e44e1014f4ae8639f1ec092391a41f69fc343ce48dd39b55ffae06ec3291f')
+
+package() {
+  cd "$srcdir/"
+
+  if [[ -d "data" ]]; then
+     rm -rf data
+  fi
+
+  mv "download" "ryzom_client.7z"
+  msg "Extracting game data..."
+  7z x ryzom_client.7z ryzom/data/ >& /dev/null
+  cd ryzom/data/
+
+  msg "Updating the official Ryzom game data, this can take a while..."
+  rsync -rtzvu --progress --stats --recursive --timeout=30 www.ryzom.com::ryzom/data/ ./ >& /dev/null
+  msg 'Update completed...'
+
+  cd "$srcdir/ryzom/data"
+
+  # creating directories
+  install -d -m 755 "${pkgdir}/usr/share/ryzom/data/fonts/"
+
+  # installing files
+  install -m 644 fonts/* "${pkgdir}/usr/share/ryzom/data/fonts/"
+  rm -rf fonts
+
+  install -m 644 * "${pkgdir}/usr/share/ryzom/data/"
+}
+
+

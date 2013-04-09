@@ -1,0 +1,26 @@
+# HG changeset patch
+# User Jan Beich <jbeich@tormail.org>
+
+Bug 783463 - libc++ and -std=gnu++11 want explicitly declared close/write.
+
+diff --git a/widget/qt/nsSound.cpp b/widget/qt/nsSound.cpp
+index 87ff544..6d001b1 100644
+--- a/widget/qt/nsSound.cpp
++++ b/widget/qt/nsSound.cpp
+@@ -2,16 +2,17 @@
+  *
+  * This Source Code Form is subject to the terms of the Mozilla Public
+  * License, v. 2.0. If a copy of the MPL was not distributed with this
+  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
+ 
+ #include <QApplication>
+ 
+ #include <string.h>
++#include <unistd.h>
+ 
+ #include "nscore.h"
+ #include "plstr.h"
+ #include "prlink.h"
+ 
+ #include "nsSound.h"
+ #include "nsString.h"

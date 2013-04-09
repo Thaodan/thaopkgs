@@ -1,0 +1,27 @@
+# HG changeset patch
+# User Jan Beich <jbeich@tormail.org>
+
+Bug 783463 - Don't include <malloc.h>, it's unused.
+
+diff --git a/widget/qt/nsNativeThemeQt.cpp b/widget/qt/nsNativeThemeQt.cpp
+index f58ce5f..dd49e5b 100644
+--- a/widget/qt/nsNativeThemeQt.cpp
++++ b/widget/qt/nsNativeThemeQt.cpp
+@@ -20,17 +20,16 @@
+ #include "nsPresContext.h"
+ 
+ #include "nsRect.h"
+ #include "nsSize.h"
+ #include "nsTransform2D.h"
+ #include "nsThemeConstants.h"
+ #include "nsIServiceManager.h"
+ #include "nsIDOMHTMLInputElement.h"
+-#include <malloc.h>
+ 
+ 
+ #include "gfxASurface.h"
+ #include "gfxContext.h"
+ #include "gfxQtPlatform.h"
+ #include "gfxQPainterSurface.h"
+ #ifdef MOZ_X11
+ #include "gfxXlibSurface.h"

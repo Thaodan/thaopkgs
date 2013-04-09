@@ -1,0 +1,46 @@
+- Information file for 'pastebincl' by Théophile BASTIAN (aka Tobast) -
+
+So, you've downloaded the source code of PastebinCL and don't know how to compile it?
+Follow those steps!
+
+
+----------------
+BEFORE COMPILING
+----------------
+
+- Go to the "src" directory
+- You'll maybe have a file named "data_devcode_default.h" and no "data_devcode.h". Then rename it to "data_devcode.h".
+- Get your Pastebin Developper API Key on this page : http://pastebin.com/api (you must register to http://pastebin.com, it's free).
+- Open "data_devcode.h", and define "DEVELOPPER_CODE" to your Developper API Key by adding it between the quotes, eg.
+	#define DEVELOPPER_CODE "[my_api_key_here]"
+- Save and close "data_devcode.h"
+- Open "data.h" and select your OS by commenting the wrong one (add "//" at the beginning of the line) and uncommenting the other, eg.
+	If you're using Windows:
+		// #define UNIX
+		#define WINDOWS
+
+	If you're using UNIX (Linux, MacOS, BSD, ...):
+		#define UNIX
+		// #define WINDOWS
+	
+	(around the line 40, you'll find this code)
+- Save and close "data.h"
+- You're ready to compile!
+
+
+------------------------
+COMPILE ON UNIX-BASED OS
+------------------------
+
+- Just run "make" and then "make install" (as root for installing) ;)
+
+
+------------------
+COMPILE ON WINDOWS
+------------------
+
+- If you can run "make" using CygWIN, MinGW or other, that's the easiest way.
+- Else, you can create a Code::blocks or other IDE project and then compile.
+
+(But, really, I cannot see why you want to use a command-line tool on Windows.)
+

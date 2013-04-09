@@ -1,0 +1,17 @@
+# Maintainer: Bjoern Bidar <theodorstormgrade@gmail.com>
+pkgname=roal  
+pkgver=0.1
+pkgrel=1 
+pkgdesc="Relics of Annorath is a MMORPG which plays in a medieval/post-modern ambience, game launcher"
+url="https://portal.annorath-game.com"
+arch=('i686' 'x86_64')
+license=('GPL3' 'CC BY-NC-ND' 'custom: SIL')
+depends=( 'qt5' 'icu' 'openssl' 'libtorrent-rasterbar')
+makedepends=( 'git' )
+build() {
+  cd $startdir/src/$pkgname-$pkgver
+  qmake -project
+  qmake
+  make || return 1
+  make DESTDIR=$pkgdir/ install
+}

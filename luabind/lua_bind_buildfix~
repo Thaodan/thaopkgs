@@ -1,0 +1,33 @@
+--- luabind/wrapper_base.hpp	2010-08-31 15:24:52.000000000 +0200
++++ luabind/wrapper_base.hpp_2	2012-06-24 21:05:56.657034986 +0200
+@@ -89,7 +89,7 @@
+ 
+ #endif // LUABIND_WRAPPER_BASE_HPP_INCLUDED
+ 
+-#elif BOOST_PP_ITERATION_FLAGS() == 1
++#if BOOST_PP_ITERATION_FLAGS() == 1
+ 
+ #define LUABIND_TUPLE_PARAMS(z, n, data) const A##n *
+ #define LUABIND_OPERATOR_PARAMS(z, n, data) const A##n & a##n
+--- luabind/detail/call_function.hpp	2012-06-24 21:07:46.817030212 +0200
++++ luabind/detail/call_function.hpp_a	2012-06-24 21:07:57.347029753 +0200
+@@ -323,7 +323,7 @@
+ 
+ #endif // LUABIND_CALL_FUNCTION_HPP_INCLUDED
+ 
+-#elif BOOST_PP_ITERATION_FLAGS() == 1
++#if BOOST_PP_ITERATION_FLAGS() == 1
+ 
+ #define LUABIND_TUPLE_PARAMS(z, n, data) const A##n *
+ #define LUABIND_OPERATOR_PARAMS(z, n, data) const A##n & a##n
+--- luabind/detail/call_member.hpp	2012-06-24 21:06:20.700367275 +0200
++++ luabind/detail/call_member.hpp_2	2012-06-24 21:06:38.703699832 +0200
+@@ -316,7 +316,7 @@
+ 
+ #endif // LUABIND_CALL_MEMBER_HPP_INCLUDED
+ 
+-#elif BOOST_PP_ITERATION_FLAGS() == 1
++#if BOOST_PP_ITERATION_FLAGS() == 1
+ 
+ #define LUABIND_TUPLE_PARAMS(z, n, data) const A##n *
+ #define LUABIND_OPERATOR_PARAMS(z, n, data) const A##n & a##n

@@ -1,0 +1,154 @@
+Changes until 1.85.0:
+
+Added 'emote' and 'put' commands.
+Fixed 'Usage:' lines.
+Code cleanup.
+
+Changes until 1.84.7:
+
+Added unique colors for teleporter objects (using cksum)
+Fixed two problematic bugs in d_buy concerning armor and clothing.
+Changed options in 'buy' command.
+
+Changes until 1.83.6:
+
+Implemented displaying of chargecount in descriptions.
+
+Changes until 1.83.1:
+
+Fixed several small bugs.
+Added workaround for bug in bash on HP that made bash segfault.
+Optimized for speed using expr(1).
+
+Changes until 1.82.6:
+
+Implemented singular currency form.
+
+Changes until 1.82.3:
+
+Added faint from exhaustion.
+Added 'cal' command.
+
+Changes until 1.81.9:
+
+Implemented money objects (take, drop and sell).
+Moved manual page to section 6.
+Fixed several small bugs.
+
+Changes until 1.81.1:
+
+Added stow away, wear and wield commands
+Added npc descriptions
+Fixed handling of cardinal numbers in item names
+
+Changes until 1.80.5:
+
+Fixed bugs in buy command
+
+Changes until 1.80.1:
+
+Added buy, sell and currency commands
+Fixed major bugs in backpack setup procedure
+
+Changes until 1.79.2:
+
+Implemented obscured locations
+Implemented airless/underwater locations
+
+Changes until 1.79.0:
+
+Added independent examine, eat, drink routines
+Added detection of unsupported shells
+Balanced scoring system and fight routines
+Fixed wrap_noeol routine
+
+Changes until 1.76.9:
+
+Added independent fight and drop routine
+Implemented dark locations
+Fixed numerous bugs and compatibility issues
+
+Changes until 1.75.5:
+
+Added object- and npc theme support
+Updated setup functions accordingly
+
+Changes until 1.75.4:
+
+Added location theme support - yay!
+Fixed currency handling: more flexible
+Code cleanup: more consistent use of variable names
+
+Changes until 1.74.4:
+
+Added non-portable objects
+Added 'eat' and 'drink' commands
+Added decrement_chargecount function (for later)
+Fixed 'help' command
+
+Changes until 1.73.9:
+
+Added r: functionality to .nadvsh
+Updated structure of manual
+
+Changes until 1.73.6:
+
+Nearly completed object repository
+Added f: functionality to .nadvsh
+Added routine to fill backpack initially
+Fixed bugs in kill/fight routine
+Updated manual for directions (ne, west, etc.)
+
+Changes until 1.72.7:
+
+Added first part of object repository
+Fixed kill/fight routine
+Updated manual for object classes
+
+Changes until 1.72.1:
+
+Added first implementation of object classes
+Fixed listing of items
+
+Changes until 1.71.9:
+
+Added 'take/drop object as object'
+Added rename/destroy
+Updated manual
+
+Changes until 1.71.2:
+
+Added 'inventory <user>'
+
+Changes until 1.71:
+
+Fixed 'describe'
+Fixed several small bugs
+Added 'look at <person>' (partially)
+Code cleanup: replace some `` with $()
+
+Changes until 1.70:
+
+Added d_quitplay function to cleanup after playing
+
+Changes until 1.68:
+
+Fixed printing routines
+Fixed behavior of play/replay/noplay
+Fixed several small bugs
+Added 'look into <location>'
+Added functionality for charm and dexterity (to be used later)
+Added backpack for NPC's (to be used later)
+Added strength checking (it is possible to die now)
+Code cleanup
+Updated manual
+
+Changes in 1.54:
+
+Fixed small bug involving a comment.
+
+Changes in 1.53:
+
+Code optimized (uses arrays now)
+Colored location descriptions (if supported by your terminal)
+Display Shire date if Date::Tolkien::Shire has been installed (available on CPAN).
