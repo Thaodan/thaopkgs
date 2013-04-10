@@ -6,8 +6,13 @@ _major=3
 _minor=8
 #_patchlevel=0
 #_subversion=1
+_basekernel=${_major}.${_minor}
+_srcname=linux-${_major}.${_minor}
+pkgbase=linux-pf
 _pfrel=2
-pkgrel=2
+_kernelname=-pf
+_pfpatchhome="http://pf.natalenko.name/sources/${_basekernel}/"
+_pfpatchname="patch-${_basekernel}.${_pfrel}${_kernelname}"
 
 ### PATCH AND BUILD OPTIONS
 # taken from graysky linux-ck see: https://aur.archlinux.org/packages/linux-ck
@@ -47,17 +52,10 @@ _NUMA_off=yes		# Disable NUMA in kernel config
 # Since 99.9% of users do not have multiple CPUs but do have multiple cores in one CPU
 # see, https://bugs.archlinux.org/task/31187
 
-_basekernel=${_major}.${_minor}
-_srcname=linux-${_major}.${_minor}
-_kernelname=-pf
-_pfpatchhome="http://pf.natalenko.name/sources/${_basekernel}/"
-_pfpatchname="patch-${_basekernel}.${_pfrel}${_kernelname}"
-_aufs3git="git://aufs.git.sourceforge.net/gitroot/aufs/aufs3-standalone.git"
-_aufs3name=aufs3
 pkgname=('linux-pf')
-pkgbase=linux-pf
 true && pkgname=('linux-pf' 'linux-pf-headers')
 pkgver=${_basekernel}.${_pfrel}
+pkgrel=2
 arch=('i686' 'x86_64')
 url="http://pf.natalenko.name/"
 license=('GPL2')
@@ -74,7 +72,8 @@ source=("ftp://www.kernel.org/pub/linux/kernel/v${_major}.x/linux-${_basekernel}
 	"${_pfpatchhome}${_pfpatchname}.bz2"	# the -pf patchset
  )
 
-
+_aufs3git="git://aufs.git.sourceforge.net/gitroot/aufs/aufs3-standalone.git"
+_aufs3name=aufs3
 # '
 
 prepare() {
@@ -403,15 +402,15 @@ package_linux-pf() {
 	 ;;
      BOBCAT)
 	 pkgname="${pkgbase}-bobcat"
-	 pkgdesc="${_pkgdesc} AMD Bobcat optimized"
+	 pkgdesc="${_pkgdesc} AMD Bobcat optimized."
 	 ;;
      BULLDOZER)
 	 pkgname"${pkgbase}-bulldozer"
-	 pkgdesc="${_pkgdesc} AMD Bulldozer optimized"
+	 pkgdesc="${_pkgdesc} AMD Bulldozer optimized."
 	 ;;
      PILEDRIVER)
 	 pkgname"${pkgbase}-piledriver"
-	 pkgdesc="${_pkgdesc} AMD Piledriver optimized"
+	 pkgdesc="${_pkgdesc} AMD Piledriver optimized."
 	 ;;
      PSC)
          pkgname="${pkgbase}-psc"
@@ -714,8 +713,8 @@ pkgdesc="Linux kernel and modules with the pf-kernel patch [-ck patchset (BFS in
 
 # makepkg -g >>PKGBUILD
 sha256sums=('e070d1bdfbded5676a4f374721c63565f1c969466c5a3e214004a136b583184b'
-            'd6a48a7744ed0bc6800848924804bc6cda9602f62c8750c38c0066d5b3dc9ee1'
-            '0e9aa9f75f204e44049190b7c7bd92b69ba73d83a882097cc53c41db1be0abb7'
+            'e965c73b7a93da116edeff54c9758ee7dbda50ad0683ead2ff7b55ac7cb263af'
+            '6cbd2c25982c6bea19ea9915252a6282ab4eff8ee27757bf221672209eb5fa27'
             '82d660caa11db0cd34fd550a049d7296b4a9dcd28f2a50c81418066d6e598864'
             '03ed4eb4a35d42ae6beaaa5e6fdbada4244ed6c343944bba6462defaa6fed0bf'
             '51ea665cfec42d9f9c7796af2b060b7edbdeb367e42811f8c02667ad729f6b19'
