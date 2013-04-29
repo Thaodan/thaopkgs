@@ -6,18 +6,19 @@
 
 pkgname=wine-multimedia
 _basename=wine
-pkgver=1.5.27
+pkgver=1.5.29
 pkgrel=1
 
 _pkgbasever=${pkgver/rc/-rc}
 
 source=(http://prdownloads.sourceforge.net/$_basename/$_basename-$_pkgbasever.tar.bz2{,.sign}
-        winemultimedia_1.5.27_20130404.patch)
+        winemultimedia_1.5.27_20130404.patch
+	'30-win32-aliases.conf')
 
-sha1sums=('457e75660312bd572ae85a567adf7805f482491e'
-          '5dfa970aa5dfb087e9efc32e70b2e42933dcb063'
-          '0764705158774e748dcd2779d7896e2f46763715')
-
+sha1sums=('19c2ee4e44d9ef4db32cb2c16e5603c195c8f42d'
+          'SKIP'
+          '0764705158774e748dcd2779d7896e2f46763715'
+          '023a5c901c6a091c56e76b6a62d141d87cce9fdb')
 
 pkgdesc="Wine with Maarten Lankhorst's multimedia patches, including PulseAudio support"
 url="http://www.winehq.com"
@@ -62,7 +63,9 @@ makedepends=(autoconf ncurses bison perl fontforge flex prelink
   # to build as such, exchange for:
   # mesa-libgl      lib32-mesa-libgl
   libgl           lib32-libgl
+  libcl           lib32-libcl
   samba
+  opencl-headers
 )
 
 optdepends=(
@@ -82,7 +85,9 @@ optdepends=(
   libjpeg-turbo   lib32-libjpeg-turbo
   libxcomposite   lib32-libxcomposite
   libxinerama     lib32-libxinerama
-               cups
+  libcl           lib32-libcl
+  ncurses lib32-ncurses
+  cups
   samba
 )
 
@@ -108,6 +113,10 @@ build() {
   rm -rf $_basename{,-{32,64}-build}
   mkdir $_basename-32-build
 
+  # ncurses fix
+  sed -i 's|libncurses|libncursesw|g' "$srcdir/$_basename-$pkgver/configure"
+  sed -i 's|lncurses|lncursesw|g' "$srcdir/$_basename-$pkgver/configure"
+
   # Allow ccache to work
   mv $_basename-$_pkgbasever $_basename
 
@@ -117,6 +126,7 @@ build() {
 
   # These additional CFLAGS solve FS#27662
   export CPPFLAGS="${CPPFLAGS/-D_FORTIFY_SOURCE=2/} -D_FORTIFY_SOURCE=0"
+  export CXXFLAGS="${CXXFLAGS/-D_FORTIFY_SOURCE=2/} -D_FORTIFY_SOURCE=0"
 
   if [[ $CARCH == x86_64 ]]; then
     msg2 "Building Wine-64..."
@@ -131,7 +141,7 @@ build() {
       --enable-win64
     # Gstreamer was disabled for FS#33655
 
-    make
+    make CFLAGS+="-fno-builtin-memcpy" CXXFLAGS+="-fno-builtin-memcpy"
 
     _wine32opts=(
       --libdir=/usr/lib32
@@ -172,6 +182,10 @@ package() {
       libdir="$pkgdir/usr/lib" \
       dlldir="$pkgdir/usr/lib/wine" install
   fi
+  # Font aliasing settings for Win32 applications
+  install -d "$pkgdir"/etc/fonts/conf.{avail,d}
+  install -m644 "$srcdir/30-win32-aliases.conf" "$pkgdir/etc/fonts/conf.avail"
+  ln -s ../conf.avail/30-win32-aliases.conf "$pkgdir/etc/fonts/conf.d/30-win32-aliases.conf"
 }
 
 # vim:set ts=8 sts=2 sw=2 et:
