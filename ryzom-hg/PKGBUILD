@@ -38,8 +38,7 @@ prepare() {
 build() {
     cd $_hg_name
     
-    if [ $_build_client = true ] ; then
-	
+    if [ $_build_client = true ] ; then	
 	mkdir -p "$srcdir/build-client"
 	cd "$srcdir/build-client"
 	msg "client is $_build_client, building client"
@@ -55,11 +54,10 @@ build() {
 	msg "client is $_build_server, building server"
 	cmake -b "$srcdir/$_hg_name/code"  ${_CMAKE_COMMON_ARGS_ARGS[*]} ${_CMAKE_SERVER_ARGS[*]} -DCMAKE_INSTALL_PREFIX=/usr -DRYZOM_ETC_PREFIX=/etc/ryzom -DRYZOM_SHARE_PREFIX=/usr/share/ryzom -DRYZOM_BIN_PREFIX=/usr/bin -DRYZOM_GAMES_PREFIX=/usr/bin
 	msg "Starting make, to build server"   
-	make
-	
+	make	
     fi
-    
 }
+
 if [ $_build_client = true ] ; then
     
     package_ryzom-client-hg() {
@@ -67,14 +65,10 @@ if [ $_build_client = true ] ; then
 	depends=( 'curl' 'freetype2' 'libx11' 'mesa' 'libxxf86vm' 'openal' 'freealut' 'libogg' 'libvorbis' 'libxml2' 'cmake' 'libpng' 'libjpeg' 'rrdtool' 'bison' 'libwww' 'boost' 'cpptest' 'luabind' 'libsquish' 'lua51'  'lua51-sql-mysql' 'ryzom-data' )
 	cd "$srcdir/build-client"
 	make DESTDIR="$pkgdir/" install
-	install -m 644 ${srcdir}/ryzom.desktop ${pkgdir}/usr/share/applications
+	install -Dm 644 ${srcdir}/ryzom.desktop ${pkgdir}/usr/share/applications
 	sed -ie 's/\/usr\/bin\/ryzom_client/ryzom/' ${pkgdir}/usr/share/applications/ryzom.desktop # replace ryzom_client with our script
-	cp ${srcdir}/ryzom.sh  ${pkgdir}/usr/bin/ryzom
-	chmod +x ${pkgdir}/usr/bin/ryzom
-	mkdir -p ${pkgdir}/usr/bin
-	
+	install -Dm755  ${srcdir}/ryzom.sh  ${pkgdir}/usr/bin/ryzom	
     }
-
 fi
 
 if [ $_build_server = true ] ; then
@@ -82,15 +76,8 @@ if [ $_build_server = true ] ; then
     package_ryzom-server-hg() {
 	pkgdesc="Ryzom is a Free to Play MMORPG . This is the version to run a server"
 	cd "$srcdir/build-server"
-	make DESTDIR="$pkgdir/" install
-     # install -m 644 ${srcdir}/ryzom.desktop ${pkgdir}/usr/share/applications
-     # sed -ie 's/\/usr\/bin\/ryzom_client/ryzom/' ${pkgdir}/usr/share/applications/ryzom.desktop # replace ryzom_client with our script
-	# cp ${srcdir}/ryzom.sh  ${pkgdir}/usr/bin/ryzom
-      #chmod +x ${pkgdir}/usr/bin/ryzom
-	mkdir -p ${pkgdir}/usr/bin
-	
+	make DESTDIR="$pkgdir/" install	
     }
-    
 fi
 
 
