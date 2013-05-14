@@ -1,0 +1,3 @@
+[console_scripts]
+dropbox-index = dropbox_index:run
+
