@@ -14,6 +14,7 @@ depends=( 'openssl' )
 if [ $_gui = true ] ; then
   depends+=( 'qt5-base' 'qt5-webkit')
 fi
+makedepends='dos2unix'
 install=$pkgname.install
 source=("http://simulationcraft.googlecode.com/files/$_pkgname-${_simver}-${_simrel}-src.zip" 
   'SimulationCraft.desktop'
