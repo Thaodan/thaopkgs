@@ -13,7 +13,8 @@ _pkgbasever=${pkgver/rc/-rc}
 
 source=(http://prdownloads.sourceforge.net/$_basename/$_basename-$_pkgbasever.tar.bz2{,.sign}
         30-win32-aliases.conf
-        winemultimedia_1.5.28_20130419.patch
+        'use_glBufferSubDataARB_dbuffer.patch::http://bugs.winehq.org/attachment.cgi?id=42868'
+        'winemultimedia_1.5.30_20130518.patch'
 	'awesomium.patch::http://bugs.winehq.org/attachment.cgi?id=36923'
         'wine-1.5.30-missing-libwine.patch::https://projects.archlinux.org/svntogit/community.git/plain/trunk/wine-1.5.30-missing-libwine.patch?h=packages/wine&id=2d587e2200855df3367f00da533979c410dfa64e'
 )
@@ -21,7 +22,8 @@ source=(http://prdownloads.sourceforge.net/$_basename/$_basename-$_pkgbasever.ta
 sha1sums=('4a2810982794606c3d6d3dde8e0b41432a8d6a90'
           'SKIP'
           '023a5c901c6a091c56e76b6a62d141d87cce9fdb'
-          'f75649442fe6ac226a8f54f732472cf9ad83b505'
+          '8684a342b3b5e21419adcc26c18252af29012089'
+          'b3e9207307d52d09073e88e4fd8416baeb8f09a2'
           '1e23b5194c8f5aca8af270bce97f74f8e5cb0020'
           '95cb7f92f67cd4f72d16f78aea5976002a6b951c')
 
@@ -113,7 +115,6 @@ fi
 
 build() {
   cd "$srcdir"
-
   # Get rid of old dirs
   rm -rf $_basename{,-{32,64}-build}
   mkdir $_basename-32-build
@@ -127,10 +128,14 @@ build() {
 
   # Apply multimedia patch
   msg2 "Applying multimedia branch patch"
-  (cd $_basename && patch -Np1 -i "${srcdir}"/winemultimedia_1.5.28_20130419.patch; 
-	patch -Np1 -i ${srcdir}/awesomium.patch || true
-	patch -Np1 -i "$srcdir"/wine-1.5.30-missing-libwine.patch;)
-
+  (
+    cd $_basename  
+    patch -Np1 -i "${srcdir}"/winemultimedia_1.5.30_20130518.patch;
+    patch -Np1 -i "${srcdir}"/awesomium.patch || true
+    patch -Np1 -i "${srcdir}"/wine-1.5.30-missing-libwine.patch;
+    patch -Np1 -i "${srcdir}"/use_glBufferSubDataARB_dbuffer.patch
+  )
+  
   # These additional CFLAGS solve FS#27662 and FS#34195
   export CFLAGS="${CFLAGS/-D_FORTIFY_SOURCE=2/} -D_FORTIFY_SOURCE=0"
   export CXXFLAGS="${CXXFLAGS/-D_FORTIFY_SOURCE=2/} -D_FORTIFY_SOURCE=0"
@@ -147,10 +152,9 @@ build() {
       --without-gstreamer \
       --enable-win64
     # Gstreamer was disabled for FS#33655
-
+    
     # These additional flags solve FS#34819
     make CFLAGS+="-fno-builtin-memcpy" CXXFLAGS+="-fno-builtin-memcpy"
-
     _wine32opts=(
       --libdir=/usr/lib32
       --with-wine64="$srcdir/$_basename-64-build"
@@ -165,7 +169,7 @@ build() {
     --prefix=/usr \
     --with-x \
     --without-gstreamer \
-    "${_wine32opts[@]}"
+    "${_wine32opts[@]}"  
 
   # These additional CFLAGS solve FS#27560 and FS#23277
   make CFLAGS+="-mstackrealign -mincoming-stack-boundary=2" CXXFLAGS+="-mstackrealign -mincoming-stack-boundary=2"
