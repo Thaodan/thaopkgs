@@ -127,7 +127,7 @@ build() {
   msg2 "Applying multimedia branch patch"
   (
     cd $_basename  
-    patch -Np1 -u "${srcdir}"/winemultimedia_1.5.31_20130529.patch
+    patch -Np1 -i "${srcdir}"/winemultimedia_1.5.31_20130529.patch
     patch -Np1 -i "${srcdir}"/awesomium.patch || true
     patch -Np1 -i "${srcdir}"/use_glBufferSubDataARB_dbuffer.patch
   )
