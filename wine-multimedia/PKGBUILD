@@ -149,8 +149,7 @@ build() {
       --enable-win64
     # Gstreamer was disabled for FS#33655
     
-    # These additional flags solve FS#34819
-    make CFLAGS+="-fno-builtin-memcpy" CXXFLAGS+="-fno-builtin-memcpy"
+    make 
     _wine32opts=(
       --libdir=/usr/lib32
       --with-wine64="$srcdir/$_basename-64-build"
