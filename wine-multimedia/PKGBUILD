@@ -6,7 +6,7 @@
 
 pkgname=wine-multimedia
 _basename=wine
-pkgver=1.6rc3
+pkgver=1.6rc4
 pkgrel=1
 
 _pkgbasever=${pkgver/rc/-rc}
@@ -18,7 +18,7 @@ source=(http://prdownloads.sourceforge.net/$_basename/$_basename-$_pkgbasever.ta
 	'awesomium.patch::http://bugs.winehq.org/attachment.cgi?id=36923'
 )
 
-sha1sums=('9533d9e6da23d69c6e5b22b45e1507c721d66ebf'
+sha1sums=('8980040f6c27df4e4fd54eb7b29cdac93635b68f'
           'SKIP'
           '023a5c901c6a091c56e76b6a62d141d87cce9fdb'
           '8684a342b3b5e21419adcc26c18252af29012089'
