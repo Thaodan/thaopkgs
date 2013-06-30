@@ -145,7 +145,7 @@ build() {
       --prefix=/usr \
       --libdir=/usr/lib \
       --with-x \
-      --without-gstreamer \
+      --with-gstreamer \
       --enable-win64
     # Gstreamer was disabled for FS#33655
     
@@ -163,7 +163,7 @@ build() {
   ../$_basename/configure \
     --prefix=/usr \
     --with-x \
-    --without-gstreamer \
+    --with-gstreamer \
     "${_wine32opts[@]}"  
 
   # These additional CFLAGS solve FS#27560 and FS#23277
