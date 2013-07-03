@@ -70,6 +70,7 @@ makedepends=(autoconf ncurses bison perl fontforge flex prelink
   libcl           lib32-libcl
   samba
   opencl-headers
+  gstreamer0.10-base  lib32-gstreamer0.10-base
 )
 
 optdepends=(
@@ -93,6 +94,7 @@ optdepends=(
   libcl           lib32-libcl
   oss             cups
   samba
+  gstreamer0.10-base lib32-gstreamer0.10-base
 )
 
 if [[ $CARCH == i686 ]]; then
