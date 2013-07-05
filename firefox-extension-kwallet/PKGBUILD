@@ -22,7 +22,7 @@ build() {
   cmake ../library
   make
   cd ..
-  make
+  make copy
 }
 
 
