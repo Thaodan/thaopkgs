@@ -10,20 +10,15 @@ pkgver=1.7.0
 pkgrel=1
 
 _pkgbasever=${pkgver/rc/-rc}
-
+_wine_multimedia_patch=winemultimedia_1.7.0_20130814.patch
 source=(http://prdownloads.sourceforge.net/$_basename/$_basename-$_pkgbasever.tar.bz2{,.sign}
-        30-win32-aliases.conf
-        'use_glBufferSubDataARB_dbuffer.patch::http://bugs.winehq.org/attachment.cgi?id=42868'
-        'winemultimedia_1.6_20130718.patch'
+  30-win32-aliases.conf
+  'use_glBufferSubDataARB_dbuffer.patch::http://bugs.winehq.org/attachment.cgi?id=42868'
+  "${_wine_multimedia_patch}"
 	'awesomium.patch::http://bugs.winehq.org/attachment.cgi?id=36923'
 )
 
-sha1sums=('6747086821b4ed0a452c5e2d6793f1e09372d06c'
-          'SKIP'
-          '023a5c901c6a091c56e76b6a62d141d87cce9fdb'
-          '8684a342b3b5e21419adcc26c18252af29012089'
-          '9dc6c9c23bccfe2c08e741ecbd67cdc69062a596'
-          '1e23b5194c8f5aca8af270bce97f74f8e5cb0020')
+
 pkgdesc="Wine with Maarten Lankhorst's multimedia patches, including PulseAudio support"
 url="http://www.winehq.com"
 arch=(i686 x86_64)
@@ -121,7 +116,7 @@ prepare() {
   # Apply multimedia patch
   msg2 "Applying multimedia branch patch"
   cd $_basename  
-  patch -Np1 -i "${srcdir}"/winemultimedia_1.6_20130718.patch 
+  patch -Np1 -i "${srcdir}"/"${_wine_multimedia_patch}"
   patch -Np1 -i "${srcdir}"/awesomium.patch || true
   patch -Np1 -i "${srcdir}"/use_glBufferSubDataARB_dbuffer.patch
 }
