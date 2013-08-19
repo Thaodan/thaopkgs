@@ -7,7 +7,7 @@
 pkgname=wine-multimedia
 _basename=wine
 pkgver=1.7.0
-pkgrel=1
+pkgrel=2
 
 _pkgbasever=${pkgver/rc/-rc}
 _wine_multimedia_patch=winemultimedia_1.7.0_20130814.patch
@@ -193,3 +193,9 @@ package() {
 }
 
 # vim:set ts=8 sts=2 sw=2 et:
+md5sums=('24789490809ddb5db5286819b3fdfed5'
+         'SKIP'
+         '1ff4e467f59409272088d92173a0f801'
+         'b645a6b5331c43f8b6c580dc18221da8'
+         '352a68c08175d67db6944f080b8531dd'
+         'b7a71df0a0a100f18fba116c6ef8ca41')
