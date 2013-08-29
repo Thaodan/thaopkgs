@@ -1,0 +1,36 @@
+# $Id: PKGBUILD 173283 2012-12-18 09:13:59Z andrea $
+# Maintainer: Andrea Scarpino <andrea@archlinux.org>
+
+pkgname=telepathy-kde-call-ui
+_pkgname=ktp-call-ui
+pkgver=0.6.3
+pkgrel=1
+pkgdesc="Voice/Video Call UI for Telepathy"
+arch=('i686' 'x86_64')
+url="http://community.kde.org/Real-Time_Communication_and_Collaboration"
+license=('GPL')
+depends=('telepathy-kde-common-internals' 'qt-gstreamer' 'kdebase-runtime')
+makedepends=('cmake' 'automoc4' 'boost')
+groups=('kde-telepathy')
+source=("http://ftp.kde.org/stable/kde-telepathy/${pkgver}/src/${_pkgname}-${pkgver}.tar.bz2" 'gstreamer_include.fix.patch')
+sha1sums=('45c8fbd22360bd2625b4e189e752a3f9809130db'
+          '0f80863cb70537c491334f73e599595e9ec13669')
+
+prepare() {
+  cd "${srcdir}/$_pkgname-$pkgver"
+  patch -Np1 -i "${srcdir}"/gstreamer_include.fix.patch
+}
+build() {
+  mkdir -p build
+  cd build
+  cmake ../${_pkgname}-${pkgver} \
+    -DCMAKE_INSTALL_PREFIX=/usr \
+    -DCMAKE_BUILD_TYPE=Release \
+    -DQT_QMAKE_EXECUTABLE=qmake-qt4
+  make
+}
+
+package() {
+  cd build
+  make DESTDIR="${pkgdir}" install
+}
