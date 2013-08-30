@@ -1,17 +1,8 @@
-commit b99cd857096f153de58750413cfdd2610914d1ad
-Author: John Schoenick <jschoenick@mozilla.com>
-Date:   Wed Aug 14 13:12:44 2013 -0700
-
-    Rebase wine-multimedia onto wine-1.7.0
-    
-    Dropped the following commit due to the name:
-      TESTING -- override pthreads to fix gstreamer
-
 diff --git a/configure b/configure
-index 7c9c76c..9415120 100755
+index d0f15d0..e4dba75 100755
 --- a/configure
 +++ b/configure
-@@ -656,6 +656,8 @@ OSS4INCL
+@@ -657,6 +657,8 @@ OSS4INCL
  ALSALIBS
  GSTREAMER_LIBS
  GSTREAMER_CFLAGS
@@ -20,7 +11,7 @@ index 7c9c76c..9415120 100755
  LIBGETTEXTPO
  ZLIB
  FREETYPE_LIBS
-@@ -837,6 +839,7 @@ with_osmesa
+@@ -838,6 +840,7 @@ with_osmesa
  with_oss
  with_png
  with_pthread
@@ -28,7 +19,7 @@ index 7c9c76c..9415120 100755
  with_sane
  with_tiff
  with_v4l
-@@ -1558,6 +1561,7 @@ Optional Packages:
+@@ -1559,6 +1562,7 @@ Optional Packages:
    --without-oss           do not use the OSS sound support
    --without-png           do not use PNG
    --without-pthread       do not use the pthread library
@@ -36,7 +27,7 @@ index 7c9c76c..9415120 100755
    --without-sane          do not use SANE (scanner support)
    --without-tiff          do not use TIFF
    --without-v4l           do not use v4l1 (v4l support)
-@@ -2787,6 +2791,12 @@ if test "${with_pthread+set}" = set; then :
+@@ -2788,6 +2792,12 @@ if test "${with_pthread+set}" = set; then :
  fi
  
  
@@ -49,7 +40,7 @@ index 7c9c76c..9415120 100755
  # Check whether --with-sane was given.
  if test "${with_sane+set}" = set; then :
    withval=$with_sane;
-@@ -11193,6 +11203,87 @@ esac
+@@ -11109,6 +11119,87 @@ esac
  fi
  fi
  
@@ -137,7 +128,7 @@ index 7c9c76c..9415120 100755
  if test "x$with_gstreamer" != "xno"
  then
      if test -n "$GSTREAMER_CFLAGS"; then :
-@@ -12422,12 +12513,13 @@ fi
+@@ -12386,12 +12477,13 @@ fi
  
  test -n "$ALSALIBS" || enable_winealsa_drv=${enable_winealsa_drv:-no}
  test -n "$COREAUDIO" || enable_winecoreaudio_drv=${enable_winecoreaudio_drv:-no}
@@ -153,7 +144,7 @@ index 7c9c76c..9415120 100755
  then
      as_fn_append wine_warnings "|No sound system was found. Windows applications will be silent."
  fi
-@@ -16473,6 +16565,7 @@ wine_fn_config_dll winemp3.acm enable_winemp3_acm
+@@ -16439,6 +16531,7 @@ wine_fn_config_dll winemp3.acm enable_winemp3_acm
  wine_fn_config_dll wineoss.drv enable_wineoss_drv
  wine_fn_config_dll wineps.drv enable_wineps_drv install-lib,po
  wine_fn_config_dll wineps16.drv16 enable_win16
@@ -162,7 +153,7 @@ index 7c9c76c..9415120 100755
  wine_fn_config_dll winex11.drv enable_winex11_drv
  wine_fn_config_dll wing.dll16 enable_win16
 diff --git a/configure.ac b/configure.ac
-index 0e3df61..086ed24 100644
+index d8033cf..abb40e9 100644
 --- a/configure.ac
 +++ b/configure.ac
 @@ -67,6 +67,7 @@ AC_ARG_WITH(oss,       AS_HELP_STRING([--without-oss],[do not use the OSS sound
@@ -173,7 +164,7 @@ index 0e3df61..086ed24 100644
  AC_ARG_WITH(sane,      AS_HELP_STRING([--without-sane],[do not use SANE (scanner support)]))
  AC_ARG_WITH(tiff,      AS_HELP_STRING([--without-tiff],[do not use TIFF]))
  AC_ARG_WITH(v4l,       AS_HELP_STRING([--without-v4l],[do not use v4l1 (v4l support)]))
-@@ -1517,6 +1518,30 @@ then
+@@ -1513,6 +1514,30 @@ then
            [GetText ${notice_platform}development files not found (or too old), po files can't be rebuilt.])
  fi
  
@@ -204,7 +195,7 @@ index 0e3df61..086ed24 100644
  dnl **** Check for gstreamer ****
  if test "x$with_gstreamer" != "xno"
  then
-@@ -1727,13 +1752,14 @@ WINE_CHECK_SONAME(odbc,SQLConnect,,[AC_DEFINE_UNQUOTED(SONAME_LIBODBC,["libodbc.
+@@ -1731,13 +1756,14 @@ WINE_CHECK_SONAME(odbc,SQLConnect,,[AC_DEFINE_UNQUOTED(SONAME_LIBODBC,["libodbc.
  dnl **** Disable unsupported winmm drivers ****
  test -n "$ALSALIBS" || enable_winealsa_drv=${enable_winealsa_drv:-no}
  test -n "$COREAUDIO" || enable_winecoreaudio_drv=${enable_winecoreaudio_drv:-no}
@@ -221,7 +212,7 @@ index 0e3df61..086ed24 100644
  then
      WINE_WARNING([No sound system was found. Windows applications will be silent.])
  fi
-@@ -3113,6 +3139,7 @@ WINE_CONFIG_DLL(winemp3.acm)
+@@ -3121,6 +3147,7 @@ WINE_CONFIG_DLL(winemp3.acm)
  WINE_CONFIG_DLL(wineoss.drv)
  WINE_CONFIG_DLL(wineps.drv,,[install-lib,po])
  WINE_CONFIG_DLL(wineps16.drv16,enable_win16)
@@ -242,7 +233,7 @@ index 5c9ef4a..9f79e7d 100644
  }
  
 diff --git a/dlls/dsound/dsound.c b/dlls/dsound/dsound.c
-index 381d0e1..362f0e8 100644
+index 986168b..a6fc671 100644
 --- a/dlls/dsound/dsound.c
 +++ b/dlls/dsound/dsound.c
 @@ -306,7 +306,6 @@ static HRESULT WINAPI IDirectSound8Impl_SetCooperativeLevel(IDirectSound8 *iface
@@ -340,7 +331,7 @@ index 381d0e1..362f0e8 100644
          HeapFree(GetProcessHeap(), 0, device->buffer);
          RtlDeleteResource(&device->buffer_list_lock);
          device->mixlock.DebugInfo->Spare[0] = 0;
-@@ -813,6 +802,7 @@ HRESULT DirectSoundDevice_Initialize(DirectSoundDevice ** ppDevice, LPCGUID lpcG
+@@ -789,6 +778,7 @@ HRESULT DirectSoundDevice_Initialize(DirectSoundDevice ** ppDevice, LPCGUID lpcG
      device->mmdevice = mmdevice;
      device->guid = devGUID;
      device->sleepev = CreateEventW(0, 0, 0, 0);
@@ -348,7 +339,7 @@ index 381d0e1..362f0e8 100644
  
      hr = DSOUND_ReopenDevice(device, FALSE);
      if (FAILED(hr))
-@@ -868,12 +858,8 @@ HRESULT DirectSoundDevice_Initialize(DirectSoundDevice ** ppDevice, LPCGUID lpcG
+@@ -844,12 +834,8 @@ HRESULT DirectSoundDevice_Initialize(DirectSoundDevice ** ppDevice, LPCGUID lpcG
  
      ZeroMemory(&device->volpan, sizeof(device->volpan));
  
@@ -426,7 +417,7 @@ index 7a16366..4f533b4 100644
  
  static const char * get_device_id(LPCGUID pGuid)
 diff --git a/dlls/dsound/dsound_private.h b/dlls/dsound/dsound_private.h
-index 1a3900c..19b6ccc 100644
+index a8f5f42..b2342e3 100644
 --- a/dlls/dsound/dsound_private.h
 +++ b/dlls/dsound/dsound_private.h
 @@ -31,7 +31,6 @@
@@ -1997,8 +1988,29 @@ index 0ee7c8c..57fa4b1 100644
      test_references();
      test_marshal();
      trace("Output to a MS-DOS console is particularly slow and disturbs timing.\n");
+diff --git a/dlls/ntdll/ntdll_misc.h b/dlls/ntdll/ntdll_misc.h
+index 3d9264d..9c0b565 100644
+--- a/dlls/ntdll/ntdll_misc.h
++++ b/dlls/ntdll/ntdll_misc.h
+@@ -28,6 +28,7 @@
+ #include "winnt.h"
+ #include "winternl.h"
+ #include "wine/server.h"
++#include "wine/list.h"
+ 
+ #define MAX_NT_PATH_LENGTH 277
+ 
+@@ -233,6 +234,8 @@ struct ntdll_thread_data
+     WINE_VM86_TEB_INFO vm86;          /* 1fc vm86 private data */
+     void              *exit_frame;    /* 204 exit frame pointer */
+ #endif
++    struct list entry;
++    BOOL detached;
+ };
+ 
+ static inline struct ntdll_thread_data *ntdll_get_thread_data(void)
 diff --git a/dlls/ntdll/server.c b/dlls/ntdll/server.c
-index 46494e2..49c6ced 100644
+index f77bacf..a15a791 100644
 --- a/dlls/ntdll/server.c
 +++ b/dlls/ntdll/server.c
 @@ -79,6 +79,9 @@
@@ -2011,7 +2023,7 @@ index 46494e2..49c6ced 100644
  
  /* Some versions of glibc don't define this */
  #ifndef SCM_RIGHTS
-@@ -979,6 +982,88 @@ static int get_unix_tid(void)
+@@ -1328,6 +1331,88 @@ static int get_unix_tid(void)
  }
  
  
@@ -2100,7 +2112,7 @@ index 46494e2..49c6ced 100644
  /***********************************************************************
   *           server_init_process
   *
-@@ -988,6 +1073,14 @@ void server_init_process(void)
+@@ -1337,6 +1422,14 @@ void server_init_process(void)
  {
      obj_handle_t version;
      const char *env_socket = getenv( "WINESERVERSOCKET" );
@@ -2115,7 +2127,7 @@ index 46494e2..49c6ced 100644
  
      server_pid = -1;
      if (env_socket)
-@@ -1071,7 +1164,6 @@ NTSTATUS server_init_process_done(void)
+@@ -1420,7 +1513,6 @@ NTSTATUS server_init_process_done(void)
      return status;
  }
  
@@ -2123,6 +2135,390 @@ index 46494e2..49c6ced 100644
  /***********************************************************************
   *           server_init_thread
   *
+diff --git a/dlls/ntdll/thread.c b/dlls/ntdll/thread.c
+index 703e83c..8c73ef0 100644
+--- a/dlls/ntdll/thread.c
++++ b/dlls/ntdll/thread.c
+@@ -33,6 +33,7 @@
+ #ifdef HAVE_SYS_SYSCALL_H
+ #include <sys/syscall.h>
+ #endif
++#include <errno.h>
+ 
+ #define NONAMELESSUNION
+ #include "ntstatus.h"
+@@ -58,6 +59,7 @@ struct startup_info
+     TEB                            *teb;
+     PRTL_THREAD_START_ROUTINE       entry_point;
+     void                           *entry_arg;
++    BOOL                            native_thread;
+ };
+ 
+ static PEB *peb;
+@@ -186,6 +188,78 @@ done:
+     return status;
+ }
+ 
++#ifdef __linux__
++extern typeof(pthread_create) *__glob_pthread_create, *call_pthread_create;
++extern typeof(pthread_join) *__glob_pthread_join, *call_pthread_join;
++extern typeof(pthread_detach) *__glob_pthread_detach, *call_pthread_detach;
++
++static typeof(pthread_create) __hook_pthread_create;
++static typeof(pthread_join) __hook_pthread_join;
++static typeof(pthread_detach) __hook_pthread_detach;
++
++static pthread_mutex_t thread_lock;
++
++static void thread_wrap_init(void)
++{
++    pthread_mutexattr_t attr;
++    pthread_mutexattr_init(&attr);
++    pthread_mutexattr_setrobust(&attr, PTHREAD_MUTEX_ROBUST);
++    pthread_mutex_init(&thread_lock, &attr);
++    pthread_mutexattr_destroy(&attr);
++
++    call_pthread_create = __hook_pthread_create;
++    call_pthread_join = __hook_pthread_join;
++    call_pthread_detach = __hook_pthread_detach;
++}
++
++static TEB *dead_teb;
++static struct list active_list = LIST_INIT(active_list);
++
++static void take_thread_lock(void)
++{
++    int ret = pthread_mutex_lock(&thread_lock);
++    if (ret == EOWNERDEAD)
++        pthread_mutex_consistent(&thread_lock);
++}
++
++static void detach_thread_unlock(TEB *own_teb)
++{
++    struct ntdll_thread_data *thread_data;
++    TEB *teb = dead_teb;
++
++    dead_teb = own_teb;
++
++    pthread_mutex_unlock(&thread_lock);
++    if (!teb)
++        return;
++
++    thread_data = (struct ntdll_thread_data *)teb->SpareBytes1;
++    __glob_pthread_join(thread_data->pthread_id, NULL);
++    signal_free_thread(teb);
++}
++
++static void reap_thread(TEB *teb)
++{
++    struct ntdll_thread_data *thread_data = (struct ntdll_thread_data *)teb->SpareBytes1;
++    take_thread_lock();
++    if (thread_data->detached)
++        detach_thread_unlock(teb);
++    else {
++        /*
++         * Do not unlock, wait until the thread is thoroughly dead.
++         * This prevents a race condition where detach is called
++         * after the thread has not finished dying yet.
++         */
++    }
++}
++
++#else
++#define __glob_pthread_create pthread_create
++#define __glob_pthread_join pthread_join
++#define __glob_pthread_detach pthread_detach
++#define thread_wrap_init()
++#endif
++
+ /***********************************************************************
+  *           thread_init
+  *
+@@ -204,6 +278,7 @@ HANDLE thread_init(void)
+     struct ntdll_thread_data *thread_data;
+     static struct debug_info debug_info;  /* debug info for initial thread */
+ 
++    thread_wrap_init();
+     virtual_init();
+ 
+     /* reserve space for shared user data */
+@@ -329,14 +404,12 @@ void terminate_thread( int status )
+     pthread_exit( UIntToPtr(status) );
+ }
+ 
+-
+-/***********************************************************************
+- *           exit_thread
+- */
+-void exit_thread( int status )
++static void exit_thread_common( int status )
+ {
++#ifndef __linux__
+     static void *prev_teb;
+     TEB *teb;
++#endif
+ 
+     if (status)  /* send the exit code to the server (0 is already the default) */
+     {
+@@ -364,24 +437,158 @@ void exit_thread( int status )
+ 
+     pthread_sigmask( SIG_BLOCK, &server_block_set, NULL );
+ 
++#ifndef __linux__
+     if ((teb = interlocked_xchg_ptr( &prev_teb, NtCurrentTeb() )))
+     {
+         struct ntdll_thread_data *thread_data = (struct ntdll_thread_data *)teb->SpareBytes1;
+ 
+         if (thread_data->pthread_id)
+         {
+-            pthread_join( thread_data->pthread_id, NULL );
++            __glob_pthread_join( thread_data->pthread_id, NULL );
+             signal_free_thread( teb );
+         }
+     }
++#else
++    reap_thread(NtCurrentTeb());
++#endif
+ 
+     close( ntdll_get_thread_data()->wait_fd[0] );
+     close( ntdll_get_thread_data()->wait_fd[1] );
+     close( ntdll_get_thread_data()->reply_fd );
+     close( ntdll_get_thread_data()->request_fd );
++}
++
++void exit_thread( int status )
++{
++    exit_thread_common(status);
+     pthread_exit( UIntToPtr(status) );
+ }
+ 
++#ifdef __linux__
++
++struct unix_arg {
++    void *(*start)(void *);
++    void *arg;
++};
++
++/* dummy used for comparison */
++static DWORD native_unix_start;
++
++static void call_native_cleanup(void *arg)
++{
++    RtlFreeThreadActivationContextStack();
++    exit_thread_common(0);
++}
++
++static int
++__hook_pthread_create(pthread_t *thread, const pthread_attr_t *attr,
++		      void *(*start_routine) (void *), void *parm)
++{
++    NTSTATUS ret;
++    size_t stack = 8 * 1024 * 1024;
++    struct unix_arg arg;
++    arg.start = start_routine;
++    arg.arg = parm;
++
++    TRACE("Overriding thread creation!\n");
++    if (attr) {
++        static int once;
++        if (!once++)
++            FIXME("most thread attributes ignored!\n");
++        else
++            WARN("most thread attributes ignored!\n");
++
++        pthread_attr_getstacksize(attr, &stack);
++    }
++
++    ret = RtlCreateUserThread( NtCurrentProcess(), NULL, FALSE, NULL, stack, 0, (void*)&native_unix_start, &arg, NULL, (void*)thread );
++    if (ret != STATUS_SUCCESS)
++        FIXME("ret: %08x\n", ret);
++    switch (ret) {
++    case STATUS_SUCCESS:
++        return 0;
++    case STATUS_NO_MEMORY:
++        return ENOMEM;
++    case STATUS_TOO_MANY_OPENED_FILES:
++        return EMFILE;
++    default:
++        ERR("Unhandled ntstatus %08x\n", ret);
++        return ENOMEM;
++    }
++}
++
++static int __hook_pthread_detach(pthread_t thread)
++{
++    struct ntdll_thread_data *thread_data;
++    TEB *teb = NULL;
++
++    if (pthread_equal(thread, pthread_self())) {
++        ntdll_get_thread_data()->detached = 1;
++        return 0;
++    }
++
++    take_thread_lock();
++    LIST_FOR_EACH_ENTRY(thread_data, &active_list, typeof(*thread_data), entry) {
++        if (pthread_equal(thread_data->pthread_id, thread)) {
++            teb = CONTAINING_RECORD(thread_data, typeof(*teb), SpareBytes1);
++
++            list_remove(&thread_data->entry);
++            if (!pthread_tryjoin_np(thread, NULL)) {
++                detach_thread_unlock(NULL);
++                signal_free_thread(teb);
++                return 0;
++            }
++            thread_data->detached = 1;
++            break;
++        }
++    }
++    detach_thread_unlock(NULL);
++    return teb ? 0 : ESRCH;
++}
++
++static int __hook_pthread_join(pthread_t thread, void **retval)
++{
++    struct ntdll_thread_data *thread_data, *t2;
++    int ret = ESRCH;
++
++    if (pthread_equal(thread, pthread_self()))
++        return EDEADLK;
++
++    take_thread_lock();
++    LIST_FOR_EACH_ENTRY(thread_data, &active_list, typeof(*thread_data), entry) {
++        TEB *teb = CONTAINING_RECORD(thread_data, typeof(*teb), SpareBytes1);
++
++        if (pthread_equal(thread, thread_data->pthread_id)) {
++
++            ret = pthread_tryjoin_np(thread, retval);
++            if (!ret)
++                goto free;
++            detach_thread_unlock(NULL);
++
++            ret = __glob_pthread_join(thread, retval);
++            if (ret)
++                return ret;
++
++            take_thread_lock();
++            /* Check if someone else freed the thread yet */
++            LIST_FOR_EACH_ENTRY(t2, &active_list, typeof(*thread_data), entry)
++                if (t2 == thread_data)
++                    goto free;
++            break;
++
++free:
++            list_remove(&thread_data->entry);
++            detach_thread_unlock(NULL);
++            signal_free_thread(teb);
++            return 0;
++        }
++    }
++
++    detach_thread_unlock(NULL);
++    return ret;
++}
++
++#endif
+ 
+ /***********************************************************************
+  *           start_thread
+@@ -414,9 +621,26 @@ static void start_thread( struct startup_info *info )
+     if (TRACE_ON(relay))
+         DPRINTF( "%04x:Starting thread proc %p (arg=%p)\n", GetCurrentThreadId(), func, arg );
+ 
+-    call_thread_entry_point( (LPTHREAD_START_ROUTINE)func, arg );
+-}
++#ifdef __linux__
++    if (info->native_thread) {
++        void *(*start)(void*) = (void*)func;
+ 
++        thread_data->detached = 0;
++
++        take_thread_lock();
++        list_add_tail(&active_list, &thread_data->entry);
++        detach_thread_unlock(NULL);
++
++        FIXME("Started native thread %08x\n", GetCurrentThreadId());
++        pthread_cleanup_push(call_native_cleanup, NULL);
++        pthread_exit(start(arg));
++        pthread_cleanup_pop(1);
++        return;
++    }
++    thread_data->detached = 1;
++#endif
++        call_thread_entry_point( (LPTHREAD_START_ROUTINE)func, arg );
++}
+ 
+ /***********************************************************************
+  *              RtlCreateUserThread   (NTDLL.@)
+@@ -499,8 +723,18 @@ NTSTATUS WINAPI RtlCreateUserThread( HANDLE process, const SECURITY_DESCRIPTOR *
+ 
+     info = (struct startup_info *)(teb + 1);
+     info->teb         = teb;
+-    info->entry_point = start;
+-    info->entry_arg   = param;
++#ifdef __linux__
++    info->native_thread = (void*)start == (void*)&native_unix_start;
++    if (info->native_thread) {
++        struct unix_arg *arg = param;
++        info->entry_point = (void*)arg->start;
++        info->entry_arg = arg->arg;
++    } else
++#endif
++    {
++        info->entry_point = start;
++        info->entry_arg   = param;
++    }
+ 
+     thread_data = (struct ntdll_thread_data *)teb->SpareBytes1;
+     thread_data->request_fd  = request_pipe[1];
+@@ -515,7 +749,7 @@ NTSTATUS WINAPI RtlCreateUserThread( HANDLE process, const SECURITY_DESCRIPTOR *
+                            (char *)teb->Tib.StackBase - (char *)teb->DeallocationStack );
+     pthread_attr_setscope( &attr, PTHREAD_SCOPE_SYSTEM ); /* force creating a kernel thread */
+     interlocked_xchg_add( &nb_threads, 1 );
+-    if (pthread_create( &pthread_id, &attr, (void * (*)(void *))start_thread, info ))
++    if (__glob_pthread_create( &pthread_id, &attr, (void * (*)(void *))start_thread, info ))
+     {
+         interlocked_xchg_add( &nb_threads, -1 );
+         pthread_attr_destroy( &attr );
+@@ -525,6 +759,11 @@ NTSTATUS WINAPI RtlCreateUserThread( HANDLE process, const SECURITY_DESCRIPTOR *
+     pthread_attr_destroy( &attr );
+     pthread_sigmask( SIG_SETMASK, &sigset, NULL );
+ 
++#ifdef __linux__
++    if ((void*)start == (void*)&native_unix_start && id)
++        *(pthread_t*)id = pthread_id;
++    else
++#endif
+     if (id) id->UniqueThread = ULongToHandle(tid);
+     if (handle_ptr) *handle_ptr = handle;
+     else NtClose( handle );
+diff --git a/dlls/winegstreamer/glibthread.c b/dlls/winegstreamer/glibthread.c
+index 25eceb8..7417941 100644
+--- a/dlls/winegstreamer/glibthread.c
++++ b/dlls/winegstreamer/glibthread.c
+@@ -43,6 +43,7 @@
+ #include <stdlib.h>
+ #include <stdio.h>
+ 
++#if 0
+ #include "windef.h"
+ #include "winbase.h"
+ #include "winnls.h"
+@@ -388,3 +389,15 @@ void g_thread_impl_init (void)
+   g_thread_self_tls = TlsAlloc ();
+   g_thread_init(&g_thread_functions_for_glib_use_default);
+ }
++
++#else
++
++void g_thread_impl_init (void)
++{
++  static gboolean beenhere = FALSE;
++
++  if (!beenhere++)
++    g_thread_init(NULL);
++}
++
++#endif
 diff --git a/dlls/winepulse.drv/Makefile.in b/dlls/winepulse.drv/Makefile.in
 new file mode 100644
 index 0000000..0f595f1
@@ -5392,11 +5788,26 @@ index f387323..3b1be27 100644
  
      HeapFree(GetProcessHeap(), 0, drvA);
      PropVariantClear(&pv);
+diff --git a/dlls/winmm/waveform.c b/dlls/winmm/waveform.c
+index 23adfc0..97849ff 100644
+--- a/dlls/winmm/waveform.c
++++ b/dlls/winmm/waveform.c
+@@ -68,8 +68,8 @@ static const WCHAR muteW[] = {'M','u','t','e',0};
+  *   - We must be able to identify bad devices without crashing.
+  */
+ 
+-/* buffer size = 100 * 100000 (100 ns) = 1 second */
+-#define AC_BUFLEN (100 * 100000)
++/* buffer size = 10 * 100000 (100 ns) = 0.1 seconds */
++#define AC_BUFLEN (10 * 100000)
+ #define MAX_DEVICES 256
+ #define MAPPER_INDEX 0x3F
+ 
 diff --git a/libs/wine/loader.c b/libs/wine/loader.c
-index 4e78116..094e5e1 100644
+index 4e78116..5d67c4c 100644
 --- a/libs/wine/loader.c
 +++ b/libs/wine/loader.c
-@@ -59,6 +59,10 @@ extern char **environ;
+@@ -59,12 +59,23 @@ extern char **environ;
  #include "winbase.h"
  #include "wine/library.h"
  
@@ -5407,7 +5818,20 @@ index 4e78116..094e5e1 100644
  /* argc/argv for the Windows application */
  int __wine_main_argc = 0;
  char **__wine_main_argv = NULL;
-@@ -644,7 +648,6 @@ int wine_dll_get_owner( const char *name, char *buffer, int size, int *exists )
+ WCHAR **__wine_main_wargv = NULL;
+ char **__wine_main_environ = NULL;
+ 
++#ifdef __linux__
++#include <pthread.h>
++typeof(pthread_create) *call_pthread_create, *__glob_pthread_create;
++typeof(pthread_join) *call_pthread_join, *__glob_pthread_join;
++typeof(pthread_detach) *call_pthread_detach, *__glob_pthread_detach;
++#endif
++
+ struct dll_path_context
+ {
+     unsigned int index; /* current index in the dll path list */
+@@ -644,7 +655,6 @@ int wine_dll_get_owner( const char *name, char *buffer, int size, int *exists )
      return ret;
  }
  
@@ -5415,7 +5839,7 @@ index 4e78116..094e5e1 100644
  /***********************************************************************
   *           set_max_limit
   *
-@@ -655,6 +658,11 @@ static void set_max_limit( int limit )
+@@ -655,6 +665,11 @@ static void set_max_limit( int limit )
  #ifdef HAVE_SETRLIMIT
      struct rlimit rlimit;
  
@@ -5427,7 +5851,7 @@ index 4e78116..094e5e1 100644
      if (!getrlimit( limit, &rlimit ))
      {
          rlimit.rlim_cur = rlimit.rlim_max;
-@@ -802,6 +810,34 @@ static void apple_main_thread( void (*init_func)(void) )
+@@ -802,6 +817,34 @@ static void apple_main_thread( void (*init_func)(void) )
  
  
  /***********************************************************************
@@ -5462,7 +5886,7 @@ index 4e78116..094e5e1 100644
   *           wine_init
   *
   * Main Wine initialisation.
-@@ -820,6 +856,7 @@ void wine_init( int argc, char *argv[], char *error, int error_size )
+@@ -820,6 +863,7 @@ void wine_init( int argc, char *argv[], char *error, int error_size )
  #ifdef RLIMIT_AS
      set_max_limit( RLIMIT_AS );
  #endif
@@ -5470,6 +5894,92 @@ index 4e78116..094e5e1 100644
  
      wine_init_argv0_path( argv[0] );
      build_dll_path();
+diff --git a/libs/wine/wine.map b/libs/wine/wine.map
+index 2159fac..fb3b951 100644
+--- a/libs/wine/wine.map
++++ b/libs/wine/wine.map
+@@ -117,6 +117,12 @@ WINE_1.0
+     wine_utf8_mbstowcs;
+     wine_utf8_wcstombs;
+     wine_wctype_table;
++    __glob_pthread_create;
++    call_pthread_create;
++    __glob_pthread_join;
++    call_pthread_join;
++    __glob_pthread_detach;
++    call_pthread_detach;
+ 
+   local: *;
+ };
+diff --git a/loader/Makefile.in b/loader/Makefile.in
+index a7ab893..6a47fdb 100644
+--- a/loader/Makefile.in
++++ b/loader/Makefile.in
+@@ -33,7 +33,7 @@ all: $(MAIN_BINARY) wine-installed $(EXTRA_BINARIES)
+ 
+ @MAKE_RULES@
+ 
+-LIBPTHREAD  = @LIBPTHREAD@
++LIBPTHREAD  = @LIBPTHREAD@ @LIBDL@
+ LDEXECFLAGS = @LDEXECFLAGS@
+ 
+ wine-preloader wine64-preloader: preloader.o Makefile.in
+diff --git a/loader/main.c b/loader/main.c
+index ac67290..e2410c4 100644
+--- a/loader/main.c
++++ b/loader/main.c
+@@ -202,6 +202,42 @@ static int pre_exec(void)
+ 
+ #endif
+ 
++#ifdef __linux__
++
++extern typeof(pthread_create) *call_pthread_create, *__glob_pthread_create;
++extern typeof(pthread_detach) *call_pthread_detach, *__glob_pthread_detach;
++extern typeof(pthread_join) *call_pthread_join, *__glob_pthread_join;
++
++int pthread_create(pthread_t *thread, const pthread_attr_t *attr,
++		   void *(*start_routine) (void *), void *arg)
++{
++    return call_pthread_create(thread, attr, start_routine, arg);
++}
++
++int pthread_detach(pthread_t thread)
++{
++    return call_pthread_detach(thread);
++}
++
++int pthread_join(pthread_t thread, void **retval)
++{
++    return call_pthread_join(thread, retval);
++}
++
++static void init_thread_hook(void) {
++    call_pthread_create = __glob_pthread_create = dlvsym(RTLD_NEXT, "pthread_create", "GLIBC_2.2.5");
++    if (!__glob_pthread_create)
++        call_pthread_create = __glob_pthread_create = dlvsym(RTLD_NEXT, "pthread_create", "GLIBC_2.1");
++
++    call_pthread_detach = __glob_pthread_detach = dlsym(RTLD_NEXT, "pthread_detach");
++    call_pthread_join = __glob_pthread_join = dlsym(RTLD_NEXT, "pthread_join");
++}
++
++#else
++
++#define init_thread_hook()
++
++#endif
+ 
+ /**********************************************************************
+  *           main
+@@ -211,6 +247,8 @@ int main( int argc, char *argv[] )
+     char error[1024];
+     int i;
+ 
++    init_thread_hook();
++
+     if (!getenv( "WINELOADERNOEXEC" ))  /* first time around */
+     {
+         static char noexec[] = "WINELOADERNOEXEC=1";
 diff --git a/programs/winemenubuilder/winemenubuilder.c b/programs/winemenubuilder/winemenubuilder.c
 index 973bd02..1982c93 100644
 --- a/programs/winemenubuilder/winemenubuilder.c
@@ -5830,7 +6340,7 @@ index 0000000..53e5ce4
 +
 +#endif
 diff --git a/server/thread.c b/server/thread.c
-index 5f9738d..573719f 100644
+index 32985ac..61a427a 100644
 --- a/server/thread.c
 +++ b/server/thread.c
 @@ -52,6 +52,8 @@
@@ -5842,7 +6352,7 @@ index 5f9738d..573719f 100644
  
  #ifdef __i386__
  static const unsigned int supported_cpus = CPU_FLAG(CPU_x86);
-@@ -198,6 +200,8 @@ static inline void init_thread_structure( struct thread *thread )
+@@ -201,6 +203,8 @@ static inline void init_thread_structure( struct thread *thread )
      list_init( &thread->mutex_list );
      list_init( &thread->system_apc );
      list_init( &thread->user_apc );
@@ -5851,7 +6361,7 @@ index 5f9738d..573719f 100644
  
      for (i = 0; i < MAX_INFLIGHT_FDS; i++)
          thread->inflight[i].server = thread->inflight[i].client = -1;
-@@ -266,6 +270,9 @@ static void cleanup_thread( struct thread *thread )
+@@ -269,6 +273,9 @@ static void cleanup_thread( struct thread *thread )
  {
      int i;
  
@@ -5861,7 +6371,7 @@ index 5f9738d..573719f 100644
      clear_apc_queue( &thread->system_apc );
      clear_apc_queue( &thread->user_apc );
      free( thread->req_data );
-@@ -456,6 +463,15 @@ affinity_t get_thread_affinity( struct thread *thread )
+@@ -459,6 +466,15 @@ affinity_t get_thread_affinity( struct thread *thread )
  #define THREAD_PRIORITY_REALTIME_HIGHEST 6
  #define THREAD_PRIORITY_REALTIME_LOWEST -7
  
@@ -5877,7 +6387,7 @@ index 5f9738d..573719f 100644
  /* set all information about a thread */
  static void set_thread_info( struct thread *thread,
                               const struct set_thread_info_request *req )
-@@ -471,8 +487,22 @@ static void set_thread_info( struct thread *thread,
+@@ -474,8 +490,22 @@ static void set_thread_info( struct thread *thread,
          }
          if ((req->priority >= min && req->priority <= max) ||
              req->priority == THREAD_PRIORITY_IDLE ||
@@ -5901,7 +6411,7 @@ index 5f9738d..573719f 100644
          else
              set_error( STATUS_INVALID_PARAMETER );
      }
-@@ -1200,6 +1230,10 @@ DECL_HANDLER(init_thread)
+@@ -1289,6 +1319,10 @@ DECL_HANDLER(init_thread)
      }
      debug_level = max( debug_level, req->debug_level );
  
@@ -5913,7 +6423,7 @@ index 5f9738d..573719f 100644
      reply->tid     = get_thread_id( current );
      reply->version = SERVER_PROTOCOL_VERSION;
 diff --git a/server/thread.h b/server/thread.h
-index 1c4a74a..66275f1 100644
+index eddfd30..b9e5645 100644
 --- a/server/thread.h
 +++ b/server/thread.h
 @@ -87,6 +87,8 @@ struct thread
