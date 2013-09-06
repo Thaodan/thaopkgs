@@ -432,11 +432,11 @@ package_linux-pf() {
 	 pkgdesc="${_pkgdesc} AMD Bobcat optimized."
 	 ;;
      BULLDOZER)
-	 pkgname"${pkgbase}-bulldozer"
+	 pkgname="${pkgbase}-bulldozer"
 	 pkgdesc="${_pkgdesc} AMD Bulldozer optimized."
 	 ;;
      PILEDRIVER)
-	 pkgname"${pkgbase}-piledriver"
+	 pkgname="${pkgbase}-piledriver"
 	 pkgdesc="${_pkgdesc} AMD Piledriver optimized."
 	 ;;
      PSC)
