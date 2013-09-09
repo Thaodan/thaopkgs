@@ -9,7 +9,7 @@ pkgdesc='Host linux-pf kernel modules for VirtualBox'
 arch=('i686' 'x86_64')
 url='http://virtualbox.org'
 license=('GPL')
-depends=('linux-pf>=3.10' 'linux-pf<3.11')
+depends=('linux-pf>=3.11' 'linux-pf<3.12')
 makedepends=('linux-pf-headers'
              "virtualbox-host-dkms=$pkgver")
 provides=('virtualbox-host-modules')
