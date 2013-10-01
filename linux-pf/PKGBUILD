@@ -10,7 +10,7 @@ _basekernel=${_major}.${_minor}
 _srcname=linux-${_major}.${_minor}
 pkgbase=linux-pf
 _pfrel=2
-_kernelname=${pkgbase#linux}
+_kernelname=$_basekernel
 _pfpatchhome="http://pf.natalenko.name/sources/${_basekernel}/"
 _pfpatchname="patch-${_basekernel}.${_pfrel}${_kernelname}"
 
@@ -284,17 +284,7 @@ build() {
     
   # Give option to rename package according to CPU
     echo
-    if [[ "$CPU" = "GENERIC" ]]; then
-      msg "Hit <ENTER>     :  to include the patchlevel number in kernver (default)"
-      msg "               (i.e. linux-pf-${_basekernel}.${_pfrel})"
-      msg "Hit <P> :  to remove the patchlevel number from kernver "
-      msg "               (i.e. linux-pf-${_basekernel})"
-      read answer
-      shopt -s nocasematch
-      if [[ "$answer" = "p" ]]; then
-	export _SUBLEVEL=n
-      fi
-  else
+    if [[ "$CPU" != "GENERIC" ]]; then
       lcpu=$(tr '[:upper:]' '[:lower:]' <<< $CPU)
       lcpu=$(sed -e "s/entium//" <<<$lcpu)
       echo "=============================================================="
