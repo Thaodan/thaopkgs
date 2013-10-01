@@ -166,7 +166,6 @@ prepare() {
   _arch=$CARCH
 
   
- 
   # disable NUMA since 99.9% of users do not have multiple CPUs but do have multiple cores in one CPU
   # see, https://bugs.archlinux.org/task/31187
   if [ -n "$_NUMA_off" ] && [ "${CARCH}" = "x86_64" ]; then
