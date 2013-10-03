@@ -6,11 +6,11 @@
 
 pkgname=wine-multimedia
 _basename=wine
-pkgver=1.7.2
-pkgrel=2
+pkgver=1.7.3
+pkgrel=1
 
 _pkgbasever=${pkgver/rc/-rc}
-_wine_multimedia_patch=winemultimedia_1.7.2_20130913.patch
+_wine_multimedia_patch=winemultimedia_1.7.3_20131003.patch
 source=(http://prdownloads.sourceforge.net/$_basename/$_basename-$_pkgbasever.tar.bz2{,.sign}
   30-win32-aliases.conf
   'use_glBufferSubDataARB_dbuffer.patch::http://bugs.winehq.org/attachment.cgi?id=42868'
@@ -193,9 +193,9 @@ package() {
 }
 
 # vim:set ts=8 sts=2 sw=2 et:
-md5sums=('17ece5f22c691bd6067c86f0dd68cfd7'
+md5sums=('8dc3815754f00ec315d61a6d14870320'
          'SKIP'
          '1ff4e467f59409272088d92173a0f801'
          'b645a6b5331c43f8b6c580dc18221da8'
-         'bee9f64a38fe4d81df1ad3c877d5b74e'
-         'b7a71df0a0a100f18fba116c6ef8ca41')
+         'c2eeea5f59ff17af969110261cbcd3fe'
+         'd92450793b2ebdda8b5f22a0744b477e')
