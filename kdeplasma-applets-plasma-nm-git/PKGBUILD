@@ -1,0 +1,43 @@
+# Maintainer: Timothée Ravier <tim@siosm.fr>
+# Previous maintainer: Andrea Scarpino <andrea@archlinux.org>
+
+pkgname=kdeplasma-applets-plasma-nm-git
+_realname=plasma-nm
+pkgver=886.ad87480
+pkgrel=1
+pkgdesc='Plasma applet written in QML for managing network connections'
+arch=('i686' 'x86_64')
+url='https://projects.kde.org/projects/playground/network/plasma-nm'
+license=('GPL2')
+depends=('kdebase-workspace' 'libnm-qt-git' 'openconnect')
+makedepends=('cmake' 'automoc4' 'git')
+provides=('kdeplasma-applets-plasma-nm')
+conflicts=('kdeplasma-applets-plasma-nm' 'kdeplasma-applets-networkmanagement')
+source=('git://anongit.kde.org/plasma-nm.git' 'enable_kcm.patch')
+sha256sums=('SKIP'
+            '1203b67cc4499df0645bf073a7cc5ff49082f8e5bf91520ad106022ae6feb44f')
+
+pkgver() {
+  cd ${_realname}
+  echo $(git rev-list --count HEAD).$(git rev-parse --short HEAD)
+}
+
+prepare() {
+  rm -rf build
+  mkdir build
+  cd ${_realname}
+  patch -Np1 -i "${srcdir}"/enable_kcm.patch
+}
+
+build() {
+  cd build
+  cmake ../${_realname} \
+    -DCMAKE_INSTALL_PREFIX=/usr \
+    -DCMAKE_BUILD_TYPE=RelWithDebInfo
+  make
+}
+
+package() {
+  cd build
+  make DESTDIR="${pkgdir}" install
+}

@@ -1,0 +1,11 @@
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index fb6ed76..8fca550 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -72,5 +72,5 @@ add_subdirectory(declarative-plugins)
+ add_subdirectory(editor)
+ add_subdirectory(vpn)
+ add_subdirectory(kded)
+-#add_subdirectory(kcm)
++add_subdirectory(kcm)
+ add_subdirectory(settings)
