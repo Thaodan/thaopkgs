@@ -1,3 +1,4 @@
+# -*- sh -*-
 post_install() {
 cat << EOF
 ===> You must load vboxdrv module before starting VirtualBox:
