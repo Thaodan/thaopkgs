@@ -5,7 +5,7 @@
 _godver=3.11
 _badver=3.12
 pkgname=virtualbox-modules-pf
-pkgver=4.2.18
+pkgver=4.3.0
 pkgrel=1
 pkgdesc='Host linux-pf kernel modules for VirtualBox'
 arch=('i686' 'x86_64')
@@ -33,6 +33,4 @@ package(){
   cd "dkms/vboxhost/$pkgver/$_kernver/$CARCH/module"
   install -m644 * "$pkgdir/usr/lib/modules/$_extramodules"
   find "$pkgdir" -name '*.ko' -exec gzip -9 {} +
-  sed -i -e "s/EXTRAMODULES='.*'/EXTRAMODULES='$_extramodules'/" "$startdir/virtualbox-modules-pf.install"
 }
-md5sums=()
