@@ -6,7 +6,7 @@
 
 pkgname=wine-multimedia
 _basename=wine
-pkgver=1.7.4
+pkgver=1.7.5
 pkgrel=1
 
 _pkgbasever=${pkgver/rc/-rc}
@@ -193,7 +193,7 @@ package() {
 }
 
 # vim:set ts=8 sts=2 sw=2 et:
-md5sums=('a1e78cdce188a4f52244780b6628507b'
+md5sums=('b67d3ee7bfbfdabe5fd8ace66692eb52'
          'SKIP'
          '1ff4e467f59409272088d92173a0f801'
          'b645a6b5331c43f8b6c580dc18221da8'
