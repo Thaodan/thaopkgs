@@ -6,7 +6,7 @@
 
 pkgname=wine-multimedia
 _basename=wine
-pkgver=1.7.5
+pkgver=1.7.6
 pkgrel=1
 
 _pkgbasever=${pkgver/rc/-rc}
@@ -15,7 +15,6 @@ source=(http://prdownloads.sourceforge.net/$_basename/$_basename-$_pkgbasever.ta
   30-win32-aliases.conf
   'use_glBufferSubDataARB_dbuffer.patch::http://bugs.winehq.org/attachment.cgi?id=42868'
   "${_wine_multimedia_patch}"
-	'awesomium.patch::http://bugs.winehq.org/attachment.cgi?id=45961'
 )
 
 
@@ -117,7 +116,6 @@ prepare() {
   msg2 "Applying multimedia branch patch"
   cd $_basename  
   patch -Np1 -i "${srcdir}"/"${_wine_multimedia_patch}"
-  patch -Np1 -i "${srcdir}"/awesomium.patch || true
   patch -Np1 -i "${srcdir}"/use_glBufferSubDataARB_dbuffer.patch
 }
 
@@ -193,9 +191,8 @@ package() {
 }
 
 # vim:set ts=8 sts=2 sw=2 et:
-md5sums=('b67d3ee7bfbfdabe5fd8ace66692eb52'
+md5sums=('5c3f579f161d12a0d65c3fa1335b604f'
          'SKIP'
          '1ff4e467f59409272088d92173a0f801'
          'b645a6b5331c43f8b6c580dc18221da8'
-         '7b30cbc884a7c5f96fdb415ec6863237'
-         'd92450793b2ebdda8b5f22a0744b477e')
+         '7b30cbc884a7c5f96fdb415ec6863237')
