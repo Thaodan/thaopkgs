@@ -1,0 +1,32 @@
+# $Id: pkgbuild-mode.el,v 1.23 2007/10/20 16:02:14 juergen Exp $
+# Maintainer: Bjoern Bidar <bidar@odin.valhalla>
+pkgname=diamond
+_pkgname='programmer'
+_pkgver=2_2
+pkgver=2.2
+pkgrel=1
+pkgdesc="FPGA Design, Meet Easy."
+arch=('x86_64')
+url="http://www.latticesemi.com/Products/DesignSoftwareAndIP/FPGAandLDS/LatticeDiamond.aspx"
+license=('custom')
+depends=('libpng12' 'qt4')
+if [ $CARCH = x86_64 ] ; then
+  _arch=x64
+  _arch_arch=64
+fi
+source=(${_pkgname}_${_pkgver}_${_arch}-101-$CARCH-linux.rpm)
+
+
+
+package() {
+  cd "$srcdir"
+  
+  install -d ${pkgdir}/usr/{bin,lib}
+  rm -r usr/local/programmer/${_pkgver}_$arch/data/**.{exe,sys,lib,dll} # remove windows stuff
+  rm -r usr/local/programmer/${_pkgver}_$arch/tcltk
+  rm -r usr/local/programmer/${_pkgver}_$arch/bin/lin_$arch_arch/*Qt*
+  
+}
+
+# vim:set ts=2 sw=2 et:
+md5sums=('ad5bc9f0b7d1e6e554217d5f343e2649')
