@@ -1,8 +1,8 @@
 diff --git a/configure b/configure
-index b18d271..722ef10 100755
+index b4dfb47..c8f9168 100755
 --- a/configure
 +++ b/configure
-@@ -657,6 +657,8 @@ OSS4INCL
+@@ -653,6 +653,8 @@ OSS4INCL
  ALSALIBS
  GSTREAMER_LIBS
  GSTREAMER_CFLAGS
@@ -11,7 +11,7 @@ index b18d271..722ef10 100755
  LIBGETTEXTPO
  ZLIB
  FREETYPE_LIBS
-@@ -835,6 +837,7 @@ with_osmesa
+@@ -830,6 +832,7 @@ with_osmesa
  with_oss
  with_png
  with_pthread
@@ -19,7 +19,7 @@ index b18d271..722ef10 100755
  with_sane
  with_tiff
  with_v4l
-@@ -2048,6 +2051,7 @@ Optional Packages:
+@@ -2044,6 +2047,7 @@ Optional Packages:
    --without-oss           do not use the OSS sound support
    --without-png           do not use PNG
    --without-pthread       do not use the pthread library
@@ -27,7 +27,7 @@ index b18d271..722ef10 100755
    --without-sane          do not use SANE (scanner support)
    --without-tiff          do not use TIFF
    --without-v4l           do not use v4l1 (v4l support)
-@@ -3283,6 +3287,12 @@ if test "${with_pthread+set}" = set; then :
+@@ -3281,6 +3285,12 @@ if test "${with_pthread+set}" = set; then :
  fi
  
  
@@ -40,7 +40,7 @@ index b18d271..722ef10 100755
  # Check whether --with-sane was given.
  if test "${with_sane+set}" = set; then :
    withval=$with_sane;
-@@ -12199,6 +12209,87 @@ esac
+@@ -12095,6 +12105,87 @@ esac
  fi
  fi
  
@@ -128,7 +128,7 @@ index b18d271..722ef10 100755
  if test "x$with_gstreamer" != "xno"
  then
      if test -n "$GSTREAMER_CFLAGS"; then :
-@@ -13536,12 +13627,13 @@ fi
+@@ -13432,12 +13523,13 @@ fi
  
  test -n "$ALSALIBS" || enable_winealsa_drv=${enable_winealsa_drv:-no}
  test -n "$COREAUDIO" || enable_winecoreaudio_drv=${enable_winecoreaudio_drv:-no}
@@ -144,7 +144,7 @@ index b18d271..722ef10 100755
  then
      as_fn_append wine_warnings "|No sound system was found. Windows applications will be silent."
  fi
-@@ -17303,6 +17395,7 @@ wine_fn_config_dll winemp3.acm enable_winemp3_acm
+@@ -17130,6 +17222,7 @@ wine_fn_config_dll winemp3.acm enable_winemp3_acm
  wine_fn_config_dll wineoss.drv enable_wineoss_drv
  wine_fn_config_dll wineps.drv enable_wineps_drv clean,po
  wine_fn_config_dll wineps16.drv16 enable_win16
@@ -153,10 +153,10 @@ index b18d271..722ef10 100755
  wine_fn_config_dll winex11.drv enable_winex11_drv
  wine_fn_config_dll wing.dll16 enable_win16
 diff --git a/configure.ac b/configure.ac
-index d80a2bc..39c0635 100644
+index 3c1101c..cf2cb7f 100644
 --- a/configure.ac
 +++ b/configure.ac
-@@ -68,6 +68,7 @@ AC_ARG_WITH(oss,       AS_HELP_STRING([--without-oss],[do not use the OSS sound
+@@ -70,6 +70,7 @@ AC_ARG_WITH(oss,       AS_HELP_STRING([--without-oss],[do not use the OSS sound
  AC_ARG_WITH(png,       AS_HELP_STRING([--without-png],[do not use PNG]))
  AC_ARG_WITH(pthread,   AS_HELP_STRING([--without-pthread],[do not use the pthread library]),
              [if test "x$withval" = "xno"; then ac_cv_header_pthread_h=no; fi])
@@ -164,7 +164,7 @@ index d80a2bc..39c0635 100644
  AC_ARG_WITH(sane,      AS_HELP_STRING([--without-sane],[do not use SANE (scanner support)]))
  AC_ARG_WITH(tiff,      AS_HELP_STRING([--without-tiff],[do not use TIFF]))
  AC_ARG_WITH(v4l,       AS_HELP_STRING([--without-v4l],[do not use v4l1 (v4l support)]))
-@@ -1529,6 +1530,30 @@ then
+@@ -1522,6 +1523,30 @@ then
            [GetText ${notice_platform}development files not found (or too old), po files can't be rebuilt.])
  fi
  
@@ -195,7 +195,7 @@ index d80a2bc..39c0635 100644
  dnl **** Check for gstreamer ****
  if test "x$with_gstreamer" != "xno"
  then
-@@ -1753,13 +1778,14 @@ fi
+@@ -1746,13 +1771,14 @@ fi
  dnl **** Disable unsupported winmm drivers ****
  test -n "$ALSALIBS" || enable_winealsa_drv=${enable_winealsa_drv:-no}
  test -n "$COREAUDIO" || enable_winecoreaudio_drv=${enable_winecoreaudio_drv:-no}
@@ -212,7 +212,7 @@ index d80a2bc..39c0635 100644
  then
      WINE_WARNING([No sound system was found. Windows applications will be silent.])
  fi
-@@ -3259,6 +3285,7 @@ WINE_CONFIG_DLL(winemp3.acm)
+@@ -3184,6 +3210,7 @@ WINE_CONFIG_DLL(winemp3.acm)
  WINE_CONFIG_DLL(wineoss.drv)
  WINE_CONFIG_DLL(wineps.drv,,[clean,po])
  WINE_CONFIG_DLL(wineps16.drv16,enable_win16)
@@ -2024,7 +2024,7 @@ index 38495df..19b5b56 100644
      test_marshal();
      trace("Output to a MS-DOS console is particularly slow and disturbs timing.\n");
 diff --git a/dlls/ntdll/ntdll_misc.h b/dlls/ntdll/ntdll_misc.h
-index a45e6b0..4d0d750 100644
+index 4370084..1af819b 100644
 --- a/dlls/ntdll/ntdll_misc.h
 +++ b/dlls/ntdll/ntdll_misc.h
 @@ -28,6 +28,7 @@
@@ -2035,7 +2035,7 @@ index a45e6b0..4d0d750 100644
  
  #define MAX_NT_PATH_LENGTH 277
  
-@@ -234,6 +235,8 @@ struct ntdll_thread_data
+@@ -235,6 +236,8 @@ struct ntdll_thread_data
      WINE_VM86_TEB_INFO vm86;          /* 1fc vm86 private data */
      void              *exit_frame;    /* 204 exit frame pointer */
  #endif
@@ -2171,7 +2171,7 @@ index f3c6b38..8c48fd2 100644
   *           server_init_thread
   *
 diff --git a/dlls/ntdll/thread.c b/dlls/ntdll/thread.c
-index 8a63725..2bbfc55 100644
+index 9f0dfc0..b1ba213 100644
 --- a/dlls/ntdll/thread.c
 +++ b/dlls/ntdll/thread.c
 @@ -33,6 +33,7 @@
@@ -2190,7 +2190,7 @@ index 8a63725..2bbfc55 100644
  };
  
  static PEB *peb;
-@@ -203,6 +205,78 @@ static ULONG get_dyld_image_info_addr(void)
+@@ -202,6 +204,78 @@ static ULONG get_dyld_image_info_addr(void)
  }
  #endif  /* __APPLE__ */
  
@@ -2269,7 +2269,7 @@ index 8a63725..2bbfc55 100644
  /***********************************************************************
   *           thread_init
   *
-@@ -221,6 +295,7 @@ HANDLE thread_init(void)
+@@ -220,6 +294,7 @@ HANDLE thread_init(void)
      struct ntdll_thread_data *thread_data;
      static struct debug_info debug_info;  /* debug info for initial thread */
  
@@ -2277,7 +2277,7 @@ index 8a63725..2bbfc55 100644
      virtual_init();
  
      /* reserve space for shared user data */
-@@ -349,14 +424,12 @@ void terminate_thread( int status )
+@@ -347,14 +422,12 @@ void terminate_thread( int status )
      pthread_exit( UIntToPtr(status) );
  }
  
@@ -2295,7 +2295,7 @@ index 8a63725..2bbfc55 100644
  
      if (status)  /* send the exit code to the server (0 is already the default) */
      {
-@@ -384,24 +457,158 @@ void exit_thread( int status )
+@@ -377,24 +450,158 @@ void exit_thread( int status )
  
      pthread_sigmask( SIG_BLOCK, &server_block_set, NULL );
  
@@ -2455,7 +2455,7 @@ index 8a63725..2bbfc55 100644
  
  /***********************************************************************
   *           start_thread
-@@ -434,9 +641,26 @@ static void start_thread( struct startup_info *info )
+@@ -423,9 +630,26 @@ static void start_thread( struct startup_info *info )
      if (TRACE_ON(relay))
          DPRINTF( "%04x:Starting thread proc %p (arg=%p)\n", GetCurrentThreadId(), func, arg );
  
@@ -2484,7 +2484,7 @@ index 8a63725..2bbfc55 100644
  
  /***********************************************************************
   *              RtlCreateUserThread   (NTDLL.@)
-@@ -534,8 +758,18 @@ NTSTATUS WINAPI RtlCreateUserThread( HANDLE process, const SECURITY_DESCRIPTOR *
+@@ -523,8 +747,18 @@ NTSTATUS WINAPI RtlCreateUserThread( HANDLE process, const SECURITY_DESCRIPTOR *
  
      info = (struct startup_info *)(teb + 1);
      info->teb         = teb;
@@ -2505,7 +2505,7 @@ index 8a63725..2bbfc55 100644
  
      thread_data = (struct ntdll_thread_data *)teb->SpareBytes1;
      thread_data->request_fd  = request_pipe[1];
-@@ -550,7 +784,7 @@ NTSTATUS WINAPI RtlCreateUserThread( HANDLE process, const SECURITY_DESCRIPTOR *
+@@ -539,7 +773,7 @@ NTSTATUS WINAPI RtlCreateUserThread( HANDLE process, const SECURITY_DESCRIPTOR *
                             (char *)teb->Tib.StackBase - (char *)teb->DeallocationStack );
      pthread_attr_setscope( &attr, PTHREAD_SCOPE_SYSTEM ); /* force creating a kernel thread */
      interlocked_xchg_add( &nb_threads, 1 );
@@ -2514,7 +2514,7 @@ index 8a63725..2bbfc55 100644
      {
          interlocked_xchg_add( &nb_threads, -1 );
          pthread_attr_destroy( &attr );
-@@ -560,6 +794,11 @@ NTSTATUS WINAPI RtlCreateUserThread( HANDLE process, const SECURITY_DESCRIPTOR *
+@@ -549,6 +783,11 @@ NTSTATUS WINAPI RtlCreateUserThread( HANDLE process, const SECURITY_DESCRIPTOR *
      pthread_attr_destroy( &attr );
      pthread_sigmask( SIG_SETMASK, &sigset, NULL );
  
@@ -2556,10 +2556,10 @@ index 0d829a0..46e22f4 100644
 +#endif
 diff --git a/dlls/winepulse.drv/Makefile.in b/dlls/winepulse.drv/Makefile.in
 new file mode 100644
-index 0000000..0f595f1
+index 0000000..ae66542
 --- /dev/null
 +++ b/dlls/winepulse.drv/Makefile.in
-@@ -0,0 +1,9 @@
+@@ -0,0 +1,7 @@
 +MODULE    = winepulse.drv
 +IMPORTS   = dxguid uuid winmm user32 advapi32 ole32
 +EXTRALIBS = @PULSELIBS@ @LIBPTHREAD@
@@ -2567,8 +2567,6 @@ index 0000000..0f595f1
 +
 +C_SRCS = \
 +	mmdevdrv.c
-+
-+@MAKE_DLL_RULES@
 diff --git a/dlls/winepulse.drv/mmdevdrv.c b/dlls/winepulse.drv/mmdevdrv.c
 new file mode 100644
 index 0000000..f052a08
@@ -5947,7 +5945,7 @@ index 2159fac..fb3b951 100644
    local: *;
  };
 diff --git a/loader/Makefile.in b/loader/Makefile.in
-index 37104a7..c2728d7 100644
+index 2c81e26..947f9fc 100644
 --- a/loader/Makefile.in
 +++ b/loader/Makefile.in
 @@ -1,5 +1,5 @@
@@ -6030,7 +6028,7 @@ index 973bd02..1982c93 100644
  }
  
 diff --git a/server/Makefile.in b/server/Makefile.in
-index 9711cac..aa4db42 100644
+index 3998f2f..81815ca 100644
 --- a/server/Makefile.in
 +++ b/server/Makefile.in
 @@ -1,4 +1,5 @@
