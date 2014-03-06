@@ -72,7 +72,6 @@ source=("ftp://www.kernel.org/pub/linux/kernel/v${_major}.x/linux-${_basekernel}
 	'change-default-console-loglevel.patch'
         'http://repo-ck.com/source/gcc_patch/enable_additional_cpu_optimizations_for_gcc.patch.gz'
 	'criu-no-expert.patch'
-	'3.12-btrfs-relocate-csums.patch'
 	"${_pfpatchhome}${_pfpatchname}.xz"	# the -pf patchset
 	'0001-sunrpc-create-a-new-dummy-pipe-for-gssd-to-hold-open.patch'
         '0002-sunrpc-replace-sunrpc_net-gssd_running-flag-with-a-m.patch'
@@ -143,10 +142,6 @@ prepare() {
   # patch from fedora
   patch -Np1 -i "${srcdir}"/criu-no-expert.patch
 
-  # fix btrfs balance bug
-  # https://bugzilla.kernel.org/show_bug.cgi?id=63411
-  # https://bugs.archlinux.org/task/37867
-  #patch -Np1 -i "${srcdir}/3.12-btrfs-relocate-csums.patch"
 
   # fix 15 seocnds nfs delay
   # http://git.linux-nfs.org/?p=trondmy/linux-nfs.git;a=commitdiff;h=4b9a445e3eeb8bd9278b1ae51c1b3a651e370cd6
