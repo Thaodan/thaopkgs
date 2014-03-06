@@ -2,11 +2,11 @@
 # Contributor: Ionut Biru <ibiru@archlinux.org>
 # Maintainer : Björn Bidar <theodostormgrade@gmail.com>
 
-_godver=3.12
-_badver=3.13
+_godver=3.13
+_badver=3.14
 pkgname=virtualbox-modules-pf
 pkgver=4.3.8
-pkgrel=1
+pkgrel=2
 pkgdesc='Host linux-pf kernel modules for VirtualBox'
 arch=('i686' 'x86_64')
 url='http://virtualbox.org'
