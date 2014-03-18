@@ -4,21 +4,26 @@
 # Contributor: Eduardo Romero <eduardo@archlinux.org>
 # Contributor: Giovanni Scafora <giovanni@archlinux.org>
 
-pkgname=wine-multimedia
+pkgname=wine-multimedia-csmt
 _basename=wine
-pkgver=1.7.10
+pkgver=1.7.13
 pkgrel=1
 
 _pkgbasever=${pkgver/rc/-rc}
-_wine_multimedia_patch=winemultimedia_1.7.10_20140105.patch
-source=(http://prdownloads.sourceforge.net/$_basename/$_basename-$_pkgbasever.tar.bz2{,.sign}
+_wine_multimedia_patch=winemultimedia_1.7.13_20140225.patch
+_wine_d3d_command_stream_patch=wine_d3d_command_stream_20141703.patch
+source=(https://github.com/stefand/wine/archive/wine-1.7.13.zip/$_basename-$_pkgbasever.tar.bz2
   30-win32-aliases.conf
-  'use_glBufferSubDataARB_dbuffer.patch::http://bugs.winehq.org/attachment.cgi?id=42868'
+  #'use_glBufferSubDataARB_dbuffer.patch::http://bugs.winehq.org/attachment.cgi?id=42868'
   "${_wine_multimedia_patch}"
 )
+md5sums=('f238be82934d48fee55b46789a26d9aa'
+         '1ff4e467f59409272088d92173a0f801'
+         '790ae9eabd75c21785d4b8cadf7420ed'
+         'e7f7a166ec43b1cda5fc46f2c5832e3d')
 
 
-pkgdesc="Wine with Maarten Lankhorst's multimedia patches, including PulseAudio support"
+pkgdesc="Wine with Maarten Lankhorst's multimedia patches, including PulseAudio support with csmt"
 url="http://www.winehq.com"
 arch=(i686 x86_64)
 license=(LGPL)
@@ -116,7 +121,7 @@ prepare() {
   msg2 "Applying multimedia branch patch"
   cd $_basename  
   patch -Np1 -i "${srcdir}"/"${_wine_multimedia_patch}"
-  patch -Np1 -i "${srcdir}"/use_glBufferSubDataARB_dbuffer.patch
+  #patch -Np1 -i "${srcdir}"/use_glBufferSubDataARB_dbuffer.patch
 }
 
 build() {
@@ -191,8 +196,3 @@ package() {
 }
 
 # vim:set ts=8 sts=2 sw=2 et:
-md5sums=('dc58a93457071b187e75c90ce74c069f'
-         'SKIP'
-         '1ff4e467f59409272088d92173a0f801'
-         'b645a6b5331c43f8b6c580dc18221da8'
-         '264702eb9a685a2b6eb45023fc9d6ba6')
