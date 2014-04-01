@@ -5,8 +5,8 @@
 _godver=3.13
 _badver=3.14
 pkgname=virtualbox-modules-pf
-pkgver=4.3.8
-pkgrel=2
+pkgver=4.3.10
+pkgrel=1
 pkgdesc='Host linux-pf kernel modules for VirtualBox'
 arch=('i686' 'x86_64')
 url='http://virtualbox.org'
