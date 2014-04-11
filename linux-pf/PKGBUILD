@@ -79,6 +79,7 @@ source=("ftp://www.kernel.org/pub/linux/kernel/v${_major}.x/linux-${_basekernel}
         '0006-genksyms-fix-typeof-handling.patch'
         '0007-Fix-the-use-of-code32_start-in-the-EFI-boot-stub.patch'
 	"${_pfpatchhome}${_pfpatchname}.xz"	# the -pf patchset
+	http://repo-ck.com/source/gcc_patch/enable_additional_cpu_optimizations_for_gcc.patch.gz
 )
 
 _aufs3git="http://git.code.sf.net/p/aufs/aufs3-standalone"
@@ -166,7 +167,7 @@ prepare() {
 
 
   # added gcc 4.7.1 support for Kconfig and menuconfig
-  #zcat ${srcdir}/enable_additional_cpu_optimizations_for_gcc.patch.gz | patch -Np1
+  zcat ${srcdir}/enable_additional_cpu_optimizations_for_gcc.patch.gz | patch -Np1
   if [ "$CARCH" = "x86_64" ]; then
 	cat "${startdir}/config.x86_64" >| .config
   else
@@ -719,4 +720,5 @@ sha256sums=('61558aa490855f42b6340d1a1596be47454909629327c49a5e4e10268065dffa'
             'e0666f75eabc2bbfa668cb35ee72dfbad48e5963828a444fbb50388048a8cd3c'
             'd2c449d346ae52724d36c3224bd06fcae7775b0698a9096eb89eeaa6dbc092e5'
             '5a175c698cfdbf942f712afeda2a6af3f4e63a742ec6b6dc3a64bc6a7fb685bb'
-            'de7e7a157cd67de7becb8d35019804f2a7c055d569df8cbbd4c45b93fef16757')
+            'de7e7a157cd67de7becb8d35019804f2a7c055d569df8cbbd4c45b93fef16757'
+            '70717f6c64bed9da2450b3a824b25df0a916cdf43ee1e0f537057db3f9a33b8d')
