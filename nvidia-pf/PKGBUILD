@@ -3,8 +3,8 @@
 pkgname=nvidia-pf
 pkgver=334.21
 pkgrel=1
-_goodkver=3.13
-_badkver=3.14
+_goodkver=3.14
+_badkver=3.15
 _modver=${_goodkver}-pf
 _extramodules=extramodules-$_modver
 _kernver="$(cat /usr/lib/modules/${_extramodules}/version)"
