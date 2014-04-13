@@ -66,6 +66,7 @@ url="http://pf.natalenko.name/"
 license=('GPL2')
 options=('!strip')
 makedepends=('git' 'xmlto' 'docbook-xsl' 'xz' 'bc')
+_gcc_patch="enable_additional_cpu_optimizations_for_gcc.patch"
 source=("ftp://www.kernel.org/pub/linux/kernel/v${_major}.x/linux-${_basekernel}.tar.xz"
 	'config' 'config.x86_64'		# the main kernel config files
 	'linux.preset'			# standard config files for mkinitcpio ramdisk
@@ -79,7 +80,7 @@ source=("ftp://www.kernel.org/pub/linux/kernel/v${_major}.x/linux-${_basekernel}
         '0006-genksyms-fix-typeof-handling.patch'
         '0007-Fix-the-use-of-code32_start-in-the-EFI-boot-stub.patch'
 	"${_pfpatchhome}${_pfpatchname}.xz"	# the -pf patchset
-	http://repo-ck.com/source/gcc_patch/enable_additional_cpu_optimizations_for_gcc.patch.gz
+	http://repo-ck.com/source/gcc_patch/$_gcc_patch.gz
 )
 
 _aufs3git="http://git.code.sf.net/p/aufs/aufs3-standalone"
@@ -167,7 +168,7 @@ prepare() {
 
 
   # added gcc 4.7.1 support for Kconfig and menuconfig
-  zcat ${srcdir}/enable_additional_cpu_optimizations_for_gcc.patch.gz | patch -Np1
+ # patch -Np1 -i "${srcdir}/${_gcc_patch}"
   if [ "$CARCH" = "x86_64" ]; then
 	cat "${startdir}/config.x86_64" >| .config
   else
