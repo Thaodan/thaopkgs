@@ -4,44 +4,52 @@
 # enable this if you run out of memory during linking
 _lowmem=true
 
+# try to build with PGO
+#_pgo=true
+
 pkgname=firefox-kde-opensuse
-pkgver=23.0.1
+pkgver=29.0
 pkgrel=1
 pkgdesc="Standalone web browser from mozilla.org with OpenSUSE patch, integrate better with KDE"
 arch=('i686' 'x86_64')
 license=('MPL' 'GPL' 'LGPL')
-url="https://www.mozilla.org/firefox/"
+url="https://build.opensuse.org/package/show/mozilla:Factory/MozillaFirefox"
 depends=('gtk2' 'mozilla-common' 'libxt' 'startup-notification' 'mime-types'
-         'dbus-glib' 'alsa-lib' 'libvpx' 'libevent' 'nss' 'hunspell' 'sqlite'
-         'libnotify' 'desktop-file-utils' 'hicolor-icon-theme'
-         'kmozillahelper' )
-
+         'dbus-glib' 'alsa-lib' 'desktop-file-utils' 'hicolor-icon-theme'
+	 'libvpx' 'libevent' 'nss' 'hunspell' 'sqlite' 'libnotify' 'kmozillahelper')
 makedepends=('unzip' 'zip' 'diffutils' 'python2' 'yasm' 'mesa' 'imake'
-             'xorg-server-xvfb' 'libpulse')
+             'xorg-server-xvfb' 'libpulse' 'gstreamer0.10-base')
 optdepends=('networkmanager: Location detection via available WiFi networks'
+            'gstreamer0.10-base-plugins: vorbis decoding, ogg demuxing'
+            'gstreamer0.10-good-plugins: webm and mp4 demuxing'
+            'gstreamer0.10-bad-plugins: aac, vp8 and opus decoding'
+            'gstreamer0.10-ugly-plugins: h.264 and mp3 decoding'
+	    'gstreamer0.10-ffmpeg: more decoders'
             'libpulse: PulseAudio audio driver')
 provides=("firefox=${pkgver}")
 conflicts=('firefox')
 install=firefox.install
 options=(!emptydirs)
-_patchurl=https://build.opensuse.org/package/rawsourcefile/mozilla:Factory/MozillaFirefox
-_patchrev=cdf792b65a71d76e6cb48d838870b3ec
+_patchrev=ae78294f6f84
+_patchurl=http://www.rosenauer.org/hg/mozilla/raw-file/$_patchrev
 source=(https://ftp.mozilla.org/pub/mozilla.org/firefox/releases/$pkgver/source/firefox-$pkgver.source.tar.bz2
-        mozconfig firefox.desktop firefox-install-dir.patch vendor.js shared-libs.patch
-        cairo-shared.patch kde.js
-	firefox-kde.patch::$_patchurl/firefox-kde.patch?srcmd5=$_patchrev
-	mozilla-kde.patch::$_patchurl/mozilla-kde.patch?srcmd5=$_patchrev
-	mozilla-nongnome-proxies.patch::$_patchurl/mozilla-nongnome-proxies.patch?srcmd5=$_patchrev
-	firefox-branded-icons.patch::$_patchurl/firefox-branded-icons.patch?srcmd5=$_patchrev
-	firefox-browser-css.patch::$_patchurl/firefox-browser-css.patch?srcmd5=$_patchrev
-	firefox-kde-114.patch::$_patchurl/firefox-kde-114.patch?srcmd5=$_patchrev
-	firefox-no-default-ualocale.patch::$_patchurl/firefox-no-default-ualocale.patch?srcmd5=$_patchrev
-	mozilla-language.patch::$_patchurl/mozilla-language.patch?srcmd5=$_patchrev
-	mozilla-prefer_plugin_pref.patch::$_patchurl/mozilla-prefer_plugin_pref.patch?srcmd5=$_patchrev
-	mozilla-preferences.patch::$_patchurl/mozilla-preferences.patch?srcmd5=$_patchrev
-	toolkit-download-folder.patch::$_patchurl/toolkit-download-folder.patch?srcmd5=$_patchrev
+        mozconfig firefox.desktop firefox-install-dir.patch vendor.js kde.js firefox-20.0.1-fixed-loading-icon.png
+	# Firefox patchset
+	$_patchurl/firefox-kde.patch
+	$_patchurl/firefox-kde-114.patch
+	$_patchurl/firefox-no-default-ualocale.patch
+	$_patchurl/firefox-branded-icons.patch
+	# Gecko/toolkit patchset
+	$_patchurl/toolkit-download-folder.patch
+	$_patchurl/mozilla-nongnome-proxies.patch
+	$_patchurl/mozilla-prefer_plugin_pref.patch
+	$_patchurl/mozilla-kde.patch
+	$_patchurl/mozilla-preferences.patch
+	$_patchurl/mozilla-language.patch
 	unity-menubar.patch
 )
+
+_google_api_key=AIzaSyDwr302FpOSkGRpLlUpPThNTDPbXcIn_FM
 
 prepare() {
   cd mozilla-release
@@ -49,11 +57,7 @@ prepare() {
   cp "$srcdir/mozconfig" .mozconfig
 
   patch -Np1 -i "$srcdir/firefox-install-dir.patch"
-  patch -Np1 -i "$srcdir/shared-libs.patch"
-
-  # Fix build with system cairo
-  # https://bugzilla.mozilla.org/show_bug.cgi?id=722975
-  patch -Np1 -i "$srcdir/cairo-shared.patch"
+  echo -n "$_google_api_key" > google-api-key
 
   msg "Patching for KDE"
   rm -f content/media/gstreamer/nsGStreamerFormatHelper.{h,cpp}
@@ -63,15 +67,19 @@ prepare() {
   rm -f uriloader/exthandler/unix/{nsCommonRegistry,nsKDERegistry}.{h,cpp}
   rm -f toolkit/content/widgets/{dialog,preferences}-kde.xml
 
+  patch -Np1 -i "$srcdir/toolkit-download-folder.patch"
   patch -Np1 -i "$srcdir/mozilla-nongnome-proxies.patch"
+  patch -Np1 -i "$srcdir/mozilla-prefer_plugin_pref.patch"
   patch -Np1 -i "$srcdir/mozilla-kde.patch"
+  patch -Np1 -i "$srcdir/mozilla-preferences.patch"
+  patch -Np1 -i "$srcdir/mozilla-language.patch"
+
   patch -Np1 -i "$srcdir/firefox-kde.patch"
+  patch -Np1 -i "$srcdir/firefox-kde-114.patch"
+  patch -Np1 -i "$srcdir/firefox-no-default-ualocale.patch"
+  patch -Np1 -i "$srcdir/firefox-branded-icons.patch"
+  msg "Adding globalmenu support"
   patch -Np1 -i "$srcdir/unity-menubar.patch"
-
-
-  # Fix PRE_RELEASE_SUFFIX
-  sed -i '/^PRE_RELEASE_SUFFIX := ""/s/ ""//' browser/base/Makefile.in
-
   # configure script misdetects the preprocessor without an optimization level
   # https://bugs.archlinux.org/task/34644
   sed -i '/ac_cpp=/s/$CPPFLAGS/& -O2/' configure
@@ -79,35 +87,56 @@ prepare() {
   # WebRTC build tries to execute "python" and expects Python 2
   mkdir -p "$srcdir/path"
   ln -s /usr/bin/python2 "$srcdir/path/python"
+
+  # Fix tab loading icon (flickers with libpng 1.6)
+  # https://bugzilla.mozilla.org/show_bug.cgi?id=841734
+  cp "$srcdir/firefox-20.0.1-fixed-loading-icon.png" \
+    browser/themes/linux/tabbrowser/loading.png
 }
 
 build() {
+  if pacman -T firefox && ! pacman -T "firefox=$pkgver"; then
+    error "Please uninstall firefox temporarily before building it (pacman -Rdd ...)"
+    exit 1
+  fi
+
   cd mozilla-release
 
   export PATH="$srcdir/path:$PATH"
   export LDFLAGS="$LDFLAGS -Wl,-rpath,/usr/lib/firefox"
   export PYTHON="/usr/bin/python2"
+  export CPPFLAGS="$CPPFLAGS -mno-avx"
 
-  if [[ -n $_lowmem ]]; then
-    export LDFLAGS+=" -Wl,--no-keep-memory"
+
+  if [[ -n $_lowmem || $CARCH == i686 ]]; then
+    LDFLAGS+=" -Wl,--no-keep-memory"
   fi
 
   export MOZ_MAKE_FLAGS="$MAKEFLAGS"
   unset MAKEFLAGS
 
-  export DISPLAY=:99
-  Xvfb -nolisten tcp -extension GLX -screen 0 1280x1024x24 $DISPLAY &
-  
-  if ! make -f client.mk profiledbuild; then
-    kill $!
-    return 1
-  fi
+  if [[ -n $_pgo ]]; then
+    # Set up PGO
+    export DISPLAY=:99
+    Xvfb -nolisten tcp -extension GLX -screen 0 1280x1024x24 $DISPLAY &
 
-  kill $! || true
+    if ! make -f client.mk build MOZ_PGO=1; then
+      kill $!
+      return 1
+    fi
+
+    kill $! || true
+  else
+    make -f client.mk build
+  fi
 }
 
 package() {
   cd mozilla-release
+
+  [[ "$CARCH" == "i686" ]] && cp "$srcdir/kde.js" obj-i686-pc-linux-gnu/dist/bin/defaults/pref
+  [[ "$CARCH" == "x86_64" ]] && cp "$srcdir/kde.js" obj-x86_64-unknown-linux-gnu/dist/bin/defaults/pref
+
   make -f client.mk DESTDIR="$pkgdir" install
 
   install -Dm644 "$srcdir/vendor.js" "$pkgdir/usr/lib/firefox/browser/defaults/preferences/vendor.js"
@@ -123,7 +152,9 @@ package() {
   install -Dm644 browser/branding/official/mozicon128.png \
     "$pkgdir/usr/share/icons/hicolor/128x128/apps/firefox.png"
   install -Dm644 browser/branding/official/content/about-logo.png \
-    "$pkgdir/usr/share/icons/hicolor/210x210/apps/firefox.png"
+    "$pkgdir/usr/share/icons/hicolor/192x192/apps/firefox.png"
+  install -Dm644 browser/branding/official/content/about-logo@2x.png \
+    "$pkgdir/usr/share/icons/hicolor/384x384/apps/firefox.png"
 
   install -Dm644 "$srcdir/firefox.desktop" "$pkgdir/usr/share/applications/firefox.desktop"
 
@@ -133,30 +164,28 @@ package() {
   ln -s /usr/share/hyphen "$pkgdir/usr/lib/firefox/hyphenation"
 
   # We don't want the development stuff
-  rm -r "$pkgdir"/usr/{include,lib/firefox-devel,share/idl}
+  rm -r "$pkgdir"/usr/{include,share/idl}
 
   #workaround for now
   #https://bugzilla.mozilla.org/show_bug.cgi?id=658850
   ln -sf firefox "$pkgdir/usr/lib/firefox/firefox-bin"
 }
 
-md5sums=('0fa25582fb5e0fba37c9f1add8370af2'
-         'd3c81f774ad4f0a7e48a9d0b9ce019a6'
-         '1df7fd9afd75d06decb129518a769133'
-         '150ac0fb3ac7b2114c8e8851a9e0516c'
-         '0d053487907de4376d67d8f499c5502b'
-         '52e52f840a49eb1d14be1c0065b03a93'
-         '3a236a2a39a60d622cf928655e68657f'
-         '05bb69d25fb3572c618e3adf1ee7b670'
-         'b251189ff372f3b0c86275f8dac2d9e1'
-         '204ab5c4e4e00c840e3b3571f097f02b'
-         '28f61de31540e20522aefdbe88a83fa8'
-         '2bd29a4922a828d2d04f1da22f824ec6'
-         '10f157ef904c650cd69eec1c7779fdf5'
-         '8d1b465949cacd932cc0da43c87e70b5'
-         '676aae76cf28b957abf57eafd2ebd13e'
-         'c911ffebad75086ebd6690678892ae6c'
-         'd7dc7e9e7a57e619d6197a2fd7ce96e9'
-         '1e73ac7e52ffb47233425a144f43622a'
-         '589ce6f4e863188080b8c234dd74629c'
-         '4064d7c121651835a465f170cbee9939')
+sha256sums=('64402a1f1359f3ea30767a94977ae823ac25b39c6d54f9fe6db444ed127db892'
+            '644f40fc6b81ac213e863cacfb470d64b784033afab27ee87b24a47c0bbef823'
+            '175d03cf3d8eb420d24a5a3072be69c9603e3ddacd3a83f68f49754eaecf6c5a'
+            '3b1c52e66b2358c164fe54a95af22ecfb11d92365e5f657660622b713640ca45'
+            '7044b77fb5d4113359144d24beccaf5d1e7cf62c660e3f5c1374bee5b2bf9c00'
+            'b8cc5f35ec35fc96ac5c5a2477b36722e373dbb57eba87eb5ad1276e4df7236d'
+            '68e3a5b47c6d175cc95b98b069a15205f027cab83af9e075818d38610feb6213'
+            'cb2816204131ccfb659b75c4aa831ab6060e27a0b756b143ca4c0850c44d8f70'
+            '1fd54e93db3a4d454ece5a6dc788a4ae36805eb497482add82a11ac5cf990562'
+            '3d439f0a65bc285a43284dfd02d71facdfcf172afc19889bd66edc90c59cdc19'
+            '4785bdf086b7d537cb83369fea5c177eddb6fc3d8a69064599c64376bd985051'
+            '60ace1c57577878850e05976ccf02f7e71512c4d62a8a9a6d270a7941d9625d3'
+            'e8289ea4c1f8191e1e23661312ceee2128b8e790501b9a589d0d7bfc4384553f'
+            '5f6b0970284d68d5ed18e6bb7ee1e9fc0025ab3c10aaa14c283adb21a4a20ee8'
+            '961594b16e534f8c77e1ca7b70d468e166de75e4692b8cb3ea35c4479fa988f5'
+            '86acf2785ec45047cd614bee54e650397aab109da7d5fa70a0df6f11e161998e'
+            'aca072853b379201b0d8ac8128eb6e0e8255ab0c955d7bfd48f6273c8bf245d5'
+            'a6950853cfccb85a41a1c9bea134411b549fc75c4486b1fa2f5313d18e7ce9bc')
