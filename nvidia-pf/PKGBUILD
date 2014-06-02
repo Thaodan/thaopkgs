@@ -33,8 +33,8 @@ options=(!strip)
 
 source=("ftp://download.nvidia.com/XFree86/Linux-x86/${pkgver}/NVIDIA-Linux-x86-${pkgver}.run"
         "ftp://download.nvidia.com/XFree86/Linux-x86_64/${pkgver}/NVIDIA-Linux-x86_64-${pkgver}-no-compat32.run")
-md5sums=('c610d5bff8f7f758dc25fdd51b1b65eb'
-         '4c2aaac75c1ff01a09ac8f4ff84084cd')
+md5sums=('2a217632ced8952e21000a51065f85b8'
+         '66e19d6d621c9e70fbd5374dd8b44341')
 [[ "$CARCH" = "i686" ]] && _pkg="NVIDIA-Linux-x86-${pkgver}"
 [[ "$CARCH" = "x86_64" ]] && _pkg="NVIDIA-Linux-x86_64-${pkgver}-no-compat32"
 
