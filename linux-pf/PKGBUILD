@@ -9,7 +9,7 @@ _minor=16
 _basekernel=${_major}.${_minor}
 _srcname=linux-${_major}.${_minor}
 pkgbase=linux-pf
-_pfrel=1
+_pfrel=2
 _kernelname=-pf
 _pfpatchhome="http://pf.natalenko.name/sources/${_basekernel}/"
 _pfpatchname="patch-${_basekernel}${_kernelname}${_pfrel}"
@@ -60,7 +60,7 @@ _NUMA_off=yes		# Disable NUMA in kernel config
 pkgname=('linux-pf')
 true && pkgname=('linux-pf' 'linux-pf-headers')
 pkgver=${_basekernel}.${_pfrel}
-pkgrel=2
+pkgrel=1
 arch=('i686' 'x86_64')
 url="http://pf.natalenko.name/"
 license=('GPL2')
@@ -72,7 +72,6 @@ source=("ftp://www.kernel.org/pub/linux/kernel/v${_major}.x/linux-${_basekernel}
 	'change-default-console-loglevel.patch'
 	'compal-laptop-hwmon-fix.patch'
 	"${_pfpatchhome}${_pfpatchname}.xz"	# the -pf patchset
-	'https://gist.githubusercontent.com/pfactum/0f4810df61f98579e6e1/raw/57c6b5de17882d422374c912718f42fe4ba811ad/0001-toi-fixes-3.16-another-attempt-to-fix-resume_file-un.patch'
 )
 
 _aufs3git="http://git.code.sf.net/p/aufs/aufs3-standalone"
@@ -132,10 +131,6 @@ prepare() {
   patch -Np1 -i "${srcdir}/change-default-console-loglevel.patch"
 
   # end linux-ARCH patches
-
-
-  patch -Np1 -i "${srcdir}/0001-toi-fixes-3.16-another-attempt-to-fix-resume_file-un.patch"
-
 
   # added gcc 4.7.1 support for Kconfig and menuconfig
   # now inclued in pf patchset
