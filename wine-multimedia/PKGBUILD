@@ -6,19 +6,23 @@
 
 pkgname=wine-multimedia-csmt
 _basename=wine
-pkgver=1.7.15
+pkgver=1.7.24
 pkgrel=1
 
 _pkgbasever=${pkgver/rc/-rc}
-_wine_multimedia_patch=winemultimedia_1.7.16_20140404.patch
-source=(https://github.com/stefand/wine/archive/$_basename-$_pkgbasever.zip
+_wine_multimedia_patch=winemultimedia_1.7.22_20140712.patch 
+source=(https://github.com/stefand/wine/archive/cs-0.9.zip
   30-win32-aliases.conf
   #'use_glBufferSubDataARB_dbuffer.patch::http://bugs.winehq.org/attachment.cgi?id=42868'
   "${_wine_multimedia_patch}"
+  'gcc49.patch::http://bugs.winehq.org/attachment.cgi?id=48545&action=diff&context=patch&collapsed=&headers=1&format=raw'
+  'fix_winebug_35718_wine_wgl.patch::http://bugs.winehq.org/attachment.cgi?id=48503&action=diff&context=patch&collapsed=&headers=1&format=raw'
 )
-md5sums=('66e816fc6cbf3b2260417207ad7063af'
+md5sums=('933c6a56ecd8d66d31fa5b4a46e420ca'
          '1ff4e467f59409272088d92173a0f801'
-         '62e88e60d0bf8a3ac3fc4a155cd31cf6')
+         '3ef55a8345325b15144e2062b627b91f'
+         'cc0de9e4df9af7fc75ea55d852bf87f4'
+         '22a8438b8c561af956963ec964252937')
 
 
 pkgdesc="Wine with Maarten Lankhorst's multimedia patches, including PulseAudio support with csmt"
@@ -110,7 +114,7 @@ fi
 prepare() {
   cd "$srcdir"
   # Allow ccache to work
-  mv $_basename-$_basename-$_pkgbasever $_basename
+  mv  wine-cs-0.9 $_basename
   # ncurses fix
   sed -i 's|libncurses|libncursesw|g' "$srcdir/$_basename/configure"
   sed -i 's|lncurses|lncursesw|g' "$srcdir/$_basename/configure"
@@ -119,6 +123,7 @@ prepare() {
   msg2 "Applying multimedia branch patch"
   cd $_basename  
   patch -Np1 -i "${srcdir}"/"${_wine_multimedia_patch}"
+ # patch -Np1 -i "${srcdir}"/fix_winebug_35718_wine_wgl.patch
   #patch -Np1 -i "${srcdir}"/use_glBufferSubDataARB_dbuffer.patch
 }
 
