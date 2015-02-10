@@ -29,8 +29,8 @@ Index: firefox-trunk-33.0~a1~hg20140721r195224/browser/components/places/content
                id="organizeButton" label="&organize.label;"
 Index: firefox-trunk-33.0~a1~hg20140721r195224/modules/libpref/src/init/all.js
 ===================================================================
---- firefox-trunk-33.0~a1~hg20140721r195224.orig/modules/libpref/src/init/all.js	2014-07-21 10:16:05.320644648 +0100
-+++ firefox-trunk-33.0~a1~hg20140721r195224/modules/libpref/src/init/all.js	2014-07-21 10:16:05.308644648 +0100
+--- firefox-trunk-33.0~a1~hg20140721r195224.orig/modules/libpref/init/all.js	2014-07-21 10:16:05.320644648 +0100
++++ firefox-trunk-33.0~a1~hg20140721r195224/modules/libpref/init/all.js	2014-07-21 10:16:05.308644648 +0100
 @@ -167,6 +167,9 @@
  pref("browser.sessionhistory.max_total_viewers", -1);
  
@@ -5581,8 +5581,8 @@ Index: firefox-trunk-33.0~a1~hg20140721r195224/widget/gtk/nsWindow.h
  class nsChildWindow : public nsWindow {
 Index: firefox-trunk-33.0~a1~hg20140721r195224/xpfe/appshell/src/nsWebShellWindow.cpp
 ===================================================================
---- firefox-trunk-33.0~a1~hg20140721r195224.orig/xpfe/appshell/src/nsWebShellWindow.cpp	2014-07-21 10:16:05.320644648 +0100
-+++ firefox-trunk-33.0~a1~hg20140721r195224/xpfe/appshell/src/nsWebShellWindow.cpp	2014-07-21 10:16:05.316644648 +0100
+--- firefox-trunk-33.0~a1~hg20140721r195224.orig/xpfe/appshell/nsWebShellWindow.cpp	2014-07-21 10:16:05.320644648 +0100
++++ firefox-trunk-33.0~a1~hg20140721r195224/xpfe/appshell/nsWebShellWindow.cpp	2014-07-21 10:16:05.316644648 +0100
 @@ -58,6 +58,7 @@
  #include "nsIScreen.h"
  
@@ -5617,14 +5617,15 @@ Index: firefox-trunk-33.0~a1~hg20140721r195224/xpfe/appshell/src/nsWebShellWindo
  }
 Index: firefox-trunk-33.0~a1~hg20140721r195224/widget/gtk/moz.build
 ===================================================================
---- firefox-trunk-33.0~a1~hg20140721r195224.orig/widget/gtk/moz.build	2014-07-21 10:16:05.320644648 +0100
-+++ firefox-trunk-33.0~a1~hg20140721r195224/widget/gtk/moz.build	2014-07-21 10:16:05.316644648 +0100
-@@ -23,10 +23,19 @@
-     'NativeKeyBindings.cpp',
+--- firefox-trunk-33.0~a1~hg20140721r195224.orig/widget/gtk/moz.build 2015-02-10 08:32:33.038220884 +0100
++++ firefox-trunk-33.0~a1~hg20140721r195224/widget/gtk/moz.build   2015-02-10 08:31:19.394226643 +0100
+@@ -19,11 +19,20 @@
+     'nsAppShell.cpp',
      'nsBidiKeyboard.cpp',
      'nsColorPicker.cpp',
 +    'nsDbusmenu.cpp',
      'nsFilePicker.cpp',
+     'nsGtkIMModule.cpp',
      'nsGtkKeyUtils.cpp',
      'nsImageToPixbuf.cpp',
      'nsLookAndFeel.cpp',
@@ -5639,40 +5640,44 @@ Index: firefox-trunk-33.0~a1~hg20140721r195224/widget/gtk/moz.build
      'nsNativeThemeGTK.cpp',
      'nsScreenGtk.cpp',
      'nsScreenManagerGtk.cpp',
-@@ -40,6 +49,7 @@
- SOURCES += [
-     'nsAppShell.cpp',
-     'nsGtkIMModule.cpp',
-+    'nsNativeMenuService.cpp',
+@@ -32,10 +41,12 @@
      'nsWidgetFactory.cpp',
-     'nsWindow.cpp',
+     'WakeLockListener.cpp',
+     'WidgetTraceEvent.cpp',
++
  ]
-@@ -96,6 +106,7 @@
+ 
+ SOURCES += [
+-    'nsWindow.cpp', # conflicts with X11 headers
++    'nsNativeMenuService.cpp',
++    'nsWindow.cpp' # conflicts with X11 headers
+ ]
+ 
+ if CONFIG['MOZ_X11']:
+@@ -84,6 +95,7 @@
      '../shared',
      '../xpwidgets',
      '/layout/generic',
 +    '/layout/style',
      '/layout/xul',
      '/other-licenses/atk-1.0',
- ]
+     '/toolkit/xre'
+
 Index: firefox-trunk-33.0~a1~hg20140721r195224/widget/moz.build
 ===================================================================
---- firefox-trunk-33.0~a1~hg20140721r195224.orig/widget/moz.build	2014-07-21 10:16:05.320644648 +0100
-+++ firefox-trunk-33.0~a1~hg20140721r195224/widget/moz.build	2014-07-21 10:16:05.316644648 +0100
-@@ -38,10 +38,12 @@
-         'nsITaskbarProgress.idl',
-     ]
-     EXPORTS += [
--        'nsINativeMenuService.h',
-         'nsIPrintDialogService.h',
-     ]
- 
-+if toolkit in ('cocoa', 'gtk2', 'gtk3'):
+--- firefox-trunk-33.0~a1~hg20140721r195224.orig/widget/moz.build       2015-02-10 08:32:33.048220884 +0100
++++ firefox-trunk-33.0~a1~hg20140721r195224/widget/moz.build 2015-02-10 08:31:54.874223868 +0100
+@@ -12,6 +12,9 @@
+     DIRS += [toolkit]
+ if toolkit in ('qt', 'android', 'gonk', 'gtk2', 'gtk3'):
+     EXPORTS += ['nsIPrintDialogService.h']
++if toolkit in ('gtk2', 'gtk3'):
 +    EXPORTS += ['nsINativeMenuService.h']
 +
- TEST_TOOL_DIRS += ['tests']
  
- # Don't build the DSO under the 'build' directory as windows does.
+ if toolkit == 'windows':
+     DIRS += ['windows']
+
 Index: firefox-trunk-33.0~a1~hg20140721r195224/browser/base/content/browser.js
 ===================================================================
 --- firefox-trunk-33.0~a1~hg20140721r195224.orig/browser/base/content/browser.js	2014-07-21 10:16:05.320644648 +0100
