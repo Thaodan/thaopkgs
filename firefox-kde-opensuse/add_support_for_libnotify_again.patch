@@ -59,9 +59,31 @@ diff --git a/toolkit/system/gnome/moz.build b/toolkit/system/gnome/moz.build
  
  if CONFIG['MOZ_ENABLE_GNOMEVFS']:
 diff --git a/toolkit/system/gnome/nsAlertsIconListener.cpp b/toolkit/system/gnome/nsAlertsIconListener.cpp
---- a/toolkit/system/gnome/nsAlertsIconListener.cpp   2015-02-10 20:35:20.886146855 +0100
-+++ b/toolkit/system/gnome/nsAlertsIconListener.cpp    2015-02-10 20:26:51.749979641 +0100
-@@ -121,15 +121,16 @@
+--- a/toolkit/system/gnome/nsAlertsIconListener.cpp   2015-01-23 07:00:08.000000000 +0100
++++ b/toolkit/system/gnome/nsAlertsIconListener.cpp     2015-02-11 10:03:08.966582020 +0100
+@@ -51,6 +51,21 @@
+   NS_RELEASE(alert);
+ }
+ 
++static GdkPixbuf*
++GetPixbufFromImgRequest(imgIRequest* aRequest)
++{
++  nsCOMPtr<imgIContainer> image;
++  nsresult rv = aRequest->GetImage(getter_AddRefs(image));
++  if (NS_FAILED(rv)) {
++    return nullptr;
++  }
++  
++  nsCOMPtr<nsIImageToPixbuf> imgToPixbuf =
++    do_GetService("@mozilla.org/widget/image-to-gdk-pixbuf;1");
++  
++  return imgToPixbuf->ConvertImageToPixbuf(image);
++}
++
+ NS_IMPL_ISUPPORTS(nsAlertsIconListener, imgINotificationObserver,
+                   nsIObserver, nsISupportsWeakReference)
+ 
+@@ -106,15 +121,16 @@
  nsresult
  nsAlertsIconListener::OnStopRequest(imgIRequest* aRequest)
  {
@@ -81,7 +103,7 @@ diff --git a/toolkit/system/gnome/nsAlertsIconListener.cpp b/toolkit/system/gnom
      mIconRequest->Cancel(NS_BINDING_ABORTED);
      mIconRequest = nullptr;
    }
-@@ -139,28 +140,18 @@
+@@ -124,29 +140,19 @@
  nsresult
  nsAlertsIconListener::OnStopFrame(imgIRequest* aRequest)
  {
@@ -119,7 +141,7 @@ diff --git a/toolkit/system/gnome/nsAlertsIconListener.cpp b/toolkit/system/gnom
 -  mLoadedFrame = true;
    return NS_OK;
  }
-
+ 
 
 diff --git a/toolkit/system/gnome/nsAlertsIconListener.h b/toolkit/system/gnome/nsAlertsIconListener.h
 new file mode 100644
