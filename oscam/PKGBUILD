@@ -3,7 +3,7 @@
 
 pkgname=oscam
 pkgver=1.10
-pkgrel=3
+pkgrel=4
 pkgdesc="The Open Source Conditional Access Module daemon"
 arch=('i686' 'x86_64')
 url="http://oscam.to/"
@@ -36,9 +36,13 @@ build() {
         -DWEBIF=1 \
         -DWITH_SSL=1 \
 	-DHAVE_DVBAPI=1\
-	-DREADER_VIACCESS=1\
+	-DREADER_NAGRA=1 \
         ../$pkgname
-  make
+  cd ../$pkgame/$pkgname
+  ls
+  sh  config.sh
+  cd ../${pkgname}-build
+  make CS_CONFDIR=/etc 
 }
 
 package() {
