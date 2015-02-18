@@ -1,0 +1,52 @@
+# Maintainer:  Joakim Hernberg <jhernberg@alchemy.lu>
+# Contributor: Markus Opitz <mastero23 at gmail dot com>
+
+pkgname=oscam
+pkgver=1.10
+pkgrel=3
+pkgdesc="The Open Source Conditional Access Module daemon"
+arch=('i686' 'x86_64')
+url="http://oscam.to/"
+license=('GPL3')
+depends=('bash' 'openssl' 'pcsclite')
+makedepends=('cmake' 'subversion')
+options=(emptydirs)
+install=oscam.install
+source=(oscam.service $pkgname::svn+http://streamboard.de.vu/svn/oscam/tags/1.10)
+md5sums=('bd18d6326ac6c10caaef9d4e19542e01'
+         'SKIP')
+
+
+_svnrepo=http://streamboard.de.vu/svn/oscam/tags/1.10
+_svnmod=oscam
+_svnrev=5954
+
+prepare()
+{
+  mkdir -p "$srcdir"/${pkgname}-build
+}
+build() {
+  cd "$srcdir"
+
+  msg "Starting make..."
+
+  cd "$srcdir/$_svnmod-build"
+
+  cmake -DCMAKE_INSTALL_PREFIX=/usr \
+        -DWEBIF=1 \
+        -DWITH_SSL=1 \
+	-DHAVE_DVBAPI=1\
+	-DREADER_VIACCESS=1\
+        ../$pkgname
+  make
+}
+
+package() {
+  cd "$srcdir/$_svnmod-build"
+
+  make DESTDIR="$pkgdir/" install
+
+  install -m 755 -d "$pkgdir/etc/oscam"
+  install -D -m 644 "$srcdir/oscam.service" "$pkgdir/usr/lib/systemd/system/oscam.service"
+}
+
