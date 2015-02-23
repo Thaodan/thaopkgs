@@ -12,7 +12,7 @@ depends=('bash' 'openssl' 'pcsclite')
 makedepends=('cmake' 'subversion')
 options=(emptydirs)
 install=oscam.install
-source=(oscam.service $pkgname::svn+http://streamboard.de.vu/svn/oscam/tags/1.10)
+source=(oscam.service $pkgname::svn+http://streamboard.de.vu/svn/oscam)
 md5sums=('bd18d6326ac6c10caaef9d4e19542e01'
          'SKIP')
 
