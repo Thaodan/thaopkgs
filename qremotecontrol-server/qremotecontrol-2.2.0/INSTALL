@@ -1,4 +1,0 @@
-To install qremotecontrol-server run:
-qmake
-make
-sudo make install
