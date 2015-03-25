@@ -8,7 +8,7 @@
 _pgo=true
 
 pkgname=firefox-kde-opensuse
-pkgver=36.0
+pkgver=36.0.4
 pkgrel=1
 pkgdesc="Standalone web browser from mozilla.org with OpenSUSE patch, integrate better with KDE"
 arch=('i686' 'x86_64')
@@ -26,7 +26,7 @@ optdepends=('networkmanager: Location detection via available WiFi networks'
 provides=("firefox=${pkgver}")
 conflicts=('firefox')
 install=firefox.install
-_patchrev=4d52d2b45cf0
+_patchrev=6fabac5939cb
 options=('!emptydirs')
 _patchurl=http://www.rosenauer.org/hg/mozilla/raw-file/$_patchrev
 source=(https://ftp.mozilla.org/pub/mozilla.org/firefox/releases/$pkgver/source/firefox-$pkgver.source.tar.bz2
@@ -108,7 +108,7 @@ build() {
   if [[ -n $_pgo ]]; then
     # Do PGO
     xvfb-run -a -s "-extension GLX -screen 0 1280x1024x24" \
-      make -f client.mk profiledbuild
+      make -f client.mk build MOZ_PGO=1
   else
     make -f client.mk build
   fi
@@ -151,7 +151,7 @@ package() {
   ln -sf firefox "$pkgdir/usr/lib/firefox/firefox-bin"
 }
 
-sha256sums=('54c8e44b773c0cae885b2be0dc7d2421d2050206cdb0f00d376492d7cf9d5b20'
+sha256sums=('9143bddc64746bf6471b5ae55b9013586b0ffd6c5515c5566b4015e0bf1e16ab'
             '94410d3e8bfe74b79ecd9dace9c4a339c25fa10908a7471001f533d843b582c9'
             '175d03cf3d8eb420d24a5a3072be69c9603e3ddacd3a83f68f49754eaecf6c5a'
             'd86e41d87363656ee62e12543e2f5181aadcff448e406ef3218e91865ae775cd'
