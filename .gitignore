@@ -1,0 +1,9 @@
+# ignore backups and directory files
+\#*\#
+*~
+*.directory
+# ignore source and package dir made by makepkg
+*/src
+*/pkg
+# ignore packages
+*pkg*
