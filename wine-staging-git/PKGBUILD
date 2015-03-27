@@ -1,0 +1,279 @@
+# Maintainer:   Thaodan <theodorstormgrade@gmail.com>
+# Contributor : Anish Bhatt anish [at] gatech [dot] edu
+# Contributor : Jesus Alvarez <jeezusjr@gmail.com>
+# Contributor : sxe <sxxe@gmx.de>
+# Based on the wine package in the community repository
+
+pkgname=wine-staging-git
+pkgver=1.7.39.r75.g3c2d0b9
+pkgrel=1
+pkgdesc="A compatibility layer for running Windows programs git + staging patches not yet upstreamed git"
+url="http://www.winehq.com"
+license=('LGPL2.1')
+arch=('x86_64' 'i686')
+options=(staticlibs !ccache)
+install=wine.install
+source=(
+ # http://prdownloads.sourceforge.net/wine/wine-1.7.39.tar.bz2{,.sign}
+  "git://source.winehq.org/git/wine.git"
+  "git+https://github.com/wine-compholio/wine-staging.git"
+  "30-win32-aliases.conf"
+  'bug7_gitapply_nogit.patch')
+validpgpkeys=('5AC1A08B03BD7A313E0A955AF5E6E9EEB9461DD7') # Alexandre Julliard
+
+md5sums=('SKIP'
+         'SKIP'
+         '1ff4e467f59409272088d92173a0f801'
+         'e4778cd626b3f5a2bd9599489095619b')
+
+depends=('fontconfig'
+         'libxcursor'
+         'libxrandr'
+         'libxdamage'
+         'libxi'
+         'gettext'
+         'freetype2'
+         'glu'
+         'libsm'
+         'gcc-libs'
+         'attr'
+         'desktop-file-utils')
+
+makedepends=('libgl'
+             'autoconf'
+             'ncurses'
+             'bison'
+             'perl'
+             'fontforge'
+             'flex'
+             'prelink'
+             'gcc>=4.5.0-2'
+             'giflib'
+             'libpng'
+             'gnutls'
+             'libxinerama'
+             'libxcomposite'
+             'libxmu'
+             'libxxf86vm'
+             'libxml2'
+             'libldap'
+             'lcms'
+             'mpg123'
+             'openal'
+             'v4l-utils'
+             'alsa-lib'
+             'mesa'
+             'libcl'
+             'opencl-headers'
+             'pulseaudio'
+             'samba')
+
+optdepends=('giflib'
+            'libpng'
+            'libldap'
+            'gnutls'
+            'lcms'
+            'libxml2'
+            'mpg123'
+            'openal'
+            'v4l-utils'
+            'libpulse'
+            'alsa-plugins'
+            'alsa-lib'
+            'libjpeg-turbo'
+            'libxcomposite'
+            'libxinerama'
+            'libncurses'
+            'libcl'
+            'pulseaudio'
+            'oss'
+            'cups'
+            'samba'
+            'libtxc_dxtn')
+
+if [[ $CARCH == x86_64 ]]; then
+
+  depends=('lib32-fontconfig'
+           'lib32-libxcursor'
+           'lib32-libxrandr'
+           'lib32-libxdamage'
+           'lib32-libxi'
+           'lib32-gettext'
+           'lib32-glu'
+           'lib32-libsm'
+           'lib32-gcc-libs'
+           'lib32-attr'
+           'desktop-file-utils')
+
+  makedepends=('autoconf'
+               'ncurses'
+               'bison'
+               'perl'
+               'fontforge'
+               'flex'
+               'prelink'
+               'gcc-multilib>=4.5.0-2'
+               'lib32-giflib'
+               'lib32-libpng'
+               'lib32-gnutls'
+               'lib32-libxinerama'
+               'lib32-libxcomposite'
+               'lib32-libxmu'
+               'lib32-libxxf86vm'
+               'lib32-libxml2'
+               'lib32-libldap'
+               'lib32-lcms'
+               'lib32-mpg123'
+               'lib32-openal'
+               'lib32-v4l-utils'
+               'lib32-alsa-lib'
+               'lib32-mesa'
+               'lib32-libgl'
+               'lib32-libcl'
+               'attr'
+               'samba'
+               'pulseaudio'
+               'opencl-headers')
+
+  optdepends=('lib32-giflib'
+              'lib32-libpng'
+              'lib32-libldap'
+              'lib32-gnutls'
+              'lib32-lcms'
+              'lib32-libxml2'
+              'lib32-mpg123'
+              'lib32-openal'
+              'lib32-v4l-utils'
+              'lib32-libpulse'
+              'lib32-alsa-plugins'
+              'lib32-alsa-lib'
+              'lib32-libjpeg-turbo'
+              'lib32-libxcomposite'
+              'lib32-ncurses'
+              'lib32-libcl'
+              'oss'
+              'cups'
+              'samba'
+              'lib32-libtxc_dxtn')
+fi
+
+makedepends+=('git')
+
+_upname="wine"
+
+# Uncomment the line below if you want wine installed to /opt/wine-silverlight instead of replacing wine
+#customprefix=1
+
+_prefix="/usr"
+_sysconf="/etc"
+conflicts=('wine' 'wine-compholio')
+provides=('wine=${pkgver}' 'wine-compholio=${pkgver}')
+
+
+
+pkgver() {
+  #date +%Y%m%d
+  cd "$srcdir/wine"
+  git describe --always --long | sed -E 's/([^-]*-g)/r\1/;s/-/./g;s/^wine.//'
+}
+
+
+prepare() {
+  cd "$srcdir"
+  # Get rid of old build dirs
+  rm -rf $pkgname-{32,64}-build
+  mkdir $pkgname-32-build
+
+  # These additional CPPFLAGS solve FS#27662 and FS#34195
+  export CFLAGS="$CFLAGS -DHAVE_ATTR_XATTR_H=1"
+  export CPPFLAGS="${CPPFLAGS/-D_FORTIFY_SOURCE=2/} -D_FORTIFY_SOURCE=0"
+
+  #export MAKEFLAGS="-j4"
+  cd "$srcdir"/wine
+  # patch -Np1 -i "$srcdir"/bug7_gitapply_nogit.patch
+  cd "$srcdir"/"${_upname}"
+
+  # use upstream Makefile to apply patches and to call make_requests / autoreconf
+  make -C "$srcdir/wine-staging/patches/" \
+       DESTDIR="$srcdir/${_upname}" \
+       install
+}
+
+build() {
+  cd "$srcdir"
+
+  if [[ $CARCH == x86_64 ]]; then
+
+    msg2 "Building Wine-64..."
+    mkdir $pkgname-64-build
+    cd "$srcdir/$pkgname-64-build"
+    ../$_upname/configure \
+      --prefix=$_prefix \
+      --sysconfdir=$_sysconf \
+      --libdir=$_prefix/lib \
+      --with-x \
+      --with-xattr \
+      --without-gstreamer \
+      --enable-win64 \
+      --disable-tests
+    # Gstreamer was disabled for FS#33655
+    make
+
+    _wine32opts=(
+      --libdir=/$_prefix/lib32
+      --with-wine64="$srcdir/$pkgname-64-build"
+    )
+
+    export PKG_CONFIG_PATH="$_prefix/lib32/pkgconfig"
+  fi
+
+  msg2 "Building Wine-32..."
+  cd "$srcdir/$pkgname-32-build"
+  ../$_upname/configure \
+    --prefix=$_prefix \
+    --sysconfdir=$_sysconf \
+    --with-x \
+    --with-xattr \
+    --without-gstreamer \
+    --disable-tests \
+    "${_wine32opts[@]}"
+
+  # These additional flags solve FS#23277
+  make CFLAGS+="-mstackrealign -mincoming-stack-boundary=2" CXXFLAGS+="-mstackrealign -mincoming-stack-boundary=2"
+}
+
+package() {
+  msg2 "Packaging Wine-32..."
+  cd "$srcdir/$pkgname-32-build"
+
+  if [[ $CARCH == i686 ]]; then
+    make prefix="$pkgdir/$_prefix" install
+  else
+    make prefix="$pkgdir/$_prefix" \
+      libdir="$pkgdir/$_prefix/lib32" \
+      dlldir="$pkgdir/$_prefix/lib32/wine" install
+
+    msg2 "Packaging Wine-64..."
+    cd "$srcdir/$pkgname-64-build"
+    make prefix="$pkgdir/$_prefix" \
+      libdir="$pkgdir/$_prefix/lib" \
+      dlldir="$pkgdir/$_prefix/lib/wine" install
+  fi
+
+  # Font aliasing settings for Win32 applications
+  install -d "$pkgdir"/etc/fonts/conf.{avail,d}
+  install -m644 "$srcdir/30-win32-aliases.conf" "$pkgdir/etc/fonts/conf.avail"
+  ln -s ../conf.avail/30-win32-aliases.conf "$pkgdir/etc/fonts/conf.d/30-win32-aliases.conf"
+
+
+  # Provide symlinks in /opt/wine-compholio/bin
+
+  if [[ "$_prefix" != "/opt/wine-compholio" ]]; then
+    mkdir -p "$pkgdir/opt/wine-compholio/bin"
+    for _file in $(ls "$pkgdir/$_prefix/bin"); do \
+      ln -s "$_prefix/bin/$_file" "$pkgdir/opt/wine-compholio/bin/$_file"; \
+    done
+  fi
+
+}
+# vim:set ts=2 sw=2 tw=0 et:
