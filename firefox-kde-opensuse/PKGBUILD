@@ -8,7 +8,7 @@
 _pgo=true
 
 pkgname=firefox-kde-opensuse
-pkgver=36.0.4
+pkgver=37.0
 pkgrel=1
 pkgdesc="Standalone web browser from mozilla.org with OpenSUSE patch, integrate better with KDE"
 arch=('i686' 'x86_64')
@@ -26,7 +26,7 @@ optdepends=('networkmanager: Location detection via available WiFi networks'
 provides=("firefox=${pkgver}")
 conflicts=('firefox')
 install=firefox.install
-_patchrev=6fabac5939cb
+_patchrev=0d861c33ec70
 options=('!emptydirs')
 _patchurl=http://www.rosenauer.org/hg/mozilla/raw-file/$_patchrev
 source=(https://ftp.mozilla.org/pub/mozilla.org/firefox/releases/$pkgver/source/firefox-$pkgver.source.tar.bz2
@@ -151,7 +151,7 @@ package() {
   ln -sf firefox "$pkgdir/usr/lib/firefox/firefox-bin"
 }
 
-sha256sums=('9143bddc64746bf6471b5ae55b9013586b0ffd6c5515c5566b4015e0bf1e16ab'
+sha256sums=('204b4a0c6478cdb4e57cf0947ce66d3c544a96b4c5eee4f64169deed67fb060d'
             '94410d3e8bfe74b79ecd9dace9c4a339c25fa10908a7471001f533d843b582c9'
             '175d03cf3d8eb420d24a5a3072be69c9603e3ddacd3a83f68f49754eaecf6c5a'
             'd86e41d87363656ee62e12543e2f5181aadcff448e406ef3218e91865ae775cd'
@@ -160,12 +160,12 @@ sha256sums=('9143bddc64746bf6471b5ae55b9013586b0ffd6c5515c5566b4015e0bf1e16ab'
             '68e3a5b47c6d175cc95b98b069a15205f027cab83af9e075818d38610feb6213'
             '746cb474c5a2c26fc474256e430e035e604b71b27df1003d4af85018fa263f4a'
             '1f0afb90e47395c5221a89e72950f5eea4bb7b880757158e04bbb634d78f0b3b'
-            '7934a0d95f8c1a4d4b9acc81a58f9667fca7ce9b250fe78dbc995c7ecc0c3613'
+            '4e892be11314e7ab7c72631be1314711d6b5ecb214f5e1aaa5c405c683092a1f'
             'a5f3a801478e73524a2ac12d376108cb330d5d74652f3466a679d54d3878902e'
-            '88cdf436143fcd63340dd896c9028c5482d8afab7573ce905968a3d03239c632'
+            '477dc99ffb6b312a45b5ab1f2938e9410c3d05f3dc6328439647b366adf32e42'
             'b9feb66a33dc1644d7d277dc3fc166c655735de7100bc4e93f1fe44567f35345'
             'e8289ea4c1f8191e1e23661312ceee2128b8e790501b9a589d0d7bfc4384553f'
             '5f6b0970284d68d5ed18e6bb7ee1e9fc0025ab3c10aaa14c283adb21a4a20ee8'
-            '60ace1c57577878850e05976ccf02f7e71512c4d62a8a9a6d270a7941d9625d3'
-            'c38037d7ad9ee8053df755cf7e8f62b85ba8e7ca8d9994dee98800253e2f5f92'
+            '03246750d62244262ae78675d869735f642a96231cf72b1f65c9112e67f2acca'
+            '637f19d782f56a143af10a6448f9780d8cfd00a49446a0ce554ab4714e2a73f5'
             'f9067f62a25a7a77276e15f91cc9e7ba6576315345cfc6347b1b2e884becdb0c')
