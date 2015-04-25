@@ -8,8 +8,8 @@
 _pgo=true
 
 pkgname=firefox-kde-opensuse
-pkgver=37.0.1
-pkgrel=1
+pkgver=37.0.2
+pkgrel=2
 pkgdesc="Standalone web browser from mozilla.org with OpenSUSE patch, integrate better with KDE"
 arch=('i686' 'x86_64')
 license=('MPL' 'GPL' 'LGPL')
@@ -26,7 +26,7 @@ optdepends=('networkmanager: Location detection via available WiFi networks'
 provides=("firefox=${pkgver}")
 conflicts=('firefox')
 install=firefox.install
-_patchrev=0d861c33ec70
+_patchrev=d995ef5231ed
 options=('!emptydirs')
 _patchurl=http://www.rosenauer.org/hg/mozilla/raw-file/$_patchrev
 source=(https://ftp.mozilla.org/pub/mozilla.org/firefox/releases/$pkgver/source/firefox-$pkgver.source.tar.bz2
@@ -44,6 +44,7 @@ source=(https://ftp.mozilla.org/pub/mozilla.org/firefox/releases/$pkgver/source/
 	$_patchurl/toolkit-download-folder.patch
 	unity-menubar.patch
 	add_missing_pgo_rule.patch
+        pgo_fix_missing_kdejs.patch 
 )
 
 _google_api_key=AIzaSyDwr302FpOSkGRpLlUpPThNTDPbXcIn_FM
@@ -72,10 +73,12 @@ prepare() {
   # add globalmenu support
   patch -Np1 -i "$srcdir/unity-menubar.patch"
 
-
-
   # add missing rule for pgo builds
   patch -Np1 -i "$srcdir"/add_missing_pgo_rule.patch
+
+  # add missing file Makefile for pgo builds
+  patch -Np1 -i "$srcdir"/pgo_fix_missing_kdejs.patch
+  
   # configure script misdetects the preprocessor without an optimization level
   # https://bugs.archlinux.org/task/34644
   sed -i '/ac_cpp=/s/$CPPFLAGS/& -O2/' configure
@@ -151,7 +154,7 @@ package() {
   ln -sf firefox "$pkgdir/usr/lib/firefox/firefox-bin"
 }
 
-sha256sums=('8d10aab49017f0222dbbe4811b953d2ce61737ba612b13a98dcd4379510e18e6'
+sha256sums=('17d0258c1b4930d618e17ef64bdc4a919d215bd7460696b9855a152324e37a96'
             '94410d3e8bfe74b79ecd9dace9c4a339c25fa10908a7471001f533d843b582c9'
             '175d03cf3d8eb420d24a5a3072be69c9603e3ddacd3a83f68f49754eaecf6c5a'
             'd86e41d87363656ee62e12543e2f5181aadcff448e406ef3218e91865ae775cd'
@@ -168,4 +171,5 @@ sha256sums=('8d10aab49017f0222dbbe4811b953d2ce61737ba612b13a98dcd4379510e18e6'
             '5f6b0970284d68d5ed18e6bb7ee1e9fc0025ab3c10aaa14c283adb21a4a20ee8'
             '03246750d62244262ae78675d869735f642a96231cf72b1f65c9112e67f2acca'
             '637f19d782f56a143af10a6448f9780d8cfd00a49446a0ce554ab4714e2a73f5'
-            'f9067f62a25a7a77276e15f91cc9e7ba6576315345cfc6347b1b2e884becdb0c')
+            'f9067f62a25a7a77276e15f91cc9e7ba6576315345cfc6347b1b2e884becdb0c'
+            '2c9c97bff07cc71b3f6d35f3edfaddaf8180a1f533ee4682adf18a8f86d29264')
