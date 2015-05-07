@@ -1,4 +1,4 @@
-# Maintainer: Björn Bidar <theodorstormgrade@gmai.com>
+# Maintainer: Thaodan <theodorstormgrade@gmai.com>
 _pkgname=shpp
 pkgname=$_pkgname-git
 pkgver=33439b2
