@@ -184,6 +184,7 @@ build() {
       source "$srcdir/batch_opts"
       if [[ "$CPU" ]] ; then # enable cpu optimisations acording to $CPU and enable pkgopt
           sed -e "s|# CONFIG_M$CPU is not set|CONFIG_M$CPU=y|" \
+              -e '/CONFIG_GENERIC_CPU=y/d' \
               -i "$srcdir/linux-${_basekernel}/.config"
           export _PKGOPT=y
       fi
