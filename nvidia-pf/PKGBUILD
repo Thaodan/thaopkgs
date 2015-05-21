@@ -2,7 +2,7 @@
      
 pkgname=nvidia-pf
 pkgver=349.16
-pkgrel=2
+pkgrel=3
 _goodkver=4.0
 _badkver=4.1
 _modver=${_goodkver}-pf
@@ -70,5 +70,6 @@ package() {
   gzip "${pkgdir}/usr/lib/modules/${_extramodules}/"*.ko
   install -d -m755 "${pkgdir}/usr/lib/modprobe.d"
   sed -i -e "s/EXTRAMODULES='.*'/EXTRAMODULES='${_extramodules}'/" "${startdir}/nvidia.install"
+  echo "blacklist nouveau" >> "${pkgdir}/usr/lib/modprobe.d/nvidia-pf.conf"
 }
 
