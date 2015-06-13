@@ -1,10 +1,28 @@
 [submodule "linux-pf"]
 	pushurl = ssh+git://aur@aur4.archlinux.org/linux-pf.git
+	path = linux-pf
+	url = ssh+git://aur@aur4.archlinux.org/linux-pf.git
 [submodule "firefox-kde-opensuse"]
 	path = firefox-kde-opensuse
 	url = ssh+git://aur@aur4.archlinux.org/firefox-kde-opensuse.git
 	pushurl = ssh+git://aur@aur4.archlinux.org/firefox-kde-opensuse.git
 [submodule "wargus"]
 	pushurl = ssh+git://aur@aur4.archlinux.org/wargus.git
+	path = wargus
+	url = ssh+git://aur@aur4.archlinux.org/wargus.git
 [submodule "nvidia-pf"]
+	path = nvidia-pf
+	url = ssh+git://aur@aur4.archlinux.org/nvidia-pf.git
 	pushurl = ssh+git://aur@aur4.archlinux.org/nvidia-pf.git
+[submodule "bbswitch-pf"]
+	pushurl = ssh+git://aur@aur4.archlinux.org/bbswitch-pf.git
+[submodule "csslint"]
+	pushurl = ssh+git://aur@aur4.archlinux.org/csslint.git
+[submodule "dropbox-index"]
+	pushurl = ssh+git://aur@aur4.archlinux.org/dropbox-index.git
+[submodule "java-swing-globalmenu"]
+	pushurl = ssh+git://aur@aur4.archlinux.org/java-swing-globalmenu.git
+[submodule "perl-devel-trace"]
+	pushurl = ssh+git://aur@aur4.archlinux.org/perl-devel-trace.git
+[submodule "qremotecontrol-server"]
+	pushurl = ssh+git://aur@aur4.archlinux.org/qremotecontrol-server.git
