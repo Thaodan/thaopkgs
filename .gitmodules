@@ -26,3 +26,11 @@
 	pushurl = ssh+git://aur@aur4.archlinux.org/perl-devel-trace.git
 [submodule "qremotecontrol-server"]
 	pushurl = ssh+git://aur@aur4.archlinux.org/qremotecontrol-server.git
+[submodule "ryzom-data"]
+	pushurl = ssh+git://aur@aur4.archlinux.org/ryzom-data.git
+[submodule "ryzom-hg"]
+	pushurl = ssh+git://aur@aur4.archlinux.org/ryzom-hg.git
+[submodule "libsh-git"]
+	pushurl = ssh+git://aur@aur4.archlinux.org/libsh-git.git
+	path = libsh-git
+	url = ssh+git://aur@aur4.archlinux.org/libsh-git.git
