@@ -1,0 +1,10 @@
+[submodule "linux-pf"]
+	pushurl = ssh+git://aur@aur4.archlinux.org/linux-pf.git
+[submodule "firefox-kde-opensuse"]
+	path = firefox-kde-opensuse
+	url = ssh+git://aur@aur4.archlinux.org/firefox-kde-opensuse.git
+	pushurl = ssh+git://aur@aur4.archlinux.org/firefox-kde-opensuse.git
+[submodule "wargus"]
+	pushurl = ssh+git://aur@aur4.archlinux.org/wargus.git
+[submodule "nvidia-pf"]
+	pushurl = ssh+git://aur@aur4.archlinux.org/nvidia-pf.git
