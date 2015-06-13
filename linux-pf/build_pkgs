@@ -21,6 +21,6 @@ for cpu in ${CPU_ARCHES[*]} ; do
     mkdir src
     echo "CPU=$cpu" > src/batch_opts
     # use our config file for makepkg
-    makepkg  --config ../scripts/makepkg.conf -f
+    makepkg  --config makepkg.conf -f
     rm -rf {src,pkg}
 done
