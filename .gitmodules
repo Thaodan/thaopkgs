@@ -34,3 +34,11 @@
 	pushurl = ssh+git://aur@aur4.archlinux.org/libsh-git.git
 	path = libsh-git
 	url = ssh+git://aur@aur4.archlinux.org/libsh-git.git
+[submodule "usenew-git"]
+	pushurl = ssh+git://aur@aur4.archlinux.org/usenew-git.git
+[submodule "shpp-git"]
+	pushurl = ssh+git://aur@aur4.archlinux.org/shpp-git.git
+[submodule "virtualbox-modules-pf"]
+	pushurl = ssh+git://aur@aur4.archlinux.org/virtualbox-modules-pf.git
+[submodule "virt-manager-qt"]
+	pushurl = ssh+git://aur@aur4.archlinux.org/virt-manager-qt.git
