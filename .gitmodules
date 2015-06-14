@@ -16,12 +16,12 @@
 	pushurl = ssh+git://aur@aur4.archlinux.org/nvidia-pf.git
 [submodule "bbswitch-pf"]
 	path = bbswitch-pf
-	url =  ssh+git://aur@aur4.archlinux.org/bbswitch-pf.git
+	url = ssh+git://aur@aur4.archlinux.org/bbswitch-pf.git
 	pushurl = ssh+git://aur@aur4.archlinux.org/bbswitch-pf.git
 [submodule "csslint"]
-	path	= csslint
+	path = csslint
 	pushurl = ssh+git://aur@aur4.archlinux.org/csslint.git
-	url =  ssh+git://aur@aur4.archlinux.org/csslint.git
+	url = ssh+git://aur@aur4.archlinux.org/csslint.git
 [submodule "dropbox-index"]
 	path	= dropbox-index
 	pushurl = ssh+git://aur@aur4.archlinux.org/dropbox-index.git
@@ -39,13 +39,13 @@
 	pushurl = ssh+git://aur@aur4.archlinux.org/qremotecontrol-server.git
 	url =  ssh+git://aur@aur4.archlinux.org/qremotecontrol-server.git
 [submodule "ryzom-data"]
-	path = ryzom-data	
+	path = ryzom-data
 	pushurl = ssh+git://aur@aur4.archlinux.org/ryzom-data.git
-	url =  ssh+git://aur@aur4.archlinux.org/ryzom-data.git
+	url = ssh+git://aur@aur4.archlinux.org/ryzom-data.git
 [submodule "ryzom-hg"]
 	path = ryzom-hg
 	pushurl = ssh+git://aur@aur4.archlinux.org/ryzom-hg.git
-	url =  ssh+git://aur@aur4.archlinux.org/ryzom-hg.git
+	url = ssh+git://aur@aur4.archlinux.org/ryzom-hg.git
 [submodule "libsh-git"]
 	pushurl = ssh+git://aur@aur4.archlinux.org/libsh-git.git
 	path = libsh-git
@@ -53,16 +53,16 @@
 [submodule "usenew-git"]
 	pushurl = ssh+git://aur@aur4.archlinux.org/usenew-git.git
 	path = usenew-git
-	url =  ssh+git://aur@aur4.archlinux.org/usenew-git.git
+	url = ssh+git://aur@aur4.archlinux.org/usenew-git.git
 [submodule "shpp-git"]
 	pushurl = ssh+git://aur@aur4.archlinux.org/shpp-git.git
 	path = shpp-git
-	url =  ssh+git://aur@aur4.archlinux.org/shpp-git.git
+	url = ssh+git://aur@aur4.archlinux.org/shpp-git.git
 [submodule "virtualbox-modules-pf"]
 	pushurl = ssh+git://aur@aur4.archlinux.org/virtualbox-modules-pf.git
 	path = virtualbox-modules-pf
-	url =  ssh+git://aur@aur4.archlinux.org/virtualbox-modules-pf.git
+	url = ssh+git://aur@aur4.archlinux.org/virtualbox-modules-pf.git
 [submodule "virt-manager-qt"]
 	pushurl = ssh+git://aur@aur4.archlinux.org/virt-manager-qt.git
-	url =  ssh+git://aur@aur4.archlinux.org/virt-manager-qt.git
+	url = ssh+git://aur@aur4.archlinux.org/virt-manager-qt.git
 	path = virt-manager-qt
