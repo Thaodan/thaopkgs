@@ -66,3 +66,7 @@
 	pushurl = ssh+git://aur@aur4.archlinux.org/virt-manager-qt.git
 	url = ssh+git://aur@aur4.archlinux.org/virt-manager-qt.git
 	path = virt-manager-qt
+[submodule "arch-wiki-cli"]
+	pushurl = ssh+git://aur@aur4.archlinux.org/arch-wiki-cli.git
+        url = ssh+git://aur@aur4.archlinux.org/arch-wiki-cli.git
+        path = arch-wiki-cli
