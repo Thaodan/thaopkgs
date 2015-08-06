@@ -1,3 +1,4 @@
+# -*- conf -*-
 [submodule "linux-pf"]
 	pushurl = ssh+git://aur@aur4.archlinux.org/linux-pf.git
 	path = linux-pf
