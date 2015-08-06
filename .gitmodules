@@ -70,3 +70,7 @@
 	pushurl = ssh+git://aur@aur4.archlinux.org/arch-wiki-cli.git
         url = ssh+git://aur@aur4.archlinux.org/arch-wiki-cli.git
         path = arch-wiki-cli
+[submodule "osc"]
+	path = osc
+	url = ssh+git://aur@aur4.archlinux.org/osc.git
+        pushurl = ssh+git://aur@aur4.archlinux.org/osc.git
