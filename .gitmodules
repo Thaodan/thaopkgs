@@ -75,3 +75,9 @@
 	path = osc
 	url = ssh+git://aur@aur4.archlinux.org/osc.git
         pushurl = ssh+git://aur@aur4.archlinux.org/osc.git
+[submodule "kmozillahelper"]
+	path = kmozillahelper
+	url = ssh+git://aur@aur4.archlinux.org/kmozillahelper.git
+[submodule "kmozillahelper-frameworks"]
+	path = kmozillahelper-frameworks
+	url = ssh+git://aur@aur4.archlinux.org/kmozillahelper-frameworks.git
