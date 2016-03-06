@@ -81,3 +81,6 @@
 [submodule "kmozillahelper-frameworks"]
 	path = kmozillahelper-frameworks
 	url = ssh+git://aur@aur4.archlinux.org/kmozillahelper-frameworks.git
+[submodule "plasma-runners-ssh"]
+	path = plasma-runners-ssh
+	url = ssh+git://aur@aur4.archlinux.org/plasma-runners-ssh
