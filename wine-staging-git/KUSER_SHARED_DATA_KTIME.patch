@@ -1,0 +1,146 @@
+--- a/wine/dlls/ntdll/thread.c	2016-05-19 18:51:02.399867617 +0200
++++ b/wine/dlls/ntdll/thread.c	2016-05-19 18:55:10.855134482 +0200
+@@ -27,6 +27,10 @@
+ #include <stdio.h>
+ #include <limits.h>
+ #include <sys/types.h>
++#include <stdint.h>
++#include <errno.h>
++
++
+ #ifdef HAVE_SYS_MMAN_H
+ #include <sys/mman.h>
+ #endif
+@@ -72,6 +76,69 @@
+ static RTL_BITMAP fls_bitmap;
+ static int nb_threads = 1;
+ 
++static void update_shared_data_time(void)
++{
++    LARGE_INTEGER now, start, irq;
++
++    NtQuerySystemTime( &now );
++
++    //FIXME("%lld\n", now.QuadPart);
++    
++    irq.QuadPart = (now.QuadPart - server_start_time);
++
++    user_shared_data->InterruptTime.High2Time = irq.HighPart;
++    user_shared_data->InterruptTime.LowPart = irq.LowPart;
++    user_shared_data->InterruptTime.High1Time = irq.HighPart;
++
++    user_shared_data->SystemTime.High2Time = now.HighPart;
++    user_shared_data->SystemTime.LowPart = now.LowPart;
++    user_shared_data->SystemTime.High1Time = now.HighPart;
++
++    start.QuadPart = irq.QuadPart / 10000;
++
++    user_shared_data->u.TickCount.High2Time = start.HighPart;
++    user_shared_data->u.TickCount.LowPart = start.LowPart;
++    user_shared_data->u.TickCount.High1Time = start.HighPart;
++    user_shared_data->TickCountLowDeprecated = start.LowPart;
++}
++
++static void add_timespec(struct timespec* dst, struct timespec* arg)
++{
++    dst->tv_sec += arg->tv_sec;
++    dst->tv_nsec += arg->tv_nsec;
++
++    if(dst->tv_nsec > 999999999) {
++        dst->tv_nsec -= 1000000000;
++        dst->tv_sec++;
++    }
++}
++
++static void* shared_data_thread(void *thread_arg) 
++{
++    struct timespec start, arg;
++    int e;
++
++    e = clock_gettime(CLOCK_MONOTONIC, &start);
++    if(e) {
++        FIXME("Unable to get starting time: %s (%d)\n", strerror(errno), errno);
++        return NULL;
++    }
++
++    arg.tv_sec = 0;
++    arg.tv_nsec = 15600000;
++
++    while(1) {
++        update_shared_data_time();
++        add_timespec(&start, &arg);
++        e = clock_nanosleep(CLOCK_MONOTONIC, TIMER_ABSTIME, &start, NULL);
++        if(e) {
++            FIXME("clock_nanosleep failed: %s (%d)\n", strerror(e), e);
++        }
++    }
++
++    return NULL;
++}
++
+ /***********************************************************************
+  *           get_unicode_string
+  *
+@@ -213,13 +280,7 @@
+  */
+ BYTE* CDECL __wine_user_shared_data(void)
+ {
+-    LARGE_INTEGER now;
+-    NtQuerySystemTime( &now );
+-    user_shared_data->SystemTime.LowPart = now.u.LowPart;
+-    user_shared_data->SystemTime.High1Time = user_shared_data->SystemTime.High2Time = now.u.HighPart;
+-    user_shared_data->u.TickCountQuad = (now.QuadPart - server_start_time) / 10000;
+-    user_shared_data->u.TickCount.High2Time = user_shared_data->u.TickCount.High1Time;
+-    user_shared_data->TickCountLowDeprecated = user_shared_data->u.TickCount.LowPart;
++    update_shared_data_time();
+     user_shared_data->TickCountMultiplier = 1 << 24;
+     return (BYTE *)user_shared_data;
+ }
+@@ -241,6 +302,9 @@
+     NTSTATUS status;
+     struct ntdll_thread_data *thread_data;
+     static struct debug_info debug_info;  /* debug info for initial thread */
++
++    pthread_t thread;
++    int s;
+ #ifdef __APPLE__
+     ULONG64 dyld_image_info;
+ #endif
+@@ -366,10 +430,19 @@
+ 
+     /* initialize user_shared_data */
+     __wine_user_shared_data();
++
+     fill_cpu_info();
+ 
+     NtCreateKeyedEvent( &keyed_event, GENERIC_READ | GENERIC_WRITE, NULL, 0 );
+ 
++    if(!(s = pthread_create(&thread, NULL, &shared_data_thread, NULL))) {
++        if(pthread_detach(thread))
++            FIXME("Unable to detach thread\n");
++    } else {
++        FIXME("unable to spawn thread: %s (%d)\n", strerror(s), s);
++    }
++
++
+     return exe_file;
+ }
+ 
+@@ -1135,17 +1208,6 @@
+                     {
+                         if (sel == (wine_get_cs() & ~3))
+                             tdi->Entry.HighWord.Bits.Type |= 8;  /* code segment */
+-                        else if (sel == (ntdll_get_thread_data()->fs & ~3))
+-                        {
+-                            ULONG_PTR fs_base = (ULONG_PTR)NtCurrentTeb();
+-                            tdi->Entry.BaseLow = fs_base & 0xffff;
+-                            tdi->Entry.HighWord.Bits.BaseMid = (fs_base >> 16) & 0xff;
+-                            tdi->Entry.HighWord.Bits.BaseHi = (fs_base >> 24) & 0xff;
+-                            tdi->Entry.LimitLow = 0x0fff;
+-                            tdi->Entry.HighWord.Bits.LimitHi = 0;
+-                            tdi->Entry.HighWord.Bits.Granularity = 0;
+-                            tdi->Entry.HighWord.Bits.Type = 0x13;
+-                        }
+                         else status = STATUS_ACCESS_DENIED;
+                     }
+                 }

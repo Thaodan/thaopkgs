@@ -4,8 +4,9 @@
 # Contributor : sxe <sxxe@gmx.de>
 # Based on the wine package in the community repository
 
+_upname="wine"
 pkgname=wine-staging-git
-pkgver=1.7.39.r75.g3c2d0b9
+pkgver=1.9.13.r225.g94b6a88
 pkgrel=1
 pkgdesc="A compatibility layer for running Windows programs git + staging patches not yet upstreamed git"
 url="http://www.winehq.com"
@@ -15,16 +16,17 @@ options=(staticlibs !ccache)
 install=wine.install
 source=(
  # http://prdownloads.sourceforge.net/wine/wine-1.7.39.tar.bz2{,.sign}
-  "git://source.winehq.org/git/wine.git"
-  "git+https://github.com/wine-compholio/wine-staging.git"
+  "$_upname"::'git://source.winehq.org/git/wine.git'
+  "$pkgname"::'git+https://github.com/wine-compholio/wine-staging.git'
   "30-win32-aliases.conf"
-  'bug7_gitapply_nogit.patch')
+  "KUSER_SHARED_DATA_KTIME.patch"
+)
 validpgpkeys=('5AC1A08B03BD7A313E0A955AF5E6E9EEB9461DD7') # Alexandre Julliard
 
 md5sums=('SKIP'
          'SKIP'
          '1ff4e467f59409272088d92173a0f801'
-         'e4778cd626b3f5a2bd9599489095619b')
+         '01b8227a716b0bbb3a8fd8530aec91f1')
 
 depends=('fontconfig'
          'libxcursor'
@@ -159,8 +161,6 @@ fi
 
 makedepends+=('git')
 
-_upname="wine"
-
 # Uncomment the line below if you want wine installed to /opt/wine-silverlight instead of replacing wine
 #customprefix=1
 
@@ -173,7 +173,7 @@ provides=('wine=${pkgver}' 'wine-compholio=${pkgver}')
 
 pkgver() {
   #date +%Y%m%d
-  cd "$srcdir/wine"
+  cd "$srcdir/$_upname"
   git describe --always --long | sed -E 's/([^-]*-g)/r\1/;s/-/./g;s/^wine.//'
 }
 
@@ -188,15 +188,28 @@ prepare() {
   export CFLAGS="$CFLAGS -DHAVE_ATTR_XATTR_H=1"
   export CPPFLAGS="${CPPFLAGS/-D_FORTIFY_SOURCE=2/} -D_FORTIFY_SOURCE=0"
 
-  #export MAKEFLAGS="-j4"
-  cd "$srcdir"/wine
-  # patch -Np1 -i "$srcdir"/bug7_gitapply_nogit.patch
-  cd "$srcdir"/"${_upname}"
+	cd "$srcdir"/$_upname
+	
+	msg2 "Cleaning the wine source code tree..."
+	
+	# Restore the wine tree to its git origin state, without wine-staging patches
+	#+(necessary for reapllying wine-staging patches in succedent builds,
+	#+otherwise the patches will fail to be reapplied)
+	git reset --hard HEAD      # Restore tracked files
+	git clean -d -x -f         # Delete untracked files
+	
+	# Change back to the wine upstream commit that this version of wine-staging is based in
+	git checkout $(../"$pkgname"/patches/patchinstall.sh --upstream-commit)
 
-  # use upstream Makefile to apply patches and to call make_requests / autoreconf
-  make -C "$srcdir/wine-staging/patches/" \
-       DESTDIR="$srcdir/${_upname}" \
-       install
+  cd "$srcdir"/"$_upname"
+  # Apply all wine-staging patches
+  cd "$srcdir"
+	msg2 "Applying wine-staging patches..."
+	./"$pkgname"/patches/patchinstall.sh DESTDIR="${srcdir}/$_upname" --all
+
+  
+  patch -Np1 -i "$srcdir"/KUSER_SHARED_DATA_KTIME.patch
+
 }
 
 build() {
@@ -205,7 +218,7 @@ build() {
   if [[ $CARCH == x86_64 ]]; then
 
     msg2 "Building Wine-64..."
-    mkdir $pkgname-64-build
+    mkdir -p $pkgname-64-build
     cd "$srcdir/$pkgname-64-build"
     ../$_upname/configure \
       --prefix=$_prefix \
