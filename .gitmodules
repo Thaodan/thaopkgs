@@ -84,3 +84,6 @@
 [submodule "plasma-runners-ssh"]
 	path = plasma-runners-ssh
 	url = ssh+git://aur@aur4.archlinux.org/plasma-runners-ssh
+[submodule "telepathy-gabble-xep0198-git"]
+	path = telepathy-gabble-xep0198-git
+	url = git+ssh://aur@aur.archlinux.org/telepathy-gabble-xep0198-git.git
