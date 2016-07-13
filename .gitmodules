@@ -90,3 +90,6 @@
 [submodule "kio-zeroconf-git"]
 	path = kio-zeroconf-git
 	url = git+ssh://aur@aur.archlinux.org/kio-zeroconf-git.git
+[submodule "telepathy-qt5-git"]
+	path = telepathy-qt5-git
+	url = git+ssh://aur@aur.archlinux.org/telepathy-qt5-git.git
