@@ -93,3 +93,6 @@
 [submodule "telepathy-qt5-git"]
 	path = telepathy-qt5-git
 	url = git+ssh://aur@aur.archlinux.org/telepathy-qt5-git.git
+[submodule "telepathy-kdeconnect-git"]
+	path = telepathy-kdeconnect-git
+	url = git+ssh://aur@aur.archlinux.org/telepathy-kdeconnect-git.git
