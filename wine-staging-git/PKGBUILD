@@ -6,7 +6,7 @@
 
 _upname="wine"
 pkgname=wine-staging-git
-pkgver=1.9.13.r225.g94b6a88
+pkgver=1.9.16.r205.g51021fa
 pkgrel=1
 pkgdesc="A compatibility layer for running Windows programs git + staging patches not yet upstreamed git"
 url="http://www.winehq.com"
@@ -26,7 +26,7 @@ validpgpkeys=('5AC1A08B03BD7A313E0A955AF5E6E9EEB9461DD7') # Alexandre Julliard
 md5sums=('SKIP'
          'SKIP'
          '1ff4e467f59409272088d92173a0f801'
-         '01b8227a716b0bbb3a8fd8530aec91f1')
+         '032e7f8de79264da0fb0e0856d2c1b44')
 
 depends=('fontconfig'
          'libxcursor'
