@@ -1,20 +1,26 @@
---- a/wine/dlls/ntdll/thread.c	2016-05-19 18:51:02.399867617 +0200
-+++ b/wine/dlls/ntdll/thread.c	2016-05-19 18:55:10.855134482 +0200
-@@ -27,6 +27,10 @@
- #include <stdio.h>
- #include <limits.h>
- #include <sys/types.h>
+http://bugs.winehq.org/show_bug.cgi?id=29168
+Star Wars: The Old Republic game client hangs at intro splash
+
+Generated from wine-1.7.13
+--- a/dlls/ntdll/thread.c
++++ b/dlls/ntdll/thread.c
+@@ -23,6 +23,10 @@
+ 
+ #include <assert.h>
+ #include <stdarg.h>
++
 +#include <stdint.h>
 +#include <errno.h>
 +
-+
+ #include <sys/types.h>
  #ifdef HAVE_SYS_MMAN_H
  #include <sys/mman.h>
- #endif
-@@ -72,6 +76,69 @@
+@@ -69,6 +73,73 @@
  static RTL_BITMAP fls_bitmap;
  static int nb_threads = 1;
  
++
++
 +static void update_shared_data_time(void)
 +{
 +    LARGE_INTEGER now, start, irq;
@@ -78,39 +84,44 @@
 +    return NULL;
 +}
 +
++
++
  /***********************************************************************
   *           get_unicode_string
   *
-@@ -213,13 +280,7 @@
-  */
- BYTE* CDECL __wine_user_shared_data(void)
- {
+@@ -215,11 +286,14 @@
+     void *addr;
+     SIZE_T size, info_size;
+     HANDLE exe_file = 0;
 -    LARGE_INTEGER now;
--    NtQuerySystemTime( &now );
--    user_shared_data->SystemTime.LowPart = now.u.LowPart;
--    user_shared_data->SystemTime.High1Time = user_shared_data->SystemTime.High2Time = now.u.HighPart;
--    user_shared_data->u.TickCountQuad = (now.QuadPart - server_start_time) / 10000;
--    user_shared_data->u.TickCount.High2Time = user_shared_data->u.TickCount.High1Time;
--    user_shared_data->TickCountLowDeprecated = user_shared_data->u.TickCount.LowPart;
-+    update_shared_data_time();
-     user_shared_data->TickCountMultiplier = 1 << 24;
-     return (BYTE *)user_shared_data;
- }
-@@ -241,6 +302,9 @@
++    //    LARGE_INTEGER now;
      NTSTATUS status;
      struct ntdll_thread_data *thread_data;
      static struct debug_info debug_info;  /* debug info for initial thread */
-+
+ 
 +    pthread_t thread;
 +    int s;
- #ifdef __APPLE__
-     ULONG64 dyld_image_info;
- #endif
-@@ -366,9 +430,18 @@
- 
-     /* initialize user_shared_data */
-     __wine_user_shared_data();
 +
+     virtual_init();
+ 
+     /* reserve space for shared user data */
+@@ -316,18 +390,30 @@
+     }
+ 
+     /* initialize time values in user_shared_data */
+-    NtQuerySystemTime( &now );
++    /*    NtQuerySystemTime( &now );
+     user_shared_data->SystemTime.LowPart = now.u.LowPart;
+     user_shared_data->SystemTime.High1Time = user_shared_data->SystemTime.High2Time = now.u.HighPart;
+     user_shared_data->u.TickCountQuad = (now.QuadPart - server_start_time) / 10000;
+     user_shared_data->u.TickCount.High2Time = user_shared_data->u.TickCount.High1Time;
+     user_shared_data->TickCountLowDeprecated = user_shared_data->u.TickCount.LowPart;
++    */    
++    
+     user_shared_data->TickCountMultiplier = 1 << 24;
++        
++    update_shared_data_time();
+ 
      fill_cpu_info();
  
      NtCreateKeyedEvent( &keyed_event, GENERIC_READ | GENERIC_WRITE, NULL, 0 );
@@ -121,7 +132,8 @@
 +    } else {
 +        FIXME("unable to spawn thread: %s (%d)\n", strerror(s), s);
 +    }
-+
++    
 +
      return exe_file;
  }
+ 
