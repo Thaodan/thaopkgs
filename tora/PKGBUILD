@@ -1,0 +1,45 @@
+# Maintainer:
+# Contributor: Angel 'angvp' Velasquez <angvp[at]archlinux.com.ve>
+# Contributor: Andrea Scarpino <andrea@archlinux.org>
+# Contributor: Stefan Husmann <stefan-husmann@t-online.de>
+# Contributor: Douglas Soares de Andrade <dsandrade@gmail.com>
+pkgname=tora
+pkgver=3.1alpha
+pkgrel=1
+pkgdesc="Toolkit for databases with support for MySQL and PostgreSQL"
+arch=('i686' 'x86_64')
+url="http://tora.sourceforge.net"
+license=('GPL')
+depends=('qscintilla-qt5' 'qt5-base' 'qt5-xmlpatterns' 'qt5-webkit' 'boost-libs' 'loki-lib')
+makedepends=('cmake' 'boost')
+options=('!libtool' '!emptydirs')
+source=("https://github.com/tora-tool/tora/archive/v$pkgver.tar.gz"
+       "cmake_pic.patch")
+md5sums=('f2f0b0b7c43a874b2aec2579fe004a0c'
+         '2dadd88948c151742d193bf6a3b23841')
+
+
+prepare()
+{
+  cd "$srcdir/${pkgname}-${pkgver}"
+  mkdir -p  "${srcdir}/build"
+  patch -Np1 -i "$srcdir/cmake_pic.patch"
+}
+build() {
+  cd "${srcdir}/${pkgname}-${pkgver}"
+
+  cd "${srcdir}/build"
+  cmake ../${pkgname}-${pkgver} \
+    -DCMAKE_INSTALL_PREFIX=/usr \
+    -DCMAKE_BUILD_TYPE=Release\
+    -DBOOST_ROOT=/usr/include
+
+  make VERBOSE=1
+}
+
+package() {
+  cd "${srcdir}"/build
+  make DESTDIR="${pkgdir}" install
+
+  install -Dm=644  "${srcdir}/${pkgname}-${pkgver}"/src/icons/toramini.xpm "$pkgdir"/usr/share/icons/hicolor/16x16/apps/tora.xpm
+}
