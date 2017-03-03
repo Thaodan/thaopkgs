@@ -6,7 +6,7 @@
 
 _upname="wine"
 pkgname=wine-staging-git
-pkgver=1.9.16.r205.g51021fa
+pkgver=2.0.rc6.r0.g199e30663e
 pkgrel=1
 pkgdesc="A compatibility layer for running Windows programs git + staging patches not yet upstreamed git"
 url="http://www.winehq.com"
@@ -16,8 +16,8 @@ options=(staticlibs !ccache)
 install=wine.install
 source=(
  # http://prdownloads.sourceforge.net/wine/wine-1.7.39.tar.bz2{,.sign}
-  "$_upname"::'git://source.winehq.org/git/wine.git'
-  "$pkgname"::'git+https://github.com/wine-compholio/wine-staging.git'
+  "$_upname"::"git://source.winehq.org/git/wine.git#commit=199e30663efadfb1539f240e6fa29204440e9974"
+  "$pkgname"::"git+https://github.com/wine-compholio/wine-staging.git#commit=428f6a06ad4550e14aa0f6befb7848cd1c0e91f7"
   "30-win32-aliases.conf"
   "KUSER_SHARED_DATA_KTIME.patch"
 )
@@ -65,7 +65,7 @@ makedepends=('libgl'
              'v4l-utils'
              'alsa-lib'
              'mesa'
-             'libcl'
+             'ocl-icd'
              'opencl-headers'
              'pulseaudio'
              'samba')
@@ -86,7 +86,7 @@ optdepends=('giflib'
             'libxcomposite'
             'libxinerama'
             'libncurses'
-            'libcl'
+            'ocl-icd'
             'pulseaudio'
             'oss'
             'cups'
@@ -131,7 +131,7 @@ if [[ $CARCH == x86_64 ]]; then
                'lib32-alsa-lib'
                'lib32-mesa'
                'lib32-libgl'
-               'lib32-libcl'
+               'lib32-ocl-icd'
                'attr'
                'samba'
                'pulseaudio'
@@ -152,7 +152,7 @@ if [[ $CARCH == x86_64 ]]; then
               'lib32-libjpeg-turbo'
               'lib32-libxcomposite'
               'lib32-ncurses'
-              'lib32-libcl'
+              'lib32-ocl-icd'
               'oss'
               'cups'
               'samba'
@@ -209,6 +209,11 @@ prepare() {
 
   
   patch -Np1 -i "$srcdir"/KUSER_SHARED_DATA_KTIME.patch
+
+  # https://bugs.winehq.org/show_bug.cgi?id=42132
+  (cd  $_upname 
+   sed 's|OpenCL/opencl.h|CL/opencl.h|g' -i configure*
+  ) 
 
 }
 
