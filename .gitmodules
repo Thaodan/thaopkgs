@@ -96,3 +96,6 @@
 [submodule "telepathy-kdeconnect-git"]
 	path = telepathy-kdeconnect-git
 	url = git+ssh://aur@aur.archlinux.org/telepathy-kdeconnect-git.git
+[submodule "zsh-git-prompt"]
+	path = zsh-git-prompt
+	url = ssh://aur@aur.archlinux.org/zsh-git-prompt.git
