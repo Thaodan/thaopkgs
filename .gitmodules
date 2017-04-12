@@ -99,3 +99,6 @@
 [submodule "zsh-git-prompt"]
 	path = zsh-git-prompt
 	url = ssh://aur@aur.archlinux.org/zsh-git-prompt.git
+[submodule "i8kutils-smm"]
+	path = i8kutils-smm
+	url = ssh://aur@aur.archlinux.org/i8kutils-smm.git
