@@ -1,0 +1,49 @@
+From 37482ffbbd34b4af1dd80f564460a7a7f7dc63b4 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Bj=C3=B6rn=20Bidar?= <theodorstormgrade@gmail.com>
+Date: Thu, 4 May 2017 20:24:11 +0200
+Subject: [PATCH] wined3d: Add NVIDIA GTX 1080 Ti to the GPU list
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Signed-off-by: Björn Bidar <theodorstormgrade@gmail.com>
+---
+ dlls/wined3d/directx.c         | 2 ++
+ dlls/wined3d/wined3d_private.h | 1 +
+ 2 files changed, 3 insertions(+)
+
+diff --git a/dlls/wined3d/directx.c b/dlls/wined3d/directx.c
+index f5d4882837..fc015a876e 100644
+--- a/dlls/wined3d/directx.c
++++ b/dlls/wined3d/directx.c
+@@ -1390,6 +1390,7 @@ static const struct gpu_description gpu_description_table[] =
+     {HW_VENDOR_NVIDIA,     CARD_NVIDIA_GEFORCE_GTX1060,    "NVIDIA GeForce GTX 1060",          DRIVER_NVIDIA_GEFORCE8,  6144},
+     {HW_VENDOR_NVIDIA,     CARD_NVIDIA_GEFORCE_GTX1070,    "NVIDIA GeForce GTX 1070",          DRIVER_NVIDIA_GEFORCE8,  8192},
+     {HW_VENDOR_NVIDIA,     CARD_NVIDIA_GEFORCE_GTX1080,    "NVIDIA GeForce GTX 1080",          DRIVER_NVIDIA_GEFORCE8,  8192},
++    {HW_VENDOR_NVIDIA,     CARD_NVIDIA_GEFORCE_GTX1080TI,  "NVIDIA GeForce GTX 1080 Ti",       DRIVER_NVIDIA_GEFORCE8,  11264},
+     {HW_VENDOR_NVIDIA,     CARD_NVIDIA_TITANX_PASCAL,      "NVIDIA TITAN X (Pascal)",          DRIVER_NVIDIA_GEFORCE8,  12288},
+ 
+     /* AMD cards */
+@@ -1876,6 +1877,7 @@ cards_nvidia_binary[] =
+ {
+     /* Direct 3D 11 */
+     {"TITAN X (Pascal)",            CARD_NVIDIA_TITANX_PASCAL},     /* GeForce 1000 - highend */
++    {"GTX 1080 Ti",                 CARD_NVIDIA_GEFORCE_GTX1080TI}, /* GeForce 1000 - highend */
+     {"GTX 1080",                    CARD_NVIDIA_GEFORCE_GTX1080},   /* GeForce 1000 - highend */
+     {"GTX 1070",                    CARD_NVIDIA_GEFORCE_GTX1070},   /* GeForce 1000 - highend */
+     {"GTX 1060",                    CARD_NVIDIA_GEFORCE_GTX1060},   /* GeForce 1000 - midend high */
+diff --git a/dlls/wined3d/wined3d_private.h b/dlls/wined3d/wined3d_private.h
+index 2e0e8e985d..d628ba549f 100644
+--- a/dlls/wined3d/wined3d_private.h
++++ b/dlls/wined3d/wined3d_private.h
+@@ -2201,6 +2201,7 @@ enum wined3d_pci_device
+     CARD_NVIDIA_GEFORCE_GTX1060     = 0x1c03,
+     CARD_NVIDIA_GEFORCE_GTX1070     = 0x1b81,
+     CARD_NVIDIA_GEFORCE_GTX1080     = 0x1b80,
++    CARD_NVIDIA_GEFORCE_GTX1080TI   = 0x1b06,
+     CARD_NVIDIA_TITANX_PASCAL       = 0x1b00,
+ 
+     CARD_VMWARE_SVGA3D              = 0x0405,
+-- 
+2.12.2
+
