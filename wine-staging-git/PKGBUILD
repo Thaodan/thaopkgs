@@ -6,157 +6,108 @@
 
 _upname="wine"
 pkgname=wine-staging-git
-pkgver=2.0.rc6.r0.g199e30663e
+pkgver=2.9.r257.ge0e4f9bbcd
 pkgrel=1
 pkgdesc="A compatibility layer for running Windows programs git + staging patches not yet upstreamed git"
 url="http://www.winehq.com"
 license=('LGPL2.1')
 arch=('x86_64' 'i686')
-options=(staticlibs !ccache)
+options=(staticlibs ccache !buildflags)
 install=wine.install
 source=(
  # http://prdownloads.sourceforge.net/wine/wine-1.7.39.tar.bz2{,.sign}
-  "$_upname"::"git://source.winehq.org/git/wine.git#commit=199e30663efadfb1539f240e6fa29204440e9974"
-  "$pkgname"::"git+https://github.com/wine-compholio/wine-staging.git#commit=428f6a06ad4550e14aa0f6befb7848cd1c0e91f7"
+  "$_upname"::"git://source.winehq.org/git/wine.git"
+  "$pkgname"::"git+https://github.com/wine-compholio/wine-staging.git#commit=25e345194ddf9a518405ce038ea91883417a785e"
   "30-win32-aliases.conf"
-  "KUSER_SHARED_DATA_KTIME.patch"
 )
 validpgpkeys=('5AC1A08B03BD7A313E0A955AF5E6E9EEB9461DD7') # Alexandre Julliard
 
 md5sums=('SKIP'
          'SKIP'
-         '1ff4e467f59409272088d92173a0f801'
-         '032e7f8de79264da0fb0e0856d2c1b44')
+         '1ff4e467f59409272088d92173a0f801')
 
-depends=('fontconfig'
-         'libxcursor'
-         'libxrandr'
-         'libxdamage'
-         'libxi'
-         'gettext'
-         'freetype2'
-         'glu'
-         'libsm'
-         'gcc-libs'
-         'attr'
-         'desktop-file-utils')
+_depends=(
+  attr             lib32-attr
+  fontconfig       lib32-fontconfig
+  lcms2            lib32-lcms2
+  libxml2          lib32-libxml2
+  libxcursor       lib32-libxcursor
+  libxrandr        lib32-libxrandr
+  libxdamage       lib32-libxdamage
+  libxi            lib32-libxi
+  gettext          lib32-gettext
+  freetype2        lib32-freetype2
+  glu              lib32-glu
+  libsm            lib32-libsm
+  gcc-libs         lib32-gcc-libs
+  libpcap          lib32-libpcap
+  desktop-file-utils
+)
 
-makedepends=('libgl'
-             'autoconf'
-             'ncurses'
-             'bison'
-             'perl'
-             'fontforge'
-             'flex'
-             'prelink'
-             'gcc>=4.5.0-2'
-             'giflib'
-             'libpng'
-             'gnutls'
-             'libxinerama'
-             'libxcomposite'
-             'libxmu'
-             'libxxf86vm'
-             'libxml2'
-             'libldap'
-             'lcms'
-             'mpg123'
-             'openal'
-             'v4l-utils'
-             'alsa-lib'
-             'mesa'
-             'ocl-icd'
-             'opencl-headers'
-             'pulseaudio'
-             'samba')
+makedepends=(autoconf ncurses bison perl fontforge flex
+  'gcc>=4.5.0-2'   'gcc-multilib>=4.5.0-2'
+  giflib                lib32-giflib
+  libpng                lib32-libpng
+  gnutls                lib32-gnutls
+  libxinerama           lib32-libxinerama
+  libxcomposite         lib32-libxcomposite
+  libxmu                lib32-libxmu
+  libxxf86vm            lib32-libxxf86vm
+  libldap               lib32-libldap
+  mpg123                lib32-mpg123
+  openal                lib32-openal
+  v4l-utils             lib32-v4l-utils
+  alsa-lib              lib32-alsa-lib
+  libxcomposite         lib32-libxcomposite
+  mesa                  lib32-mesa
+  mesa-libgl            lib32-mesa-libgl
+  opencl-icd-loader     lib32-opencl-icd-loader
+  libxslt               lib32-libxslt
+  libpulse              lib32-libpulse
+  libva                 lib32-libva
+  gtk3                  lib32-gtk3
+  gst-plugins-base-libs lib32-gst-plugins-base-libs
+  samba
+  opencl-headers
+)
+  
+optdepends=(
+  giflib                lib32-giflib
+  libpng                lib32-libpng
+  libldap               lib32-libldap
+  gnutls                lib32-gnutls
+  mpg123                lib32-mpg123
+  openal                lib32-openal
+  v4l-utils             lib32-v4l-utils
+  libpulse              lib32-libpulse
+  alsa-plugins          lib32-alsa-plugins
+  alsa-lib              lib32-alsa-lib
+  libjpeg-turbo         lib32-libjpeg-turbo
+  libxcomposite         lib32-libxcomposite
+  libxinerama           lib32-libxinerama
+  ncurses               lib32-ncurses
+  opencl-icd-loader     lib32-opencl-icd-loader
+  libxslt               lib32-libxslt
+  libva                 lib32-libva
+  gtk3                  lib32-gtk3
+  gst-plugins-base-libs lib32-gst-plugins-base-libs
+  vulkan-icd-loader     lib32-vulkan-icd-loader
+  cups
+  samba           dosbox
+)
 
-optdepends=('giflib'
-            'libpng'
-            'libldap'
-            'gnutls'
-            'lcms'
-            'libxml2'
-            'mpg123'
-            'openal'
-            'v4l-utils'
-            'libpulse'
-            'alsa-plugins'
-            'alsa-lib'
-            'libjpeg-turbo'
-            'libxcomposite'
-            'libxinerama'
-            'libncurses'
-            'ocl-icd'
-            'pulseaudio'
-            'oss'
-            'cups'
-            'samba'
-            'libtxc_dxtn')
-
-if [[ $CARCH == x86_64 ]]; then
-
-  depends=('lib32-fontconfig'
-           'lib32-libxcursor'
-           'lib32-libxrandr'
-           'lib32-libxdamage'
-           'lib32-libxi'
-           'lib32-gettext'
-           'lib32-glu'
-           'lib32-libsm'
-           'lib32-gcc-libs'
-           'lib32-attr'
-           'desktop-file-utils')
-
-  makedepends=('autoconf'
-               'ncurses'
-               'bison'
-               'perl'
-               'fontforge'
-               'flex'
-               'prelink'
-               'gcc-multilib>=4.5.0-2'
-               'lib32-giflib'
-               'lib32-libpng'
-               'lib32-gnutls'
-               'lib32-libxinerama'
-               'lib32-libxcomposite'
-               'lib32-libxmu'
-               'lib32-libxxf86vm'
-               'lib32-libxml2'
-               'lib32-libldap'
-               'lib32-lcms'
-               'lib32-mpg123'
-               'lib32-openal'
-               'lib32-v4l-utils'
-               'lib32-alsa-lib'
-               'lib32-mesa'
-               'lib32-libgl'
-               'lib32-ocl-icd'
-               'attr'
-               'samba'
-               'pulseaudio'
-               'opencl-headers')
-
-  optdepends=('lib32-giflib'
-              'lib32-libpng'
-              'lib32-libldap'
-              'lib32-gnutls'
-              'lib32-lcms'
-              'lib32-libxml2'
-              'lib32-mpg123'
-              'lib32-openal'
-              'lib32-v4l-utils'
-              'lib32-libpulse'
-              'lib32-alsa-plugins'
-              'lib32-alsa-lib'
-              'lib32-libjpeg-turbo'
-              'lib32-libxcomposite'
-              'lib32-ncurses'
-              'lib32-ocl-icd'
-              'oss'
-              'cups'
-              'samba'
-              'lib32-libtxc_dxtn')
+if [[ $CARCH == i686 ]]; then
+  # Strip lib32 etc. on i686
+  _depends=(${_depends[@]/*32-*/})
+  makedepends=(${makedepends[@]/*32-*/} ${_depends[@]})
+  makedepends=(${makedepends[@]/*-multilib*/})
+  optdepends=(${optdepends[@]/*32-*/})
+  provides=("wine=$pkgver")
+  conflicts=('wine')
+else
+  makedepends=(${makedepends[@]} ${_depends[@]})
+  provides=("wine=$pkgver" "wine-wow64=$pkgver")
+  conflicts=('wine' 'wine-wow64')
 fi
 
 makedepends+=('git')
@@ -184,9 +135,7 @@ prepare() {
   rm -rf $pkgname-{32,64}-build
   mkdir $pkgname-32-build
 
-  # These additional CPPFLAGS solve FS#27662 and FS#34195
-  export CFLAGS="$CFLAGS -DHAVE_ATTR_XATTR_H=1"
-  export CPPFLAGS="${CPPFLAGS/-D_FORTIFY_SOURCE=2/} -D_FORTIFY_SOURCE=0"
+
 
 	cd "$srcdir"/$_upname
 	
@@ -208,16 +157,18 @@ prepare() {
 	./"$pkgname"/patches/patchinstall.sh DESTDIR="${srcdir}/$_upname" --all
 
   
-  patch -Np1 -i "$srcdir"/KUSER_SHARED_DATA_KTIME.patch
+  # patch -Np1 -i "$srcdir"/KUSER_SHARED_DATA_KTIME.patch
 
   # https://bugs.winehq.org/show_bug.cgi?id=42132
   (cd  $_upname 
-   sed 's|OpenCL/opencl.h|CL/opencl.h|g' -i configure*
+   sed 's|OpenCL/opencl.h|CL/opencl.h|g' -i configure
   ) 
 
 }
 
 build() {
+  export CFLAGS="-O2 -pipe -fstack-protector-strong"
+  export CXXFLAGS="${CFLAGS}"
   cd "$srcdir"
 
   if [[ $CARCH == x86_64 ]]; then
@@ -230,11 +181,9 @@ build() {
       --sysconfdir=$_sysconf \
       --libdir=$_prefix/lib \
       --with-x \
-      --with-xattr \
-      --without-gstreamer \
+      --with-gstreamer \
       --enable-win64 \
       --disable-tests
-    # Gstreamer was disabled for FS#33655
     make
 
     _wine32opts=(
@@ -251,13 +200,11 @@ build() {
     --prefix=$_prefix \
     --sysconfdir=$_sysconf \
     --with-x \
-    --with-xattr \
-    --without-gstreamer \
+    --with-gstreamer \
     --disable-tests \
     "${_wine32opts[@]}"
 
-  # These additional flags solve FS#23277
-  make CFLAGS+="-mstackrealign -mincoming-stack-boundary=2" CXXFLAGS+="-mstackrealign -mincoming-stack-boundary=2"
+  make
 }
 
 package() {
