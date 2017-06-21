@@ -6,7 +6,7 @@
 
 _upname="wine"
 pkgname=wine-staging-git
-pkgver=2.9.r257.ge0e4f9bbcd
+pkgver=2.10.r88.g95a49bdce6
 pkgrel=1
 pkgdesc="A compatibility layer for running Windows programs git + staging patches not yet upstreamed git"
 url="http://www.winehq.com"
@@ -17,7 +17,7 @@ install=wine.install
 source=(
  # http://prdownloads.sourceforge.net/wine/wine-1.7.39.tar.bz2{,.sign}
   "$_upname"::"git://source.winehq.org/git/wine.git"
-  "$pkgname"::"git+https://github.com/wine-compholio/wine-staging.git#commit=25e345194ddf9a518405ce038ea91883417a785e"
+  "$pkgname"::"git+https://github.com/wine-compholio/wine-staging.git"
   "30-win32-aliases.conf"
 )
 validpgpkeys=('5AC1A08B03BD7A313E0A955AF5E6E9EEB9461DD7') # Alexandre Julliard
@@ -125,7 +125,9 @@ provides=('wine=${pkgver}' 'wine-compholio=${pkgver}')
 pkgver() {
   #date +%Y%m%d
   cd "$srcdir/$_upname"
-  git describe --always --long | sed -E 's/([^-]*-g)/r\1/;s/-/./g;s/^wine.//'
+  printf %s $(git describe --always --long | sed -E 's/([^-]*-g)/r\1/;s/-/./g;s/^wine.//')
+  #cd "$srcdir/$pkgname"
+  #printf '+%s\n' $(git describe --always --long | sed -E 's/([^-]*-g)/r\1/;s/-/./g;s/^wine.//')
 }
 
 
@@ -154,7 +156,7 @@ prepare() {
   # Apply all wine-staging patches
   cd "$srcdir"
 	msg2 "Applying wine-staging patches..."
-	./"$pkgname"/patches/patchinstall.sh DESTDIR="${srcdir}/$_upname" --all
+  ./"$pkgname"/patches/patchinstall.sh DESTDIR="${srcdir}/$_upname"  --all -W ntdll-Builtin_Prot
 
   
   # patch -Np1 -i "$srcdir"/KUSER_SHARED_DATA_KTIME.patch
