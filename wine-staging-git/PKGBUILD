@@ -5,28 +5,35 @@
 # Based on the wine package in the community repository
 
 _upname="wine"
-pkgname=wine-staging-git
-pkgver=2.21.r0.g53290d2ec4
-pkgrel=2
+pkgname=wine-staging-git-pba
+pkgver=3.8.r0.g7280f7fb74+8f20f07
+pkgrel=1
 pkgdesc="A compatibility layer for running Windows programs git + staging patches not yet upstreamed git"
 url="http://www.winehq.com"
 license=('LGPL2.1')
 arch=('x86_64' 'i686')
 options=(staticlibs ccache !buildflags)
 install=wine.install
+
+
+_patches=(
+#
+)
+
 source=(
  # http://prdownloads.sourceforge.net/wine/wine-1.7.39.tar.bz2{,.sign}
   "$_upname"::"git://source.winehq.org/git/wine.git"
-  "$pkgname"::"git+https://github.com/wine-compholio/wine-staging.git"
+  "$pkgname"::"git+https://github.com/wine-staging/wine-staging"
+  "git+https://github.com/acomminos/wine-pba"
   "30-win32-aliases.conf"
-  "vertex_blend.patch"::https://bugs.winehq.org/attachment.cgi?id=57893
+  ${_patches[*]}
 )
 validpgpkeys=('5AC1A08B03BD7A313E0A955AF5E6E9EEB9461DD7') # Alexandre Julliard
 
 md5sums=('SKIP'
          'SKIP'
-         '1ff4e467f59409272088d92173a0f801'
-         'ade8975466f6f10f2216ce3a53e8bac0')
+         'SKIP'
+         '1ff4e467f59409272088d92173a0f801')
 
 _depends=(
   attr             lib32-attr
@@ -128,8 +135,8 @@ pkgver() {
   #date +%Y%m%d
   cd "$srcdir/$_upname"
   printf %s $(git describe --always --long | sed -E 's/([^-]*-g)/r\1/;s/-/./g;s/^wine.//')
-  #cd "$srcdir/$pkgname"
-  #printf '+%s\n' $(git describe --always --long | sed -E 's/([^-]*-g)/r\1/;s/-/./g;s/^wine.//')
+  cd "$srcdir"/wine-pba
+  printf '+%s\n' $(git describe --always --long | sed -E 's/([^-]*-g)/r\1/;s/-/./g;s/^wine.//')
 }
 
 
@@ -139,10 +146,18 @@ prepare() {
   rm -rf $pkgname-{32,64}-build
   mkdir $pkgname-32-build
   
-
+  #cd "$srcdir"/$pkgname
   
 	cd "$srcdir"/$_upname
-	
+
+  # fix wine-staging
+
+  for _patch in ${_patches[*]} ; do
+    patch -Np1 -i ../$_patch
+  done
+
+
+  
 	msg2 "Cleaning the wine source code tree..."
 	
 	# Restore the wine tree to its git origin state, without wine-staging patches
@@ -153,21 +168,23 @@ prepare() {
 	
 	# Change back to the wine upstream commit that this version of wine-staging is based in
 	git checkout $(../"$pkgname"/patches/patchinstall.sh --upstream-commit)
-  
   cd "$srcdir"/"$_upname"
   # Apply all wine-staging patches
   cd "$srcdir"
 	msg2 "Applying wine-staging patches..."
   ./"$pkgname"/patches/patchinstall.sh DESTDIR="${srcdir}/$_upname"  --all
-  #-W ntdll-Builtin_Prot
-  
-  
+
+  cd "$srcdir"/"$_upname" 
+  for _patch in "$srcdir"/wine-pba/patches/* ; do
+    patch -p1 -i "$_patch"
+  done
+
+           
   # patch -Np1 -i "$srcdir"/KUSER_SHARED_DATA_KTIME.patch
 
   # https://bugs.winehq.org/show_bug.cgi?id=42132
-  (cd  $_upname 
+  (cd "$srcdir"/"$_upname"
    sed 's|OpenCL/opencl.h|CL/opencl.h|g' -i configure
-  # patch -Np1 -i "$srcdir/vertex_blend.patch"
   ) 
   
 }
