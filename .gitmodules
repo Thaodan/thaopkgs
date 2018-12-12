@@ -102,3 +102,6 @@
 [submodule "i8kutils-smm"]
 	path = i8kutils-smm
 	url = ssh://aur@aur.archlinux.org/i8kutils-smm.git
+[submodule "python-telegramusermapbot-git"]
+	path = python-telegramusermapbot-git
+	url = ssh://aur@aur.archlinux.org/python-telegramusermapbot-git.git
