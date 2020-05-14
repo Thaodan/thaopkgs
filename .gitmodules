@@ -105,3 +105,6 @@
 [submodule "python-telegramusermapbot-git"]
 	path = python-telegramusermapbot-git
 	url = ssh://aur@aur.archlinux.org/python-telegramusermapbot-git.git
+[submodule "graphite-mozilla"]
+	path = graphite-mozilla
+	url = ssh://aur@aur.archlinux.org/graphite-mozilla.git
