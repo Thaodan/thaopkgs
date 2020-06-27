@@ -108,3 +108,6 @@
 [submodule "graphite-mozilla"]
 	path = graphite-mozilla
 	url = ssh://aur@aur.archlinux.org/graphite-mozilla.git
+[submodule "virtualbox-host-modules-pf"]
+	path = virtualbox-host-modules-pf
+	url = ssh://aur@aur.archlinux.org/virtualbox-host-modules-pf
